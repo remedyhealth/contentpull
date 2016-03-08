@@ -1,6 +1,6 @@
 {
   "name": "@rhm/content-reader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/remedyhealth/content-reader/issues"
   },
-  "homepage": "https://github.com/remedyhealth/content-reader#readme"
+  "homepage": "https://github.com/remedyhealth/content-reader#readme",
+  "dependencies": {
+    "contentful": "^3.0.7"
+  }
 }
