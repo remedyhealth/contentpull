@@ -49,12 +49,42 @@ class Controller {
      * @param {String} id - The entry id.
      * @param {Bool=} noParse - Ignore parsing.
      * @returns {Promise} The promise instance.
+     * @todo - We can do `this.client.getEntries({'sys.id': id})` as well...
      */
     getEntry(id, noParse) {
         console.log("Getting entry: " + id);
         var raw = this.client.getEntry(id);
 
         return noParse ? raw : raw.then(entry => this.parse(entry), err => this.genericError(err));
+    }
+
+    findEntry(contentType, fields) {
+        let params = {
+            resolveLinks: false,
+            limit: 1,
+            content_type: contentType
+        };
+
+        for (let i in fields) {
+            params[`fields.${i}`] = fields[i];
+        }
+
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.client.getEntries(params).then(function(entries) {
+                if (entries.total === 1 && entries.items.length === 1) {
+                    self.parse(entries.items[0]).then(function(parsed) {
+                        resolve(parsed);
+                    }, function(err) {
+                        reject(err);
+                    });
+                } else {
+                    reject(new Error("No entry found"));
+                }
+            }, function(err) {
+                reject(err);
+            });
+        });
     }
 
     /**
