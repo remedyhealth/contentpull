@@ -39,9 +39,10 @@ class Controller {
      * @todo - Add additional parameters, instead of listing all.
      */
     getEntries(name) {
-        return this.client.getEntries({
-            content_type: name
-        });
+        return this.parseCollection(this.client.getEntries({
+            content_type: name,
+            resolveLinks: false
+        }));
     }
 
     /**
@@ -58,30 +59,51 @@ class Controller {
         return noParse ? raw : raw.then(entry => this.parse(entry), err => this.genericError(err));
     }
 
-    findEntry(contentType, fields) {
-        let params = {
+    /**
+     * Finds entries by parameters.
+     * @param {String} contentType - The type of content to query.
+     * @param {Object} fields - The fields to search by.
+     * @param {Object} args - Argument overides for contentful.
+     * @returns {Promise} The promise instance.
+     */
+    findEntries(contentType, fields, args) {
+        args = args || {};
+        let params = Object.assign({
             resolveLinks: false,
-            limit: 1,
             content_type: contentType
-        };
+        }, args);
 
         for (let i in fields) {
             params[`fields.${i}`] = fields[i];
         }
 
         var self = this;
-        return new Promise(function(resolve, reject) {
-            self.client.getEntries(params).then(function(entries) {
-                if (entries.total === 1 && entries.items.length === 1) {
-                    self.parse(entries.items[0]).then(function(parsed) {
-                        resolve(parsed);
-                    }, function(err) {
-                        reject(err);
-                    });
+        return new Promise((resolve, reject) => {
+            self.parseCollection(self.client.getEntries(params)).then(parsed => {
+                resolve(parsed);
+            }, err => {
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * Looks for a specific entry.
+     * @param {String} contentType - The type of content to query.
+     * @param {Object} fields - The fields to search by.
+     * @returns {Promise} The promise instance.
+     */
+    findEntry(contentType, fields) {
+        return new Promise((resolve, reject) => {
+            this.findEntries(contentType, fields, {
+                limit: 1
+            }).then(entries => {
+                if (entries.meta.total === 1) {
+                    resolve(entries.items[0]);
                 } else {
-                    reject(new Error("No entry found"));
+                    reject(new Error("New entry found"));
                 }
-            }, function(err) {
+            }, err => {
                 reject(err);
             });
         });
@@ -167,6 +189,50 @@ class Controller {
             this.getGeneric(obj).then(sub => {
                 this._updateParsedRef(parsed, sub);
                 resolve(parsed);
+            });
+        });
+    }
+
+    /**
+     * Parses a collection.
+     * @param {Promise} promise - The promise that needs to happen first for returning a collection.
+     * @return {Promise} The promise instance.
+     */
+    parseCollection(promise) {
+        return new Promise((resolve, reject) => {
+            promise.then(raw => {
+                var parsed = {
+                    meta: {
+                        total: raw.total
+                    }
+                };
+
+                this.parseAll(raw.items).then(parsedObjs => {
+                    parsed.items = parsedObjs;
+                    resolve(parsed);
+                }, err => {
+                    reject(err);
+                });
+            });
+        });
+    }
+
+    /**
+     * Parses an array of entries or assets.
+     * @param {Object[]} objs - The generic object list to search.
+     * @returns {Promise} The promise instance.
+     */
+    parseAll(objs) {
+        var promises = [];
+        for (let obj of objs) {
+            promises.push(this.parse(obj));
+        }
+
+        return new Promise((resolve, reject) => {
+            Promise.all(promises).then(parsed => {
+                resolve(parsed);
+            }, err => {
+                reject(err);
             });
         });
     }
