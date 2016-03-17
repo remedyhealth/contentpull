@@ -1,7 +1,7 @@
 var c = require('./index');
-var reader = new c('cyn2ssr0iqx0', '1157ce98f62ebccc473a3fe59397c84fc685e5f1b7630ad56da07ccba3be50ca');
+var reader = new c('k93yc4pkke22', '8df52946b77b1862ea5650ddb4b3b41a3047303d11defbdb0f8cb5fb8c2738b0');
 
-reader.findEntries('slideshow', {slug: 'common-triggers'}).then(entries => {
+reader.getEntry('5edY84DmSc0oqGAEio4kKS').then(entries => {
     console.log(entries);
 }, err => {
     console.log(err);
