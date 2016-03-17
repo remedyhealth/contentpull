@@ -52,11 +52,21 @@ class Controller {
      * @returns {Promise} The promise instance.
      * @todo - We can do `this.client.getEntries({'sys.id': id})` as well...
      */
-    getEntry(id, noParse) {
+    getEntry(id, noParse, ignore) {
         console.log("Getting entry: " + id);
+        
+        ignore = ignore || [];
+        
+        if (ignore.indexOf(id) >= 0) {
+            return new Promise(resolve => {
+                resolve({ id: id });
+            });
+        }
+        
+        ignore.push(id);
         var raw = this.client.getEntry(id);
 
-        return noParse ? raw : raw.then(entry => this.parse(entry), err => this.genericError(err));
+        return noParse ? raw : raw.then(entry => this.parse(entry, ignore), err => this.genericError(err));
     }
 
     /**
@@ -115,11 +125,21 @@ class Controller {
      * @param {Bool=} noParse - Ignore parsing.
      * @returns {Promise} The promise instance.
      */
-    getAsset(id, noParse) {
+    getAsset(id, noParse, ignore) {
         console.log("Getting asset: " + id);
+        
+        ignore = ignore || [];
+        
+        if (ignore.indexOf(id) >= 0) {
+            return new Promise(resolve => {
+                resolve({ id: id });
+            });
+        }
+        
+        ignore.push(id);
         var raw = this.client.getAsset(id);
 
-        return noParse ? raw : raw.then(asset => this.parse(asset), err => this.genericError(err));
+        return noParse ? raw : raw.then(asset => this.parse(asset, ignore), err => this.genericError(err));
     }
 
     /**
@@ -129,16 +149,16 @@ class Controller {
      * @param {String} obj.linkType - The type of link. Either 'Asset' or 'Entry'.
      * @returns {Promise} The promise instance.
      */
-    getGeneric(obj) {
+    getGeneric(obj, ignore) {
         if (obj && obj.sys) {
             obj = obj.sys;
         }
 
         if (obj && obj.id && obj.linkType) {
             if (obj.linkType === 'Entry') {
-                return this.getEntry(obj.id);
+                return this.getEntry(obj.id, null, ignore);
             } else if (obj.linkType === 'Asset') {
-                return this.getAsset(obj.id);
+                return this.getAsset(obj.id, null, ignore);
             }
         }
 
@@ -184,9 +204,9 @@ class Controller {
      * @param {Object} obj - The unparsed object. This will wait for the request to resolve before parsing.
      * @param {Object} parsed - The currently parsed parent object. This should have a reference to obj.id somewhere.
      */
-    _deferredRequest(obj, parsed) {
+    _deferredRequest(obj, parsed, ignore) {
         return new Promise((resolve, reject) => {
-            this.getGeneric(obj).then(sub => {
+            this.getGeneric(obj, ignore).then(sub => {
                 this._updateParsedRef(parsed, sub);
                 resolve(parsed);
             });
@@ -244,7 +264,7 @@ class Controller {
      * @todo - Currently wouldn't work for collections, but we should make a collection promise that wraps a bunch of these up as long as it can manage.
      * @todo - The collection parse would have to account for potentially already resolved fields. This asumsed the response has nothing resolved.
      */
-    parse(entry) {
+    parse(entry, ignore) {
 
         let promise = new Promise((resolve, reject) => {
 
@@ -263,13 +283,13 @@ class Controller {
                         parsed[key].push({
                             id: entry.fields[key][i].sys.id
                         });
-                        deferred.push(this._deferredRequest(entry.fields[key][i], parsed));
+                        deferred.push(this._deferredRequest(entry.fields[key][i], parsed, ignore));
                     }
                 } else if (entry.fields[key].sys) {
                     parsed[key] = {
                         id: entry.fields[key].sys.id
                     };
-                    deferred.push(this._deferredRequest(entry.fields[key], parsed));
+                    deferred.push(this._deferredRequest(entry.fields[key], parsed, ignore));
                 } else {
                     parsed[key] = entry.fields[key];
                 }
