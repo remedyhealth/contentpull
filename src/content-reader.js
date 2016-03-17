@@ -38,11 +38,12 @@ class Controller {
      * @returns {Promise} The promise instance.
      * @todo - Add additional parameters, instead of listing all.
      */
-    getEntries(name) {
+    getEntries(name, ignore) {
+        ignore = ignore || [];
         return this.parseCollection(this.client.getEntries({
             content_type: name,
             resolveLinks: false
-        }));
+        }), ignore);
     }
 
     /**
@@ -54,15 +55,15 @@ class Controller {
      */
     getEntry(id, noParse, ignore) {
         console.log("Getting entry: " + id);
-        
+
         ignore = ignore || [];
-        
+
         if (ignore.indexOf(id) >= 0) {
             return new Promise(resolve => {
                 resolve({ id: id });
             });
         }
-        
+
         ignore.push(id);
         var raw = this.client.getEntry(id);
 
@@ -76,7 +77,8 @@ class Controller {
      * @param {Object} args - Argument overides for contentful.
      * @returns {Promise} The promise instance.
      */
-    findEntries(contentType, fields, args) {
+    findEntries(contentType, fields, args, ignore) {
+        ignore = ignore || [];
         args = args || {};
         let params = Object.assign({
             resolveLinks: false,
@@ -89,7 +91,7 @@ class Controller {
 
         var self = this;
         return new Promise((resolve, reject) => {
-            self.parseCollection(self.client.getEntries(params)).then(parsed => {
+            self.parseCollection(self.client.getEntries(params), ignore).then(parsed => {
                 resolve(parsed);
             }, err => {
                 reject(err);
@@ -127,15 +129,15 @@ class Controller {
      */
     getAsset(id, noParse, ignore) {
         console.log("Getting asset: " + id);
-        
+
         ignore = ignore || [];
-        
+
         if (ignore.indexOf(id) >= 0) {
             return new Promise(resolve => {
                 resolve({ id: id });
             });
         }
-        
+
         ignore.push(id);
         var raw = this.client.getAsset(id);
 
@@ -174,7 +176,7 @@ class Controller {
      * Resolved the parsed object recursively with the new object returned.
      * @param {Object} parsed - The currently parsed object. This object nested somewhere should have a reference to obj.id.
      * @param {Object} obj - The new object to replace the referenced object in the parsed parameter.
-     * @returns {Bool|undefined} - 
+     * @returns {Bool|undefined} -
      */
     _updateParsedRef(parsed, obj) {
         for (var field in parsed) {
@@ -218,7 +220,7 @@ class Controller {
      * @param {Promise} promise - The promise that needs to happen first for returning a collection.
      * @return {Promise} The promise instance.
      */
-    parseCollection(promise) {
+    parseCollection(promise, ignore) {
         return new Promise((resolve, reject) => {
             promise.then(raw => {
                 var parsed = {
@@ -227,7 +229,7 @@ class Controller {
                     }
                 };
 
-                this.parseAll(raw.items).then(parsedObjs => {
+                this.parseAll(raw.items, ignore).then(parsedObjs => {
                     parsed.items = parsedObjs;
                     resolve(parsed);
                 }, err => {
@@ -242,10 +244,10 @@ class Controller {
      * @param {Object[]} objs - The generic object list to search.
      * @returns {Promise} The promise instance.
      */
-    parseAll(objs) {
+    parseAll(objs, ignore) {
         var promises = [];
         for (let obj of objs) {
-            promises.push(this.parse(obj));
+            promises.push(this.parse(obj, ignore));
         }
 
         return new Promise((resolve, reject) => {
