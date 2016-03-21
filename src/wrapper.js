@@ -1,6 +1,7 @@
 'use strict';
 
 var contentful = require('contentful');
+var parse = require('./parser');
 
 class Controller {
 
@@ -22,6 +23,7 @@ class Controller {
         }
 
         this.client = contentful.createClient(params);
+        this.parse = parse;
     }
 
     /**
@@ -31,7 +33,7 @@ class Controller {
     getSpace() {
         return this.client.getSpace();
     }
-    
+
     /**
      * Returns a collection of object (entries or assets).
      * @param {JSON} params - The params to pass to contentful.
@@ -40,10 +42,10 @@ class Controller {
      */
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
-        
+
         return fn(params);
     }
-    
+
     /**
      * Returns a collection of entries.
      * @param {JSON} params - The params to pass to contentful.
@@ -52,7 +54,7 @@ class Controller {
     getEntries(params) {
         return this._getObjects(params);
     }
-    
+
     /**
      * Returns a collection of assets.
      * @param {JSON} params - The params to pass to contentful.
@@ -61,7 +63,7 @@ class Controller {
     getAssets(params) {
         return this._getObjects(params, true);
     }
-    
+
     /**
      * Returns an individual object (entry or asset).
      * @param {JSON} params - The params to pass to contentful.
@@ -81,7 +83,7 @@ class Controller {
             }, this.genericError);
         });
     }
-    
+
     /**
      * Returns an individual entry.
      * @param {JSON} params - The params to pass to contentful.
@@ -90,7 +92,7 @@ class Controller {
     getEntry(params) {
         return this._getObjects(params);
     }
-    
+
     /**
      * Returns an individual asset.
      * @param {JSON} params - The params to pass to contentful.
@@ -99,7 +101,7 @@ class Controller {
     getAsset(params) {
         return this._getObjects(params, true);
     }
-    
+
     /**
      * Returns an individual object by id (entry or asset).
      * @param {JSON} params - The params to pass to contentful.
@@ -111,7 +113,7 @@ class Controller {
             'sys.id': id
         }, isAsset);
     }
-    
+
     /**
      * Returns an individual entry by id.
      * @param {String} id - The id.
@@ -120,7 +122,7 @@ class Controller {
     getEntryById(id) {
         return this._getObjectById(id);
     }
-    
+
     /**
      * Returns an individual asset by id.
      * @param {String} id - The id.
