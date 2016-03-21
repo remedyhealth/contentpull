@@ -5,4 +5,7 @@ reader.getEntryById('4V2Ze2uOZy60k8CeUc0Gsu').then(entry => {
     console.log(reader.parse.it(entry));
 }, err => {
     console.log(err);
+})
+.catch(err => {
+  console.log('Error: ', err);
 });
