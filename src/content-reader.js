@@ -31,30 +31,112 @@ class Controller {
     getSpace() {
         return this.client.getSpace();
     }
-
-    getEntries(params) {
-        return this.client.getEntries(params);
+    
+    /**
+     * Returns a collection of object (entries or assets).
+     * @param {JSON} params - The params to pass to contentful.
+     * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
+     * @returns {Promise} The promise instance.
+     */
+    _getObjects(params, isAsset) {
+        let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
+        
+        return fn(params);
     }
-
-    getEntry(params) {
+    
+    /**
+     * Returns a collection of entries.
+     * @param {JSON} params - The params to pass to contentful.
+     * @returns {Promise} The promise instance.
+     */
+    getEntries(params) {
+        return this._getObjects(params);
+    }
+    
+    /**
+     * Returns a collection of assets.
+     * @param {JSON} params - The params to pass to contentful.
+     * @returns {Promise} The promise instance.
+     */
+    getAssets(params) {
+        return this._getObjects(params, true);
+    }
+    
+    /**
+     * Returns an individual object (entry or asset).
+     * @param {JSON} params - The params to pass to contentful.
+     * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
+     * @returns {Promise} The promise instance.
+     */
+    _getObject(params, isAsset) {
         params = params || {};
         params.limit = 1;
-        return this.getEntries(params);
-    }
-
-    getEntryById(id) {
-        return this.getEntry({
-            'sys.id': id
+        return new Promise((resolve, reject) => {
+            this._getObjects(params, isAsset).then(objects => {
+                if (objects && objects.total === 1) {
+                    resolve(objects.items[0]);
+                } else {
+                    reject(new Error("Entry not found."));
+                }
+            }, this.genericError);
         });
+    }
+    
+    /**
+     * Returns an individual entry.
+     * @param {JSON} params - The params to pass to contentful.
+     * @returns {Promise} The promise instance.
+     */
+    getEntry(params) {
+        return this._getObjects(params);
+    }
+    
+    /**
+     * Returns an individual asset.
+     * @param {JSON} params - The params to pass to contentful.
+     * @returns {Promise} The promise instance.
+     */
+    getAsset(params) {
+        return this._getObjects(params, true);
+    }
+    
+    /**
+     * Returns an individual object by id (entry or asset).
+     * @param {JSON} params - The params to pass to contentful.
+     * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
+     * @returns {Promise} The promise instance.
+     */
+    _getObjectById(id, isAsset) {
+        return this._getObject({
+            'sys.id': id
+        }, isAsset);
+    }
+    
+    /**
+     * Returns an individual entry by id.
+     * @param {String} id - The id.
+     * @returns {Promise} The promise instance.
+     */
+    getEntryById(id) {
+        return this._getObjectById(id);
+    }
+    
+    /**
+     * Returns an individual asset by id.
+     * @param {String} id - The id.
+     * @returns {Promise} The promise instance.
+     */
+    getAssetById(id) {
+        return this._getObjectById(id, true);
     }
 
     /**
-     * Looks for a specific entry.
+     * Looks for a specific object by content type (entry or asset).
      * @param {String} contentType - The type of content to query.
      * @param {Object} fields - The fields to search by.
      * @returns {Promise} The promise instance.
      */
-    findEntry(contentType, fields) {
+    _findObjectByContentType(contentType, fields, isAsset) {
 
         let params = {
             content_type: contentType
@@ -64,7 +146,27 @@ class Controller {
             params[`fields.${i}`] = fields[i];
         }
 
-        return this.getEntry(params);
+        return this._getObject(params, isAsset);
+    }
+
+    /**
+     * Looks for a specific entry by content type.
+     * @param {String} contentType - The type of content to query.
+     * @param {Object} fields - The fields to search by.
+     * @returns {Promise} The promise instance.
+     */
+    findEntryByContentType(contentType, fields) {
+        return this._findObjectByContentType(contentType, fields);
+    }
+
+    /**
+     * Looks for a specific asset by content type.
+     * @param {String} contentType - The type of content to query.
+     * @param {Object} fields - The fields to search by.
+     * @returns {Promise} The promise instance.
+     */
+    findAssetByContentType(contentType, fields) {
+        return this._findObjectByContentType(contentType, fields, true);
     }
 
     /**
