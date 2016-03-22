@@ -108,10 +108,10 @@ class Controller {
      * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
      * @returns {Promise} The promise instance.
      */
-    _getObjectById(id, isAsset) {
-        return this._getObject({
-            'sys.id': id
-        }, isAsset);
+    _getObjectById(id, params, isAsset) {
+      params = params || {};
+      params['sys.id'] = id;
+      return this._getObject(params, isAsset);
     }
 
     /**
@@ -119,8 +119,8 @@ class Controller {
      * @param {String} id - The id.
      * @returns {Promise} The promise instance.
      */
-    getEntryById(id) {
-        return this._getObjectById(id);
+    getEntryById(id, params) {
+        return this._getObjectById(id, params);
     }
 
     /**
@@ -128,8 +128,8 @@ class Controller {
      * @param {String} id - The id.
      * @returns {Promise} The promise instance.
      */
-    getAssetById(id) {
-        return this._getObjectById(id, true);
+    getAssetById(id, params) {
+        return this._getObjectById(id, params, true);
     }
 
     /**
@@ -138,7 +138,7 @@ class Controller {
      * @param {Object} fields - The fields to search by.
      * @returns {Promise} The promise instance.
      */
-    _findObjectByContentType(contentType, fields, isAsset) {
+    _findObjectByContentType(contentType, fields, otherParams, isAsset) {
 
         let params = {
             content_type: contentType
@@ -147,6 +147,8 @@ class Controller {
         for (let i in fields) {
             params[`fields.${i}`] = fields[i];
         }
+
+        params = Object.assign(params, otherParams);
 
         return this._getObject(params, isAsset);
     }
@@ -157,8 +159,8 @@ class Controller {
      * @param {Object} fields - The fields to search by.
      * @returns {Promise} The promise instance.
      */
-    findEntryByContentType(contentType, fields) {
-        return this._findObjectByContentType(contentType, fields);
+    findEntryByContentType(contentType, fields, params) {
+        return this._findObjectByContentType(contentType, fields, params);
     }
 
     /**
@@ -168,14 +170,14 @@ class Controller {
      * @returns {Promise} The promise instance.
      */
     findAssetByContentType(contentType, fields) {
-        return this._findObjectByContentType(contentType, fields, true);
+        return this._findObjectByContentType(contentType, fields, {}, true);
     }
 
     /**
      * Used to create a generic error should we need one.
      */
     genericError(err) {
-        console.log(err);
+        console.log(err.stack);
         return err;
     }
 }
