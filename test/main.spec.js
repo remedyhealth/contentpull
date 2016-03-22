@@ -28,6 +28,7 @@ describe('Content-reader', function () {
         parsedEntry.should.have.deep.property('contentType', 'article');
         parsedEntry.should.have.property('fields').that.is.an('object');
         parsedEntry.should.have.property('bubba').that.is.an('object');
+        console.log('did these pass?');
       })
       .catch(err => {
         console.log(err.stack);
