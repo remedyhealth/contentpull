@@ -48,10 +48,10 @@ class Parser {
         };
 
         if (obj && obj.sys && obj.sys.type === 'Array') {
-            parsed.meta.total = obj.sys.total;
-            for (let item of obj.sys.items) {
-                parsed.items.push(this.it(item));
-            }
+          parsed.meta.total = obj.total;
+          parsed.meta.skip = obj.skip;
+          parsed.meta.limit = obj.limit;
+          parsed.items = obj.items.map( item => this.it(item));
         }
 
         return parsed;
