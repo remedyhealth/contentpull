@@ -10,14 +10,16 @@ class Parser {
     one(obj) {
         let parsed = {};
 
-        if (obj && obj.sys && obj.sys.type !== 'Array') {
+        if (obj && obj.sys && (obj.sys.type !== 'Array' || obj.sys.type !== 'Link')) {
             parsed.id = obj.sys.id;
             parsed.meta = {
                 createdAt: obj.sys.createdAt,
                 updatedAt: obj.sys.updatedAt,
                 revision: obj.sys.revision,
-                contentType: obj.sys.contentType.sys.id
             };
+            if (obj.sys.contentType) {
+              parsed.contentType = obj.sys.contentType.sys.id;
+            }
 
             parsed.fields = {};
             for (let key in obj.fields) {
