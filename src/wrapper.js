@@ -90,7 +90,7 @@ class Controller {
      * @returns {Promise} The promise instance.
      */
     getEntry(params) {
-        return this._getObjects(params);
+        return this._getObject(params);
     }
 
     /**
@@ -99,7 +99,7 @@ class Controller {
      * @returns {Promise} The promise instance.
      */
     getAsset(params) {
-        return this._getObjects(params, true);
+        return this._getObject(params, true);
     }
 
     /**
