@@ -1,6 +1,6 @@
 var reader;
 try {
-    reader = require('./src/content-reader');
+    reader = require('./src/wrapper');
 } catch (err) {
     console.log(err);
     process.exit(1);
