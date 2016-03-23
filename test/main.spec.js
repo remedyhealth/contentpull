@@ -71,5 +71,71 @@ describe('Content reader - hooked up to contentful', function () {
       });
     });
 
+    it('should return the list of articles for a subCategory', function () {
+      // we need to know the subCategory id to do the query
+      let subCatId = '31ogjk5nBS4Euo0wM8OKus';
+      let result = reader.getEntries({
+        content_type: 'article',
+        'fields.subCategory.sys.id': subCatId,
+        include: 1,
+      });
+
+      return result.then(function (entry) {
+        var parsedEntry = reader.parse.it(entry);
+
+        parsedEntry.should.have.property('meta').that.is.an('object');
+        parsedEntry.should.have.deep.property('meta.total').that.is.at.least(1);
+        parsedEntry.should.have.deep.property('meta.skip', 0);
+        parsedEntry.should.have.deep.property('meta.limit', 100);
+        parsedEntry.should.have.property('items').that.is.an('Array');
+        parsedEntry.should.have.deep.property('items[0].contentType', 'article');
+        parsedEntry.should.have.deep.property('items[0].fields.slug', 'a-guide-to-good-posture');
+        parsedEntry.should.have.deep.property('items[0].fields.teaserImage');
+
+        let teaserImage = parsedEntry.items[0].fields.teaserImage;
+        teaserImage.should.have.deep.property('fields.file.details.image.width', 988);
+      });
+    });
+
+    it('should return the list of articles for a category', function () {
+      // search for category using slug
+      let catSlug = 'fitness';
+      return reader.findEntryByContentType('category', { slug: catSlug }, { include: 0 })
+      .then(category => {
+        // we have category, now search for subCategories for this Category
+        return reader.getEntries({
+          content_type: 'subCategory',
+          'fields.category.sys.id': category.sys.id,
+          include: 0,
+        });
+      })
+      .then(subCategories => {
+        // we have subCategories, now get all their ids for the query
+        let subCatIds = subCategories.items.map(subCat => subCat.sys.id);
+
+        let result = reader.getEntries({
+          content_type: 'article',
+          'fields.subCategory.sys.id[in]': subCatIds.join(','),
+          include: 1,
+        });
+
+        return result.then(function (entry) {
+          var parsedEntry = reader.parse.it(entry);
+
+          parsedEntry.should.have.property('meta').that.is.an('object');
+          parsedEntry.should.have.deep.property('meta.total').that.is.at.least(1);
+          parsedEntry.should.have.deep.property('meta.skip', 0);
+          parsedEntry.should.have.deep.property('meta.limit', 100);
+          parsedEntry.should.have.property('items').that.is.an('Array');
+          parsedEntry.should.have.deep.property('items[0].contentType', 'article');
+          parsedEntry.should.have.deep.property('items[0].fields.slug', 'a-guide-to-good-posture');
+          parsedEntry.should.have.deep.property('items[0].fields.teaserImage');
+
+          let teaserImage = parsedEntry.items[0].fields.teaserImage;
+          teaserImage.should.have.deep.property('fields.file.details.image.width', 988);
+        });
+      });
+    });
+
   });
 });
