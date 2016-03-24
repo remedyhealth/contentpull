@@ -25,6 +25,11 @@ class Parser {
             for (let key in obj.fields) {
                 if (obj.fields[key] && obj.fields[key].sys) {
                     parsed.fields[key] = this.it(obj.fields[key]);
+                } else if (Array.isArray(obj.fields[key])) {
+                    parsed.fields[key] = [];
+                    for (let sub of obj.fields[key]) {
+                        parsed.fields[key].push(this.it(sub));
+                    }
                 } else {
                     parsed.fields[key] = obj.fields[key];
                 }
