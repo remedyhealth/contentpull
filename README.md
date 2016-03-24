@@ -1,6 +1,10 @@
 # Content Reader
 
-This package is a [contentful.js](https://github.com/contentful/contentful.js) wrapper. Use it to assist with getting entires, assets, and resolve nested object in requests.
+This package is a contentful.js wrapper. Use it to assist with getting entires, assets, and resolve nested object in requests.
+
+### Reference
+
+See [contentful.js](https://github.com/contentful/contentful.js) for more information as this system wraps around contentful's.
 
 ### Installation
 
