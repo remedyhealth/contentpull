@@ -3,6 +3,15 @@
 var contentful = require('contentful');
 var parse = require('./parser');
 
+// Extend Promise
+Promise.prototype.parse = function (then, error) {
+    return this.then(obj => {
+        then(parse.it(obj));
+    }, err => {
+        error(err);
+    });
+};
+
 class Controller {
 
     /**
@@ -23,7 +32,6 @@ class Controller {
         }
 
         this.client = contentful.createClient(params);
-        this.parse = parse;
     }
 
     /**
@@ -109,9 +117,9 @@ class Controller {
      * @returns {Promise} The promise instance.
      */
     _getObjectById(id, params, isAsset) {
-      params = params || {};
-      params['sys.id'] = id;
-      return this._getObject(params, isAsset);
+        params = params || {};
+        params['sys.id'] = id;
+        return this._getObject(params, isAsset);
     }
 
     /**
