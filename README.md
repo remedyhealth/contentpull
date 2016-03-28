@@ -53,25 +53,41 @@ reader.getEntry('entry-id').then(function (entry) {
 An entry can be retrived using the following:
 
 ```
-reader.getEntry('entry-id', ignoreParse).then(function (entry) {
+reader.getEntryById('entry-id').then(function (entry) {
     console.log(entry);
 }, function (err) {
     console.log('something went wrong');
 });
 ```
 
-`entry-id` is required, but if `ignoreParsed` is set to `true`, then the response will be returned unparsed and left in the raw state.
+We also support the following functions for further entry gathering.
+
+* **getEntries()** - Returns an entry.
 
 ##### Assets
 
 An asset can be returned using the following:
 
 ```
-reader.getAsset('asset-id', ignoreParse).then(function (asset) {
+reader.getAssetById('asset-id').then(function (asset) {
     console.log(asset);
 }, function (err) {
     console.log('something went wrong');
 });
 ```
 
-`asset-id` is required, but if `ignoreParsed` is set to `true`, then the response will be returned unparsed and left in the raw state.
+##### Parsing
+
+We have added the ability to parse subobjects should we choose to have a cleaner version of the fields from contentful.
+
+The promise system is extended to include a `parse` method to automatically parse the response.
+
+```
+reader.getAssetById('asset-id').parse(function (parsedAsset) {
+    console.log(parsedAsset);
+}, function (err) {
+    console.log('something went wrong');
+});
+```
+
+We simply replaced `.then(...)` with `.parse(...)` and that parses the response from contentful first.
