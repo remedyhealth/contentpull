@@ -1,25 +1,7 @@
 'use strict';
 
 var contentful = require('contentful');
-var parse = require('./parser');
-
-/**
- * Extends `Promise` to allow a parsing before resolving.
- * @function parse
- * @param {function} then - The callback after parsing.
- * @param {function} error - The failed resolve.
- * @returns {Promise} The promise instance.
- * @example reader.getSomething(params).parse(function(res) { ... });
- * @todo - This jsdoc is not correct, but I cannot find a good way to globally
- *  extend something.
- */
-Promise.prototype.parse = function (then, error) {
-    return this.then(obj => {
-        then(parse.it(obj));
-    }, err => {
-        error(err);
-    });
-};
+var Linker = require('./linker');
 
 class Wrapper {
 
@@ -60,7 +42,7 @@ class Wrapper {
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
 
-        return fn(params);
+        return new Linker(fn(params));
     }
 
     /**
@@ -90,7 +72,7 @@ class Wrapper {
     _getObject(params, isAsset) {
         params = params || {};
         params.limit = 1;
-        return new Promise((resolve, reject) => {
+        return new Linker(new Promise((resolve, reject) => {
             this._getObjects(params, isAsset).then(objects => {
                 if (objects && objects.total === 1) {
                     resolve(objects.items[0]);
@@ -98,7 +80,7 @@ class Wrapper {
                     reject(new Error("Entry not found."));
                 }
             }, this.genericError);
-        });
+        }));
     }
 
     /**
