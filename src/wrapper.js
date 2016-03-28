@@ -3,7 +3,16 @@
 var contentful = require('contentful');
 var parse = require('./parser');
 
-// Extend Promise
+/**
+ * Extends `Promise` to allow a parsing before resolving.
+ * @function parse
+ * @param {function} then - The callback after parsing.
+ * @param {function} error - The failed resolve.
+ * @returns {Promise} The promise instance.
+ * @example reader.getSomething(params).parse(function(res) { ... });
+ * @todo - This jsdoc is not correct, but I cannot find a good way to globally
+ *  extend something.
+ */
 Promise.prototype.parse = function (then, error) {
     return this.then(obj => {
         then(parse.it(obj));
@@ -12,7 +21,7 @@ Promise.prototype.parse = function (then, error) {
     });
 };
 
-class Controller {
+class Wrapper {
 
     /**
      * Creates a new instance of the content-reader, which wraps around contentful.js
@@ -190,4 +199,4 @@ class Controller {
     }
 }
 
-module.exports = Controller;
+module.exports = Wrapper;
