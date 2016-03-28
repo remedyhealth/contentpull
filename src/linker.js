@@ -10,15 +10,17 @@ var parse = require('./parser');
  */
 class Linker {
     constructor(o) {
-        o.parse = function(then, error) {
-            return o.then(obj => {
-                then(parse.it(obj));
-            }, err => {
-                error(err);
-            });
-        };
+        o.parse = this.parse;
 
         return o;
+    }
+    
+    parse(then, error) {
+        return this.then(obj => {
+            then(parse.it(obj));
+        }, err => {
+            error(err);
+        });
     }
 }
 
