@@ -40,38 +40,12 @@ The wrapper (along with contentful.js) uses a promise-driven architecture. All r
 Assuming our `reader` has been set up from the code-block above, the following can be used to get an entry, where `entry-id` is the id of the entry in contentful.
 
 ```
-reader.getEntry('entry-id').then(function (entry) {
+reader.getEntryById('entry-id').then(function (entry) {
     // assuming there is a title attribute
     console.log(entry.title);
-});
-```
-
-### Advanced Usage
-
-##### Entry
-
-An entry can be retrived using the following:
-
-```
-reader.getEntry('entry-id', ignoreParse).then(function (entry) {
-    console.log(entry);
 }, function (err) {
-    console.log('something went wrong');
+    console.log(err);
 });
 ```
 
-`entry-id` is required, but if `ignoreParsed` is set to `true`, then the response will be returned unparsed and left in the raw state.
-
-##### Assets
-
-An asset can be returned using the following:
-
-```
-reader.getAsset('asset-id', ignoreParse).then(function (asset) {
-    console.log(asset);
-}, function (err) {
-    console.log('something went wrong');
-});
-```
-
-`asset-id` is required, but if `ignoreParsed` is set to `true`, then the response will be returned unparsed and left in the raw state.
+Please refer to the generated JSDOC articles (`gulp doc`).
