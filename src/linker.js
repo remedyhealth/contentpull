@@ -36,7 +36,11 @@ class Linker {
         error = error || emptyFn;
 
         return this.then(obj => {
-            return then(parse.it(obj));
+            try {
+                return parse.it(obj);
+            } catch (e) {
+                return error(e);
+            }
         }, err => {
             return error(err);
         });

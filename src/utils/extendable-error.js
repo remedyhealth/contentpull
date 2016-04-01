@@ -12,11 +12,13 @@ class ExtendableError extends Error {
 
         /**
          * The name of the constructor.
+         * @type {String}
          */
         this.name = this.constructor.name;
 
         /**
          * The error message.
+         * @type {String}
          */
         this.message = message;
 
@@ -26,6 +28,7 @@ class ExtendableError extends Error {
 
             /**
              * The stack trace.
+             * @type {Error.stack}
              */
             this.stack = (new Error(message)).stack;
         }

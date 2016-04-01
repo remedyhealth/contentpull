@@ -10,17 +10,30 @@ class Wrapper {
      * Creates a new instance of the content-reader, which wraps around contentful.js
      * @param {String} space - The space to read from.
      * @param {String} accesstoken - The access token provided by contentful.
-     * @param {Bool=} debug - Whether or not to use the preview mode, or the default host.
+     * @param {Bool=} preview - Whether or not to use the preview mode, or the default host.
      */
-    constructor(space, accesstoken, debug) {
+    constructor(space, accesstoken, preview) {
 
         let params = {
             space: space,
             accessToken: accesstoken,
-            host: (debug) ? 'preview.contentful.com' : null
+            host: (preview) ? 'preview.contentful.com' : null
         };
 
+        /**
+         * Whether or not the client is set up for preview.
+         * @type {Bool}
+         */
+        this.isPreview = preview;
+        
+        /**
+         * The contentful client.
+         * @type {CDAClient}
+         * @see https://contentful.github.io/contentful.js/contentful/3.3.0/CDAClient.html
+         */
         this.client = contentful.createClient(params);
+        
+        return this;
     }
 
     /**
