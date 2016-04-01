@@ -1,7 +1,8 @@
 'use strict';
 
-var contentful = require('contentful');
-var Linker = require('./linker');
+const contentful = require('contentful');
+const Linker = require('./linker');
+const ReaderError = require('./error');
 
 class Wrapper {
 
@@ -9,25 +10,36 @@ class Wrapper {
      * Creates a new instance of the content-reader, which wraps around contentful.js
      * @param {String} space - The space to read from.
      * @param {String} accesstoken - The access token provided by contentful.
-     * @param {Bool=} debug - Whether or not to use the preview mode, or the default host.
+     * @param {Bool=} preview - Whether or not to use the preview mode, or the default host.
      */
-    constructor(space, accesstoken, debug) {
+    constructor(space, accesstoken, preview) {
 
         let params = {
             space: space,
-            accessToken: accesstoken
+            accessToken: accesstoken,
+            host: (preview) ? 'preview.contentful.com' : null
         };
 
-        if (debug) {
-            params.host = 'preview.contentful.com';
-        }
-
+        /**
+         * Whether or not the client is set up for preview.
+         * @type {Bool}
+         */
+        this.isPreview = preview;
+        
+        /**
+         * The contentful client.
+         * @type {CDAClient}
+         * @see https://contentful.github.io/contentful.js/contentful/3.3.0/CDAClient.html
+         */
         this.client = contentful.createClient(params);
+        
+        return this;
     }
 
     /**
      * Returns the space for the client.
-     * @returns {Object} Details about the currently registered space.
+     * @returns {Promise} The promise instance.
+     * @todo - Need to add the Linker to this and parse properly.
      */
     getSpace() {
         return this.client.getSpace();
@@ -35,9 +47,9 @@ class Wrapper {
 
     /**
      * Returns a collection of object (entries or assets).
-     * @param {JSON} params - The params to pass to contentful.
+     * @param {Object} params - The params to pass to contentful.
      * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
-     * @returns {Promise} The promise instance.
+     * @returns {Linker} The promise instance.
      */
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
@@ -47,8 +59,8 @@ class Wrapper {
 
     /**
      * Returns a collection of entries.
-     * @param {JSON} params - The params to pass to contentful.
-     * @returns {Promise} The promise instance.
+     * @param {Object} params - The params to pass to contentful.
+     * @returns {Linker} The promise instance.
      */
     getEntries(params) {
         return this._getObjects(params);
@@ -56,8 +68,8 @@ class Wrapper {
 
     /**
      * Returns a collection of assets.
-     * @param {JSON} params - The params to pass to contentful.
-     * @returns {Promise} The promise instance.
+     * @param {Object} params - The params to pass to contentful.
+     * @returns {Linker} The promise instance.
      */
     getAssets(params) {
         return this._getObjects(params, true);
@@ -65,9 +77,9 @@ class Wrapper {
 
     /**
      * Returns an individual object (entry or asset).
-     * @param {JSON} params - The params to pass to contentful.
+     * @param {Object} params - The params to pass to contentful.
      * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
-     * @returns {Promise} The promise instance.
+     * @returns {Linker} The promise instance.
      */
     _getObject(params, isAsset) {
         params = params || {};
@@ -77,7 +89,7 @@ class Wrapper {
                 if (objects && objects.total === 1) {
                     resolve(objects.items[0]);
                 } else {
-                    reject(new Error("Entry not found."));
+                    reject(new ReaderError("Entry not found."));
                 }
             }, this.genericError);
         }));
@@ -85,8 +97,8 @@ class Wrapper {
 
     /**
      * Returns an individual entry.
-     * @param {JSON} params - The params to pass to contentful.
-     * @returns {Promise} The promise instance.
+     * @param {Object} params - The params to pass to contentful.
+     * @returns {Linker} The promise instance.
      */
     getEntry(params) {
         return this._getObject(params);
@@ -94,8 +106,8 @@ class Wrapper {
 
     /**
      * Returns an individual asset.
-     * @param {JSON} params - The params to pass to contentful.
-     * @returns {Promise} The promise instance.
+     * @param {Object} params - The params to pass to contentful.
+     * @returns {Linker} The promise instance.
      */
     getAsset(params) {
         return this._getObject(params, true);
@@ -103,9 +115,9 @@ class Wrapper {
 
     /**
      * Returns an individual object by id (entry or asset).
-     * @param {JSON} params - The params to pass to contentful.
+     * @param {Object} params - The params to pass to contentful.
      * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
-     * @returns {Promise} The promise instance.
+     * @returns {Linker} The promise instance.
      */
     _getObjectById(id, params, isAsset) {
         params = params || {};
@@ -116,7 +128,7 @@ class Wrapper {
     /**
      * Returns an individual entry by id.
      * @param {String} id - The id.
-     * @returns {Promise} The promise instance.
+     * @returns {Linker} The promise instance.
      */
     getEntryById(id, params) {
         return this._getObjectById(id, params);
@@ -125,7 +137,7 @@ class Wrapper {
     /**
      * Returns an individual asset by id.
      * @param {String} id - The id.
-     * @returns {Promise} The promise instance.
+     * @returns {Linker} The promise instance.
      */
     getAssetById(id, params) {
         return this._getObjectById(id, params, true);
@@ -135,7 +147,7 @@ class Wrapper {
      * Looks for a specific object by content type (entry or asset).
      * @param {String} contentType - The type of content to query.
      * @param {Object} fields - The fields to search by.
-     * @returns {Promise} The promise instance.
+     * @returns {Linker} The promise instance.
      */
     _findObjectByContentType(contentType, fields, otherParams, isAsset) {
 
@@ -156,7 +168,7 @@ class Wrapper {
      * Looks for a specific entry by content type.
      * @param {String} contentType - The type of content to query.
      * @param {Object} fields - The fields to search by.
-     * @returns {Promise} The promise instance.
+     * @returns {Linker} The promise instance.
      */
     findEntryByContentType(contentType, fields, params) {
         return this._findObjectByContentType(contentType, fields, params);
@@ -166,7 +178,7 @@ class Wrapper {
      * Looks for a specific asset by content type.
      * @param {String} contentType - The type of content to query.
      * @param {Object} fields - The fields to search by.
-     * @returns {Promise} The promise instance.
+     * @returns {Linker} The promise instance.
      */
     findAssetByContentType(contentType, fields) {
         return this._findObjectByContentType(contentType, fields, {}, true);
@@ -174,6 +186,8 @@ class Wrapper {
 
     /**
      * Used to create a generic error should we need one.
+     * @param {Error} err - The error object.
+     * @returns {Error} The error object.
      */
     genericError(err) {
         console.log(err.stack);
