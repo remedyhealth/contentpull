@@ -22,7 +22,7 @@ class Parser {
                 revision: obj.sys.revision,
             };
             if (obj.sys.contentType) {
-              parsed.contentType = obj.sys.contentType.sys.id;
+                parsed.contentType = obj.sys.contentType.sys.id;
             }
 
             parsed.fields = {};
@@ -57,10 +57,10 @@ class Parser {
         };
 
         if (obj && obj.sys && obj.sys.type === 'Array') {
-          parsed.meta.total = obj.total;
-          parsed.meta.skip = obj.skip;
-          parsed.meta.limit = obj.limit;
-          parsed.items = obj.items.map( item => this.it(item));
+            parsed.meta.total = obj.total;
+            parsed.meta.skip = obj.skip;
+            parsed.meta.limit = obj.limit;
+            parsed.items = obj.items.map(item => this.it(item));
         }
 
         return parsed;
