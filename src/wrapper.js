@@ -1,9 +1,9 @@
 'use strict';
 
 var contentful = require('contentful');
-var parse = require('./parser');
+var Linker = require('./linker');
 
-class Controller {
+class Wrapper {
 
     /**
      * Creates a new instance of the content-reader, which wraps around contentful.js
@@ -23,7 +23,6 @@ class Controller {
         }
 
         this.client = contentful.createClient(params);
-        this.parse = parse;
     }
 
     /**
@@ -43,7 +42,7 @@ class Controller {
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
 
-        return fn(params);
+        return new Linker(fn(params));
     }
 
     /**
@@ -73,7 +72,7 @@ class Controller {
     _getObject(params, isAsset) {
         params = params || {};
         params.limit = 1;
-        return new Promise((resolve, reject) => {
+        return new Linker(new Promise((resolve, reject) => {
             this._getObjects(params, isAsset).then(objects => {
                 if (objects && objects.total === 1) {
                     resolve(objects.items[0]);
@@ -81,7 +80,7 @@ class Controller {
                     reject(new Error("Entry not found."));
                 }
             }, this.genericError);
-        });
+        }));
     }
 
     /**
@@ -109,9 +108,9 @@ class Controller {
      * @returns {Promise} The promise instance.
      */
     _getObjectById(id, params, isAsset) {
-      params = params || {};
-      params['sys.id'] = id;
-      return this._getObject(params, isAsset);
+        params = params || {};
+        params['sys.id'] = id;
+        return this._getObject(params, isAsset);
     }
 
     /**
@@ -182,4 +181,4 @@ class Controller {
     }
 }
 
-module.exports = Controller;
+module.exports = Wrapper;

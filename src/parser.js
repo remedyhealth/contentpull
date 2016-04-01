@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @class
+ * Parses objects received by contentful.
+ */
 class Parser {
 
     /**
