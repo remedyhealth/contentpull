@@ -1,27 +1,26 @@
 'use strict'
 
 // Dependencies (tests)
-var chai = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
+const chai = require('chai');
 chai.should();
 
 // Dependencies (application)
-var Wrapper = require('../src/wrapper');
-var Linker = require('../src/linker');
-var Parser = require('../src/parser');
-var ReaderError = require('../src/error');
+const Wrapper = require('../src/wrapper');
+const Linker = require('../src/linker');
+const Parser = require('../src/parser');
+const ReaderError = require('../src/error');
 
 // Dependencies (local)
-var reader;
-var rand = Date.now();
-var data = require('./mocha.data');
+let reader;
+const rand = Date.now();
+const data = require('./mocha.data');
+const entryId = '***REMOVED***';
 
 // create reader to use for tests
 before(done => {
     reader = new Wrapper(
-        'k93yc4pkke22',
-        '8df52946b77b1862ea5650ddb4b3b41a3047303d11defbdb0f8cb5fb8c2738b0');
+        '***REMOVED***',
+        '***REMOVED***');
     done();
 });
 
@@ -29,10 +28,35 @@ describe('Wrapper', () => {
 
     describe('getSpace', () => {
 
+        it('should return data about the registered space', done => {
+            done();
+        });
+        
     });
 
     describe('getEntries', () => {
 
+        it('should all entries when no criteria is passed', done => {
+            return reader.getEntries().then(res => {
+                res.should.have.property('total');
+                res.total.should.be.above(0);
+                done();
+            });
+        });
+
+        it('should return entries that match criteria specified', done => {
+            return reader.getEntries({content_type: 'qaEntry'}).then(res => {
+                res.should.have.property('items');
+                res.total.should.equal(1);
+                res.items[0].sys.contentType.sys.should.have.property('id', 'qaEntry');
+                done();
+            });
+        });
+        
+        it('should return nothing if no entries match', done => {
+            done();
+        });
+        
     });
 
     describe('getAssets', () => {
@@ -40,7 +64,7 @@ describe('Wrapper', () => {
     });
 
     describe('getEntry', () => {
-
+        
     });
 
     describe('getAsset', () => {
@@ -48,8 +72,14 @@ describe('Wrapper', () => {
     });
 
     describe('getEntryById', () => {
-        it('should return an single entry when requesting by id', () => {
-
+        
+        it('should return an single entry when requesting by id', done => {
+            return reader.getEntryById(entryId).then(entry => {
+                entry.should.have.property('sys');
+                entry.sys.should.have.property('id');
+                entry.sys.id.should.equal(entryId);
+                done();
+            });
         });
 
     });
@@ -59,7 +89,9 @@ describe('Wrapper', () => {
     });
 
     describe('findEntryByContentType', () => {
-
+        it('should return entries by content type', done => {
+            done();
+        });
     });
 
     describe('findAssetByContentType', () => {
@@ -77,12 +109,12 @@ describe('Parser', () => {
     describe('one', () => {
         
         it ('should parse a single object', () => {
-            var parsed = Parser.one(data.unparsed);
+            const parsed = Parser.one(data.unparsed);
             parsed.should.deep.equal(data.parsed);
         });
         
         it('should reject an array', () => {
-            var parsed = Parser.one(data.unparsedArr);
+            const parsed = Parser.one(data.unparsedArr);
             parsed.should.deep.equal({});
         });
         
@@ -91,12 +123,12 @@ describe('Parser', () => {
     describe('all', () => {
         
         it('should parse an array', () => {
-            var parsed = Parser.all(data.unparsedArr);
+            const parsed = Parser.all(data.unparsedArr);
             parsed.should.deep.equal(data.parsedArr);
         });
         
         it('should put a single object in the form of a parsed array', () => {
-            var parsed = Parser.all(data.unparsed);
+            const parsed = Parser.all(data.unparsed);
             parsed.should.have.property('meta').that.is.an('object');
             parsed.meta.should.have.property('total').that.equals(1);
             parsed.should.have.property('items').that.is.an('array');
@@ -108,12 +140,12 @@ describe('Parser', () => {
     describe('it', () => {
 
         it('should parse a single object', () => {
-            var parsed = Parser.it(data.unparsed);
+            const parsed = Parser.it(data.unparsed);
             parsed.should.deep.equal(data.parsed);
         });
 
         it('should parse an array', () => {
-            var parsed = Parser.it(data.unparsed);
+            const parsed = Parser.it(data.unparsed);
             parsed.should.deep.equal(data.parsed);
         });
         
