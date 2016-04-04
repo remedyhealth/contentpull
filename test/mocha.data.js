@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+const data = {
     unparsed: {
         sys: {
             id: 'test',
@@ -74,3 +74,20 @@ module.exports = {
         }
     }
 };
+
+data.unparsedArr = {
+    sys: {
+        type: 'Array',
+    },
+    total: 1,
+    items: [data.unparsed]
+};
+
+data.parsedArr = {
+    meta: {
+        total: 1
+    },
+    items: [data.parsed]
+};
+
+module.exports = data;
