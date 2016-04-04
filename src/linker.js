@@ -37,7 +37,7 @@ class Linker {
 
         return this.then(obj => {
             try {
-                return parse.it(obj);
+                return then(parse.it(obj));
             } catch (e) {
                 return error(e);
             }
