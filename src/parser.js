@@ -14,7 +14,7 @@ class Parser {
     one(obj) {
         let parsed = {};
 
-        if (obj && obj.sys && (obj.sys.type !== 'Array' || obj.sys.type !== 'Link')) {
+        if (obj && obj.sys && obj.sys.type !== 'Array' && obj.sys.type !== 'Link') {
 
             // Add the important stuff
             parsed.id = obj.sys.id;
