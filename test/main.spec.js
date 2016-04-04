@@ -75,15 +75,48 @@ describe('Wrapper', () => {
 describe('Parser', () => {
 
     describe('one', () => {
-
+        
+        it ('should parse a single object', () => {
+            var parsed = Parser.one(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+        
+        it('should reject an array', () => {
+            var parsed = Parser.one(data.unparsedArr);
+            parsed.should.deep.equal({});
+        });
+        
     });
 
     describe('all', () => {
-
+        
+        it('should parse an array', () => {
+            var parsed = Parser.all(data.unparsedArr);
+            parsed.should.deep.equal(data.parsedArr);
+        });
+        
+        it('should put a single object in the form of a parsed array', () => {
+            var parsed = Parser.all(data.unparsed);
+            parsed.should.have.property('meta').that.is.an('object');
+            parsed.meta.should.have.property('total').that.equals(1);
+            parsed.should.have.property('items').that.is.an('array');
+            parsed.items[0].should.deep.equal(data.parsed);
+        });
+        
     });
 
     describe('it', () => {
 
+        it('should parse a single object', () => {
+            var parsed = Parser.it(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+
+        it('should parse an array', () => {
+            var parsed = Parser.it(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+        
     });
 
 });
