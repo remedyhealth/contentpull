@@ -1,141 +1,329 @@
-'use strict';
+'use strict'
 
-var chai = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
+// Dependencies (tests)
+const chai = require('chai');
 chai.should();
 
-var ContentReader = require('../index');
+// Dependencies (application)
+const Wrapper = require('../src/wrapper');
+const Linker = require('../src/linker');
+const Parser = require('../src/parser');
+const ReaderError = require('../src/error');
 
-describe('Content reader - hooked up to contentful', function () {
-  var reader;
+// Dependencies (local)
+let reader;
+const rand = Date.now();
+const data = require('./mocha.data');
+const entryId = '***REMOVED***';
+const spaceId = '***REMOVED***';
+const qaEntry = 'qaEntry';
 
-  // create reader to use for tests
-  before(function (done) {
-    reader = new ContentReader(
-      'k93yc4pkke22',
-      '8df52946b77b1862ea5650ddb4b3b41a3047303d11defbdb0f8cb5fb8c2738b0');
+// create reader to use for tests
+before(done => {
+    reader = new Wrapper(
+        spaceId,
+        '***REMOVED***');
     done();
-  });
+});
 
-  describe(': getEntryById', function () {
-    it('should return an article when passed the article id', function () {
-      let result = reader.getEntryById('4V2Ze2uOZy60k8CeUc0Gsu', { include: 1 });
+describe('Wrapper', () => {
 
-      return result.then(function (entry) {
-        var parsedEntry = reader.parse.it(entry);
+    describe('getSpace', () => {
 
-        parsedEntry.should.have.deep.property('id', '4V2Ze2uOZy60k8CeUc0Gsu');
-        parsedEntry.should.have.property('meta').that.is.an('object');
-        parsedEntry.should.have.deep.property('contentType', 'article');
-        parsedEntry.should.have.property('fields').that.is.an('object');
-        parsedEntry.should.have.deep.property('fields.teaserImage');
-        parsedEntry.should.have.deep.property('fields.teaserImage.fields.file.details');
-      });
-    });
-
-  });
-
-  describe(': findEntryByContentType', function () {
-    it('should return the home content type when passed the query for home', function () {
-      let result = reader.findEntryByContentType('home', { current: true }, { include: 3 });
-
-      return result.then(function (entry) {
-        var parsedEntry = reader.parse.it(entry);
-
-        parsedEntry.should.have.deep.property('contentType', 'home');
-        parsedEntry.should.have.property('meta').that.is.an('object');
-        parsedEntry.should.have.property('fields').that.is.an('object');
-        parsedEntry.should.have.deep.property('fields.current').that.is.true;
-        parsedEntry.should.have.deep.property('fields.featured').that.is.an('object');
-        parsedEntry.should.have.deep.property('fields.featured.fields.first').that.is.an('object');
-        parsedEntry.should.have.deep.property('fields.featured.fields.first.fields.teaserImage');
-      });
-    });
-
-  });
-
-  describe(': getEntries', function () {
-    it('should return the category content type when passed the query for categories', function () {
-      let result = reader.getEntries({ content_type: 'category', include: 0 });
-
-      return result.then(function (entry) {
-        var parsedEntry = reader.parse.it(entry);
-
-        parsedEntry.should.have.property('meta').that.is.an('object');
-        parsedEntry.should.have.deep.property('meta.total', 3);
-        parsedEntry.should.have.deep.property('meta.skip', 0);
-        parsedEntry.should.have.deep.property('meta.limit', 100);
-        parsedEntry.should.have.property('items').that.is.an('Array');
-        parsedEntry.should.have.deep.property('items[0].contentType', 'category');
-      });
-    });
-
-    it('should return the list of articles for a subCategory', function () {
-      // we need to know the subCategory id to do the query
-      let subCatId = '31ogjk5nBS4Euo0wM8OKus';
-      let result = reader.getEntries({
-        content_type: 'article',
-        'fields.subCategory.sys.id': subCatId,
-        include: 1,
-      });
-
-      return result.then(function (entry) {
-        var parsedEntry = reader.parse.it(entry);
-
-        parsedEntry.should.have.property('meta').that.is.an('object');
-        parsedEntry.should.have.deep.property('meta.total').that.is.at.least(1);
-        parsedEntry.should.have.deep.property('meta.skip', 0);
-        parsedEntry.should.have.deep.property('meta.limit', 100);
-        parsedEntry.should.have.property('items').that.is.an('Array');
-        parsedEntry.should.have.deep.property('items[0].contentType', 'article');
-        parsedEntry.should.have.deep.property('items[0].fields.slug', 'a-guide-to-good-posture');
-        parsedEntry.should.have.deep.property('items[0].fields.teaserImage');
-
-        let teaserImage = parsedEntry.items[0].fields.teaserImage;
-        teaserImage.should.have.deep.property('fields.file.details.image.width', 988);
-      });
-    });
-
-    it('should return the list of articles for a category', function () {
-      // search for category using slug
-      let catSlug = 'fitness';
-      return reader.findEntryByContentType('category', { slug: catSlug }, { include: 0 })
-      .then(category => {
-        // we have category, now search for subCategories for this Category
-        return reader.getEntries({
-          content_type: 'subCategory',
-          'fields.category.sys.id': category.sys.id,
-          include: 0,
+        it('should return data about the registered space', done => {
+            return reader.getSpace().then(res => {
+                res.sys.id.should.equal(spaceId);
+                done();
+            });
         });
-      })
-      .then(subCategories => {
-        // we have subCategories, now get all their ids for the query
-        let subCatIds = subCategories.items.map(subCat => subCat.sys.id);
+        
+    });
 
-        let result = reader.getEntries({
-          content_type: 'article',
-          'fields.subCategory.sys.id[in]': subCatIds.join(','),
-          include: 1,
+    describe('getEntries', () => {
+
+        it('should return all entries when no criteria is passed', done => {
+            return reader.getEntries().then(res => {
+                res.should.have.property('total');
+                res.total.should.be.above(0);
+                done();
+            });
         });
 
-        return result.then(function (entry) {
-          var parsedEntry = reader.parse.it(entry);
-
-          parsedEntry.should.have.property('meta').that.is.an('object');
-          parsedEntry.should.have.deep.property('meta.total').that.is.at.least(1);
-          parsedEntry.should.have.deep.property('meta.skip', 0);
-          parsedEntry.should.have.deep.property('meta.limit', 100);
-          parsedEntry.should.have.property('items').that.is.an('Array');
-          parsedEntry.should.have.deep.property('items[0].contentType', 'article');
-          parsedEntry.should.have.deep.property('items[0].fields.slug', 'a-guide-to-good-posture');
-          parsedEntry.should.have.deep.property('items[0].fields.teaserImage');
-
-          let teaserImage = parsedEntry.items[0].fields.teaserImage;
-          teaserImage.should.have.deep.property('fields.file.details.image.width', 988);
+        it('should return entries that match criteria specified', done => {
+            return reader.getEntries({content_type: qaEntry}).then(res => {
+                res.should.have.property('items');
+                res.total.should.equal(1);
+                res.items[0].sys.contentType.sys.should.have.property('id', qaEntry);
+                done();
+            });
         });
-      });
+        
+        it('should return nothing if no entries match', done => {
+            return reader.getEntries({content_type: 'qaEntryNOPE'}).then(res => {
+                // shouldn't get here...
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            });
+        });
+        
     });
 
-  });
+    describe('getAssets', () => {
+
+        it('should return all entries when no criteria is passed', done => {
+            return reader.getAssets().then(res => {
+                res.should.have.property('total');
+                res.total.should.be.above(0);
+                done();
+            });
+        });
+
+        it('should return entries that match criteria specified', done => {
+            const assetCriteria = 'image/jpeg';
+            return reader.getAssets({'fields.file.contentType': assetCriteria}).then(res => {
+                res.should.have.property('items');
+                res.total.should.be.above(0);
+                res.items[0].fields.file.contentType.should.equal(assetCriteria);
+                done();
+            }, err => {
+                console.log(err);
+            });
+        });
+        
+        it('should return nothing if no assets match', done => {
+            return reader.getEntries({'fields.file.contentType': 'image/nope'}).then(res => {
+                // shouldn't get here...
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            });
+        });
+    });
+
+    describe('getEntry', () => {
+        
+        it('should return first entry when no criteria is passed', done => {
+            return reader.getEntry().then(res => {
+                res.sys.should.have.property('type', 'Entry');
+                done();
+            });
+        });
+
+        it('should return first entry that matches criteria specified', done => {
+            return reader.getEntry({content_type: qaEntry}).then(res => {
+                res.sys.should.have.property('type', 'Entry');
+                done();
+            });
+        });
+        
+        it('should return nothing if no entries match', done => {
+            return reader.getEntry({content_type: 'qaEntryNOPE'}).then(res => {
+                // shouldn't get here...
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            });
+        });
+    });
+
+    describe('getAsset', () => {
+        
+        it('should return first asset when no criteria is passed', done => {
+            return reader.getAsset().then(res => {
+                res.sys.should.have.property('type', 'Asset');
+                done();
+            });
+        });
+
+        it('should return first asset that matches criteria specified', done => {
+            const assetCriteria = 'image/jpeg';
+            return reader.getAsset({'fields.file.contentType': assetCriteria}).then(res => {
+                res.sys.should.have.property('type', 'Asset');
+                done();
+            });
+        });
+        
+        it('should return nothing if no assets match', done => {
+            return reader.getAsset({'fields.file.contentType': 'image/nope'}).then(res => {
+                // shouldn't get here...
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            });
+        });
+
+    });
+
+    describe('getEntryById', () => {
+        
+        it('should return an single entry when requesting by id', done => {
+            return reader.getEntryById(entryId).then(entry => {
+                entry.sys.should.have.property('id');
+                entry.sys.id.should.equal(entryId);
+                done();
+            });
+        });
+
+    });
+
+    describe('getAssetById', () => {
+        
+        it('should return an single asset when requesting by id', done => {
+            const assetId = '6JCShApjO0O4CUkUKAKAaS';
+            return reader.getAssetById(assetId).then(entry => {
+                entry.sys.should.have.property('id');
+                entry.sys.id.should.equal(assetId);
+                done();
+            });
+        });
+    });
+
+    describe('findEntryByContentType', () => {
+    
+        it('should return all entries when no criteria is passed', done => {
+            return reader.findEntryByContentType(qaEntry).then(res => {
+                res.sys.should.have.property('type', 'Entry');
+                done();
+            });
+        });
+
+        it('should return entries that match criteria specified', done => {
+            const entryTitle = 'Test Entry';
+            return reader.findEntryByContentType(qaEntry, {title: entryTitle}).then(res => {
+                res.sys.should.have.property('type', 'Entry');
+                res.fields.title.should.equal(entryTitle);
+                done();
+            });
+        });
+        
+        it('should return nothing if no entries match', done => {
+            return reader.findEntryByContentType(qaEntry, {title: 'qaEntryNOPE'}).then(res => {
+                // shouldn't get here...
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            });
+        });
+    });
+
+});
+
+describe('Parser', () => {
+
+    describe('one', () => {
+        
+        it ('should parse a single object', () => {
+            const parsed = Parser.one(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+        
+        it('should reject an array', () => {
+            const parsed = Parser.one(data.unparsedArr);
+            parsed.should.deep.equal({});
+        });
+        
+    });
+
+    describe('all', () => {
+        
+        it('should parse an array', () => {
+            const parsed = Parser.all(data.unparsedArr);
+            parsed.should.deep.equal(data.parsedArr);
+        });
+        
+        it('should put a single object in the form of a parsed array', () => {
+            const parsed = Parser.all(data.unparsed);
+            parsed.meta.should.have.property('total').that.equals(1);
+            parsed.should.have.property('items').that.is.an('array');
+            parsed.items[0].should.deep.equal(data.parsed);
+        });
+        
+    });
+
+    describe('it', () => {
+
+        it('should parse a single object', () => {
+            const parsed = Parser.it(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+
+        it('should parse an array', () => {
+            const parsed = Parser.it(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+        
+    });
+
+});
+
+describe('Linker', () => {
+
+    describe('then', () => {
+
+        it('should still run then functions', (done) => {
+            return new Linker(Promise.resolve(rand)).then(res => {
+                res.should.equal(rand);
+                done();
+            });
+        });
+
+    });
+
+    describe('catch', () => {
+
+        it('should still run catch statements with then statements', (done) => {
+            return new Linker(Promise.reject(rand)).then(res => {
+                // shouldn't get here...
+            }, err => {
+                err.should.equal(rand);
+                done();
+            });
+        });
+
+        it('should still run catch statements standalone', (done) => {
+            return new Linker(Promise.reject(rand)).catch(res => {
+                res.should.equal(rand);
+                done();
+            });
+        });
+
+    });
+
+    describe('parse', () => {
+
+        it('should parse in place of then', (done) => {
+            return new Linker(Promise.resolve(data.unparsed)).parse(res => {
+                res.should.deep.equal(data.parsed);
+                done();
+            });
+        });
+
+        it('should parse as a chain before then', (done) => {
+            return new Linker(Promise.resolve(data.unparsed)).parse().then(res => {
+                res.should.deep.equal(data.parsed);
+                done();
+            });
+        });
+
+    });
+
+});
+
+describe('Error', () => {
+
+    describe('ReaderError', () => {
+
+        var err = new ReaderError(rand);
+
+        it('should be of custom type', () => {
+            err.constructor.name.should.equal('ReaderError');
+        });
+
+        it('should have a message', () => {
+            err.message.should.equal(rand);
+        });
+
+    });
+
 });
