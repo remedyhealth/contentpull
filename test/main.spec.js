@@ -199,6 +199,18 @@ describe('Wrapper', () => {
             });
         });
     });
+    
+    describe('getEntriesByType', () => {
+        it('should return entries by content type', done => {
+            return reader.getEntriesByType(qaEntry).then(entries => {
+                entries.should.have.property('items');
+                entries.total.should.be.above(0);
+                done();
+            }, err => {
+                done(err);
+            });
+        });
+    });
 
     describe('findEntryByType', () => {
     

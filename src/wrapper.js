@@ -25,14 +25,14 @@ class Wrapper {
          * @type {Bool}
          */
         this.isPreview = preview;
-        
+
         /**
          * The contentful client.
          * @type {CDAClient}
          * @see https://contentful.github.io/contentful.js/contentful/3.3.0/CDAClient.html
          */
         this.client = contentful.createClient(params);
-        
+
         return this;
     }
 
@@ -54,7 +54,9 @@ class Wrapper {
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
 
-        return new Linker(fn.call(this, Object.assign({include: 10}, params)));
+        return new Linker(fn.call(this, Object.assign({
+            include: 10
+        }, params)));
     }
 
     /**
@@ -128,6 +130,18 @@ class Wrapper {
     }
 
     /**
+     * Gets entries by a specified content type
+     * @param {String} contentType - The content type to get.
+     * @param {Object=} params - Additional params to use.
+     */
+    getEntriesByType(contentType, params) {
+        params = params || {};
+        return this.getEntries(Object.assign({
+            content_type: contentType
+        }, params));
+    }
+
+    /**
      * Returns an individual entry by id.
      * @param {String} id - The id.
      * @returns {Linker} The promise instance.
@@ -144,7 +158,7 @@ class Wrapper {
     getAssetById(id, params) {
         return this._getObjectById(id, params, true);
     }
-    
+
 
     /**
      * Looks for one or more entries by content type.
@@ -158,8 +172,8 @@ class Wrapper {
         let params = {
             content_type: contentType
         };
-        
-        let fn = (onlyOne) ? this._getObject : this._getObjects;
+
+        let fn = (onlyOne) ? this.getEntry : this.getEntries;
 
         for (let i in fields) {
             params[`fields.${i}`] = fields[i];
