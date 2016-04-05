@@ -17,6 +17,7 @@ const data = require('./mocha.data');
 const entryId = '***REMOVED***';
 const spaceId = '***REMOVED***';
 const qaEntry = 'qaEntry';
+const entryTitle = 'Test Entry';
 
 // create reader to use for tests
 before(done => {
@@ -34,6 +35,8 @@ describe('Wrapper', () => {
             return reader.getSpace().then(res => {
                 res.sys.id.should.equal(spaceId);
                 done();
+            }, err => {
+                done(err);
             });
         });
         
@@ -46,6 +49,8 @@ describe('Wrapper', () => {
                 res.should.have.property('total');
                 res.total.should.be.above(0);
                 done();
+            }, err => {
+                done(err);
             });
         });
 
@@ -55,12 +60,14 @@ describe('Wrapper', () => {
                 res.total.should.equal(1);
                 res.items[0].sys.contentType.sys.should.have.property('id', qaEntry);
                 done();
+            }, err => {
+                done(err);
             });
         });
         
         it('should return nothing if no entries match', done => {
             return reader.getEntries({content_type: 'qaEntryNOPE'}).then(res => {
-                // shouldn't get here...
+                done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
                 done();
@@ -76,6 +83,8 @@ describe('Wrapper', () => {
                 res.should.have.property('total');
                 res.total.should.be.above(0);
                 done();
+            }, err => {
+                done(err);
             });
         });
 
@@ -87,13 +96,13 @@ describe('Wrapper', () => {
                 res.items[0].fields.file.contentType.should.equal(assetCriteria);
                 done();
             }, err => {
-                console.log(err);
+                done(err);
             });
         });
         
         it('should return nothing if no assets match', done => {
             return reader.getEntries({'fields.file.contentType': 'image/nope'}).then(res => {
-                // shouldn't get here...
+                done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
                 done();
@@ -107,6 +116,8 @@ describe('Wrapper', () => {
             return reader.getEntry().then(res => {
                 res.sys.should.have.property('type', 'Entry');
                 done();
+            }, err => {
+                done(err);
             });
         });
 
@@ -114,12 +125,14 @@ describe('Wrapper', () => {
             return reader.getEntry({content_type: qaEntry}).then(res => {
                 res.sys.should.have.property('type', 'Entry');
                 done();
+            }, err => {
+                done(err);
             });
         });
         
         it('should return nothing if no entries match', done => {
             return reader.getEntry({content_type: 'qaEntryNOPE'}).then(res => {
-                // shouldn't get here...
+                done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
                 done();
@@ -133,6 +146,8 @@ describe('Wrapper', () => {
             return reader.getAsset().then(res => {
                 res.sys.should.have.property('type', 'Asset');
                 done();
+            }, err => {
+                done(err);
             });
         });
 
@@ -141,12 +156,14 @@ describe('Wrapper', () => {
             return reader.getAsset({'fields.file.contentType': assetCriteria}).then(res => {
                 res.sys.should.have.property('type', 'Asset');
                 done();
+            }, err => {
+                done(err);
             });
         });
         
         it('should return nothing if no assets match', done => {
             return reader.getAsset({'fields.file.contentType': 'image/nope'}).then(res => {
-                // shouldn't get here...
+                done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
                 done();
@@ -162,6 +179,8 @@ describe('Wrapper', () => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(entryId);
                 done();
+            }, err => {
+                done(err);
             });
         });
 
@@ -175,34 +194,61 @@ describe('Wrapper', () => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(assetId);
                 done();
+            }, err => {
+                done(err);
             });
         });
     });
 
-    describe('findEntryByContentType', () => {
+    describe('findEntryByType', () => {
     
         it('should return all entries when no criteria is passed', done => {
-            return reader.findEntryByContentType(qaEntry).then(res => {
+            return reader.findEntryByType(qaEntry).then(res => {
                 res.sys.should.have.property('type', 'Entry');
                 done();
+            }, err => {
+                done(err);
             });
         });
 
         it('should return entries that match criteria specified', done => {
-            const entryTitle = 'Test Entry';
-            return reader.findEntryByContentType(qaEntry, {title: entryTitle}).then(res => {
+            return reader.findEntryByType(qaEntry, {title: entryTitle}).then(res => {
                 res.sys.should.have.property('type', 'Entry');
                 res.fields.title.should.equal(entryTitle);
                 done();
+            }, err => {
+                done(err);
             });
         });
         
         it('should return nothing if no entries match', done => {
-            return reader.findEntryByContentType(qaEntry, {title: 'qaEntryNOPE'}).then(res => {
-                // shouldn't get here...
+            return reader.findEntryByType(qaEntry, {title: 'qaEntryNOPE'}).then(res => {
+                done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
                 done();
+            });
+        });
+    });
+
+    describe('findEntriesByType', () => {
+    
+        it('should return all entries that match the criteria', done => {
+            return reader.findEntriesByType(qaEntry, {title: entryTitle}).then(res => {
+                res.should.have.property('items');
+                res.total.should.be.above(0);
+                done();
+            }, err => {
+                done(err);
+            });
+        });
+        
+        it('should return nothing if no entries match', done => {
+            return reader.findEntriesByType(qaEntry, {title: 'qaEntryNOPE'}).then(res => {
+                res.total.should.equal(0);
+                done();
+            }, err => {
+                done(err);
             });
         });
     });

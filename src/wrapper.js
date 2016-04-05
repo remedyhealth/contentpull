@@ -54,7 +54,7 @@ class Wrapper {
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
 
-        return new Linker(fn(Object.assign({includes: 10}, params)));
+        return new Linker(fn.call(this, Object.assign({include: 10}, params)));
     }
 
     /**
@@ -144,6 +144,31 @@ class Wrapper {
     getAssetById(id, params) {
         return this._getObjectById(id, params, true);
     }
+    
+
+    /**
+     * Looks for one or more entries by content type.
+     * @param {String} contentType - The type of content to query.
+     * @param {JSON} fields - The fields to search by using key => value.
+     * @param {JSON} otherParams - Any params that need to override for extra criteria.
+     * @param {Bool} onlyOne - Whether or not one is expected, or more.
+     * @returns {Linker} The promise instance.
+     */
+    _findByType(contentType, fields, otherParams, onlyOne) {
+        let params = {
+            content_type: contentType
+        };
+        
+        let fn = (onlyOne) ? this._getObject : this._getObjects;
+
+        for (let i in fields) {
+            params[`fields.${i}`] = fields[i];
+        }
+
+        params = Object.assign(params, otherParams);
+
+        return fn.call(this, params);
+    }
 
     /**
      * Looks for a specific entry by content type.
@@ -152,18 +177,19 @@ class Wrapper {
      * @param {JSON} otherParams - Any params that need to override for extra criteria.
      * @returns {Linker} The promise instance.
      */
-    findEntryByContentType(contentType, fields, otherParams) {
-        let params = {
-            content_type: contentType
-        };
+    findEntryByType(contentType, fields, otherParams) {
+        return this._findByType(contentType, fields, otherParams, true);
+    }
 
-        for (let i in fields) {
-            params[`fields.${i}`] = fields[i];
-        }
-
-        params = Object.assign(params, otherParams);
-
-        return this._getObject(params);
+    /**
+     * Looks for entries by content type.
+     * @param {String} contentType - The type of content to query.
+     * @param {JSON} fields - The fields to search by using key => value.
+     * @param {JSON} otherParams - Any params that need to override for extra criteria.
+     * @returns {Linker} The promise instance.
+     */
+    findEntriesByType(contentType, fields, otherParams) {
+        return this._findByType(contentType, fields, otherParams);
     }
 
 }
