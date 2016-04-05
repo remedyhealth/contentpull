@@ -54,7 +54,7 @@ class Wrapper {
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
 
-        return new Linker(fn(params));
+        return new Linker(fn(Object.assign({includes: 10}, params)));
     }
 
     /**
