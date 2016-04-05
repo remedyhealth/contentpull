@@ -8,8 +8,8 @@ class Parser {
 
     /**
      * Returns an individual object parsed.
-     * @param {Object} obj - An unparsed object.
-     * @returns {Object} The parsed object.
+     * @param {JSON} obj - An unparsed object.
+     * @returns {JSON} The parsed object.
      */
     one(obj) {
         let parsed = {};
@@ -57,8 +57,8 @@ class Parser {
 
     /**
      * Returns an individual object parsed.
-     * @param {Object} obj - An unparsed collection of objects.
-     * @returns {Object} The parsed object.
+     * @param {JSON} obj - An unparsed collection of objects.
+     * @returns {JSON} The parsed object.
      */
     all(obj) {
 
@@ -85,8 +85,8 @@ class Parser {
 
     /**
      * If the contentful object might be one or more, use this to properly route.
-     * @param {Object} obj - An unparsed collection of objects, or an individual object.
-     * @returns {Object} The parsed object.
+     * @param {JSON} obj - An unparsed collection of objects, or an individual object.
+     * @returns {JSON} The parsed object.
      */
     it(obj) {
         if (obj && obj.sys) {
