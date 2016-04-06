@@ -3,7 +3,7 @@
 const data = {
     unparsed: {
         sys: {
-            id: 'test',
+            id: 'test1',
             type: 'Asset',
             createdAt: '1',
             updatedAt: '2',
@@ -13,7 +13,7 @@ const data = {
             str: 'test',
             obj: {
                 sys: {
-                    id: 'test',
+                    id: 'test2',
                     type: 'Asset',
                     createdAt: '1',
                     updatedAt: '2',
@@ -25,7 +25,7 @@ const data = {
             },
             arr: [{
                 sys: {
-                    id: 'test',
+                    id: 'test3',
                     type: 'Asset',
                     createdAt: '1',
                     updatedAt: '2',
@@ -38,7 +38,7 @@ const data = {
         }
     },
     parsed: {
-        id: 'test',
+        id: 'test1',
         type: 'Asset',
         meta: {
             createdAt: '1',
@@ -48,7 +48,7 @@ const data = {
         fields: {
             str: 'test',
             obj: {
-                id: 'test',
+                id: 'test2',
                 type: 'Asset',
                 meta: {
                     createdAt: '1',
@@ -60,7 +60,7 @@ const data = {
                 },
             },
             arr: [{
-                id: 'test',
+                id: 'test3',
                 type: 'Asset',
                 meta: {
                     createdAt: '1',
