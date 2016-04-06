@@ -354,6 +354,8 @@ describe('Linker', () => {
             return new Linker(Promise.resolve(data.unparsed)).parse(res => {
                 res.should.deep.equal(data.parsed);
                 done();
+            }, err => {
+                done(err);
             });
         });
 
@@ -361,6 +363,8 @@ describe('Linker', () => {
             return new Linker(Promise.resolve(data.unparsed)).parse().then(res => {
                 res.should.deep.equal(data.parsed);
                 done();
+            }, err => {
+                done(err);
             });
         });
 
