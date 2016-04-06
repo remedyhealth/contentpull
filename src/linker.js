@@ -1,6 +1,7 @@
 'use strict';
 
 const parse = require('./parser');
+const cloneDeep = require('lodash.clonedeep');
 
 // This is used simply as a helper for the parse callback/chain
 const emptyFn = a => a;
@@ -37,7 +38,7 @@ class Linker {
 
         return this.then(obj => {
             try {
-                return then(parse.it(obj));
+                return then(parse.it(cloneDeep(obj)));
             } catch (e) {
                 return error(e);
             }
