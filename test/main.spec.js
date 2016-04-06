@@ -278,7 +278,7 @@ describe('Parser', () => {
         
         it('should reject an array', () => {
             const parsed = Parser.one(data.unparsedArr);
-            parsed.should.deep.equal({});
+            parsed.should.deep.equal(data.unparsedArr);
         });
         
     });
