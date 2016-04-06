@@ -15,6 +15,7 @@ let reader;
 const rand = Date.now();
 const data = require('./mocha.data');
 const entryId = '1JlZm1pjX66E44cUyMQ2C2';
+const circularEntryId = '2sSdDG2HQ0GkEeYUOSooqK';
 const spaceId = 'ww6sikmud9wx';
 const qaEntry = 'qaEntry';
 const entryTitle = 'Test Entry';
@@ -39,7 +40,7 @@ describe('Wrapper', () => {
                 done(err);
             });
         });
-        
+
     });
 
     describe('getEntries', () => {
@@ -55,7 +56,9 @@ describe('Wrapper', () => {
         });
 
         it('should return entries that match criteria specified', done => {
-            return reader.getEntries({content_type: qaEntry}).then(res => {
+            return reader.getEntries({
+                content_type: qaEntry
+            }).then(res => {
                 res.should.have.property('items');
                 res.total.should.equal(1);
                 res.items[0].sys.contentType.sys.should.have.property('id', qaEntry);
@@ -64,16 +67,18 @@ describe('Wrapper', () => {
                 done(err);
             });
         });
-        
+
         it('should return nothing if no entries match', done => {
-            return reader.getEntries({content_type: 'qaEntryNOPE'}).then(res => {
+            return reader.getEntries({
+                content_type: 'qaEntryNOPE'
+            }).then(res => {
                 done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
                 done();
             });
         });
-        
+
     });
 
     describe('getAssets', () => {
@@ -90,7 +95,9 @@ describe('Wrapper', () => {
 
         it('should return entries that match criteria specified', done => {
             const assetCriteria = 'image/jpeg';
-            return reader.getAssets({'fields.file.contentType': assetCriteria}).then(res => {
+            return reader.getAssets({
+                'fields.file.contentType': assetCriteria
+            }).then(res => {
                 res.should.have.property('items');
                 res.total.should.be.above(0);
                 res.items[0].fields.file.contentType.should.equal(assetCriteria);
@@ -99,9 +106,11 @@ describe('Wrapper', () => {
                 done(err);
             });
         });
-        
+
         it('should return nothing if no assets match', done => {
-            return reader.getEntries({'fields.file.contentType': 'image/nope'}).then(res => {
+            return reader.getEntries({
+                'fields.file.contentType': 'image/nope'
+            }).then(res => {
                 done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
@@ -111,7 +120,7 @@ describe('Wrapper', () => {
     });
 
     describe('getEntry', () => {
-        
+
         it('should return first entry when no criteria is passed', done => {
             return reader.getEntry().then(res => {
                 res.sys.should.have.property('type', 'Entry');
@@ -122,16 +131,20 @@ describe('Wrapper', () => {
         });
 
         it('should return first entry that matches criteria specified', done => {
-            return reader.getEntry({content_type: qaEntry}).then(res => {
+            return reader.getEntry({
+                content_type: qaEntry
+            }).then(res => {
                 res.sys.should.have.property('type', 'Entry');
                 done();
             }, err => {
                 done(err);
             });
         });
-        
+
         it('should return nothing if no entries match', done => {
-            return reader.getEntry({content_type: 'qaEntryNOPE'}).then(res => {
+            return reader.getEntry({
+                content_type: 'qaEntryNOPE'
+            }).then(res => {
                 done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
@@ -141,7 +154,7 @@ describe('Wrapper', () => {
     });
 
     describe('getAsset', () => {
-        
+
         it('should return first asset when no criteria is passed', done => {
             return reader.getAsset().then(res => {
                 res.sys.should.have.property('type', 'Asset');
@@ -153,16 +166,20 @@ describe('Wrapper', () => {
 
         it('should return first asset that matches criteria specified', done => {
             const assetCriteria = 'image/jpeg';
-            return reader.getAsset({'fields.file.contentType': assetCriteria}).then(res => {
+            return reader.getAsset({
+                'fields.file.contentType': assetCriteria
+            }).then(res => {
                 res.sys.should.have.property('type', 'Asset');
                 done();
             }, err => {
                 done(err);
             });
         });
-        
+
         it('should return nothing if no assets match', done => {
-            return reader.getAsset({'fields.file.contentType': 'image/nope'}).then(res => {
+            return reader.getAsset({
+                'fields.file.contentType': 'image/nope'
+            }).then(res => {
                 done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
@@ -173,7 +190,7 @@ describe('Wrapper', () => {
     });
 
     describe('getEntryById', () => {
-        
+
         it('should return an single entry when requesting by id', done => {
             return reader.getEntryById(entryId).then(entry => {
                 entry.sys.should.have.property('id');
@@ -187,7 +204,7 @@ describe('Wrapper', () => {
     });
 
     describe('getAssetById', () => {
-        
+
         it('should return an single asset when requesting by id', done => {
             const assetId = '6JCShApjO0O4CUkUKAKAaS';
             return reader.getAssetById(assetId).then(entry => {
@@ -199,7 +216,7 @@ describe('Wrapper', () => {
             });
         });
     });
-    
+
     describe('getEntriesByType', () => {
         it('should return entries by content type', done => {
             return reader.getEntriesByType(qaEntry).then(entries => {
@@ -213,7 +230,7 @@ describe('Wrapper', () => {
     });
 
     describe('findEntryByType', () => {
-    
+
         it('should return all entries when no criteria is passed', done => {
             return reader.findEntryByType(qaEntry).then(res => {
                 res.sys.should.have.property('type', 'Entry');
@@ -224,7 +241,9 @@ describe('Wrapper', () => {
         });
 
         it('should return entries that match criteria specified', done => {
-            return reader.findEntryByType(qaEntry, {title: entryTitle}).then(res => {
+            return reader.findEntryByType(qaEntry, {
+                title: entryTitle
+            }).then(res => {
                 res.sys.should.have.property('type', 'Entry');
                 res.fields.title.should.equal(entryTitle);
                 done();
@@ -232,9 +251,11 @@ describe('Wrapper', () => {
                 done(err);
             });
         });
-        
+
         it('should return nothing if no entries match', done => {
-            return reader.findEntryByType(qaEntry, {title: 'qaEntryNOPE'}).then(res => {
+            return reader.findEntryByType(qaEntry, {
+                title: 'qaEntryNOPE'
+            }).then(res => {
                 done(new Error("Expected an error..."));
             }, err => {
                 err.message.should.be.a('string');
@@ -244,9 +265,11 @@ describe('Wrapper', () => {
     });
 
     describe('findEntriesByType', () => {
-    
+
         it('should return all entries that match the criteria', done => {
-            return reader.findEntriesByType(qaEntry, {title: entryTitle}).then(res => {
+            return reader.findEntriesByType(qaEntry, {
+                title: entryTitle
+            }).then(res => {
                 res.should.have.property('items');
                 res.total.should.be.above(0);
                 done();
@@ -254,9 +277,11 @@ describe('Wrapper', () => {
                 done(err);
             });
         });
-        
+
         it('should return nothing if no entries match', done => {
-            return reader.findEntriesByType(qaEntry, {title: 'qaEntryNOPE'}).then(res => {
+            return reader.findEntriesByType(qaEntry, {
+                title: 'qaEntryNOPE'
+            }).then(res => {
                 res.total.should.equal(0);
                 done();
             }, err => {
@@ -270,33 +295,33 @@ describe('Wrapper', () => {
 describe('Parser', () => {
 
     describe('one', () => {
-        
-        it ('should parse a single object', () => {
+
+        it('should parse a single object', () => {
             const parsed = Parser.one(data.unparsed);
             parsed.should.deep.equal(data.parsed);
         });
-        
+
         it('should reject an array', () => {
             const parsed = Parser.one(data.unparsedArr);
             parsed.should.deep.equal(data.unparsedArr);
         });
-        
+
     });
 
     describe('all', () => {
-        
+
         it('should parse an array', () => {
             const parsed = Parser.all(data.unparsedArr);
             parsed.should.deep.equal(data.parsedArr);
         });
-        
+
         it('should put a single object in the form of a parsed array', () => {
             const parsed = Parser.all(data.unparsed);
             parsed.meta.should.have.property('total').that.equals(1);
             parsed.should.have.property('items').that.is.an('array');
             parsed.items[0].should.deep.equal(data.parsed);
         });
-        
+
     });
 
     describe('it', () => {
@@ -310,7 +335,7 @@ describe('Parser', () => {
             const parsed = Parser.it(data.unparsed);
             parsed.should.deep.equal(data.parsed);
         });
-        
+
     });
 
 });
@@ -319,7 +344,7 @@ describe('Linker', () => {
 
     describe('then', () => {
 
-        it('should still run then functions', (done) => {
+        it('should still run then functions', done => {
             return new Linker(Promise.resolve(rand)).then(res => {
                 res.should.equal(rand);
                 done();
@@ -330,7 +355,7 @@ describe('Linker', () => {
 
     describe('catch', () => {
 
-        it('should still run catch statements with then statements', (done) => {
+        it('should still run catch statements with then statements', done => {
             return new Linker(Promise.reject(rand)).then(res => {
                 // shouldn't get here...
             }, err => {
@@ -339,7 +364,7 @@ describe('Linker', () => {
             });
         });
 
-        it('should still run catch statements standalone', (done) => {
+        it('should still run catch statements standalone', done => {
             return new Linker(Promise.reject(rand)).catch(res => {
                 res.should.equal(rand);
                 done();
@@ -350,7 +375,7 @@ describe('Linker', () => {
 
     describe('parse', () => {
 
-        it('should parse in place of then', (done) => {
+        it('should parse in place of then', done => {
             return new Linker(Promise.resolve(data.unparsed)).parse(res => {
                 res.should.deep.equal(data.parsed);
                 done();
@@ -359,9 +384,20 @@ describe('Linker', () => {
             });
         });
 
-        it('should parse as a chain before then', (done) => {
+        it('should parse as a chain before then', done => {
             return new Linker(Promise.resolve(data.unparsed)).parse().then(res => {
                 res.should.deep.equal(data.parsed);
+                done();
+            }, err => {
+                done(err);
+            });
+        });
+
+        it('should be able to parse a circularly referenced object', done => {
+            return reader.getEntryById(circularEntryId).parse(entry => {
+                let nested = entry.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref;
+                nested.id.should.equal(circularEntryId);
+                nested.should.not.have.property('sys');
                 done();
             }, err => {
                 done(err);
