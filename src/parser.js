@@ -9,108 +9,92 @@ class Parser {
     /**
      * Returns an individual object parsed.
      * @param {JSON} obj - An unparsed object.
-     * @param {String[]} ignore - ids to ignore.
      * @returns {JSON} The parsed object.
      */
-    one(obj, ignore) {
-        ignore = ignore || [];
-        let parsed = {};
+    one(obj) {
 
         if (obj && obj.sys && obj.sys.type !== 'Array' && obj.sys.type !== 'Link') {
 
-            // Ignore redundancies
-            parsed.id = obj.sys.id;
-            if (ignore.indexOf(obj.sys.id) !== -1) {
-                return parsed;
-            }
-
-            ignore.push(parsed.id);
 
             // Add the important stuff
-            parsed.type = obj.sys.type;
+            obj.id = obj.sys.id;
+            obj.type = obj.sys.type;
+            
+            if (obj.type === 'Entry') {
+                obj.contentType = obj.sys.contentType.sys.id;
+            }
 
             // Add meta fields
-            if (obj.sys.type !== 'Space') {
-                parsed.meta = {
+            if (obj.type !== 'Space') {
+                obj.meta = {
                     createdAt: obj.sys.createdAt,
                     updatedAt: obj.sys.updatedAt,
                     revision: obj.sys.revision,
                 };
+            }
 
-                // If it is an entry, probably can add the type
-                if (obj.sys.contentType) {
-                    parsed.contentType = obj.sys.contentType.sys.id;
-                }
+            // clean up before iterating over children
+            delete obj.sys;
 
-                // All fields need to be parsed and added
-                parsed.fields = {};
+            if (obj.type !== 'Space') {
                 for (let key in obj.fields) {
-
-                    // It is either going to be a nested object, array, or raw field
                     if (obj.fields[key] && obj.fields[key].sys) {
-                        parsed.fields[key] = this.it(obj.fields[key], ignore);
+                        obj.fields[key] = this.it(obj.fields[key]);
                     } else if (Array.isArray(obj.fields[key])) {
-                        parsed.fields[key] = [];
-                        for (let sub of obj.fields[key]) {
-                            parsed.fields[key].push(this.it(sub, ignore));
-                        }
-                    } else {
-                        parsed.fields[key] = obj.fields[key];
+                        obj.fields[key] = obj.fields[key].map(subfield => this.it(subfield));
                     }
                 }
             }
         }
 
-        return parsed;
+        return obj;
     }
 
     /**
      * Returns an individual object parsed.
      * @param {JSON} obj - An unparsed collection of objects.
-     * @param {String[]} ignore - ids to ignore.
      * @returns {JSON} The parsed object.
      */
-    all(obj, ignore) {
-
-        ignore = ignore || [];
-
-        // Create the parsed JSON structure
-        let parsed = {
-            meta: {
-                total: 0
-            },
-            items: []
-        };
+    all(obj) {
 
         // If there are many, parse them and populate them
         // If there is only one, go ahead and add it
         if (obj && obj.sys && obj.sys.type === 'Array') {
-            parsed.meta.total = obj.total;
-            parsed.items = obj.items.map(item => this.it(item, ignore));
+            obj.meta = {
+                total: obj.total
+            };
+            delete obj.sys;
+            delete obj.skip;
+            delete obj.limit;
+            delete obj.includes;
+            delete obj.total;
+            obj.items = obj.items.map(item => this.it(item));
         } else if (obj && obj.sys && obj.sys.type) {
-            parsed.meta.total = 1;
-            parsed.items.push(this.it(obj, ignore));
+            obj = {
+                meta: {
+                    total: 1
+                },
+                items: [this.it(obj)]
+            };
         }
 
-        return parsed;
+        return obj;
     }
 
     /**
      * If the contentful object might be one or more, use this to properly route.
      * @param {JSON} obj - An unparsed collection of objects, or an individual object.
-     * @param {String[]} ignore - ids to ignore.
      * @returns {JSON} The parsed object.
      */
-    it(obj, ignore) {
-        ignore = ignore || [];
-        if (obj && obj.sys) {
+    it(obj) {
+        if (obj && obj.sys && obj.sys.type) {
 
             // if it is an array, use
-            return (obj.sys.type === 'Array') ? this.all(obj, ignore) : this.one(obj, ignore);
+            return (obj.sys.type === 'Array') ? this.all(obj) : this.one(obj);
         } else {
 
-            // not valid, return an empty object
-            return {};
+            // not valid, return the object
+            return obj;
         }
     }
 }
