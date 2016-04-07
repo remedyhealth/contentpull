@@ -2,7 +2,6 @@
 
 var gulp = require('gulp');
 var pkg = require('./package.json');
-var lint = require('gulp-jscs');
 var clean = require('gulp-clean');
 var jsdoc = require('gulp-jsdoc3');
 
