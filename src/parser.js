@@ -19,7 +19,7 @@ class Parser {
             // Add the important stuff
             obj.id = obj.sys.id;
             obj.type = obj.sys.type;
-            
+
             if (obj.type === 'Entry') {
                 obj.contentType = obj.sys.contentType.sys.id;
             }
