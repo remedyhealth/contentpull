@@ -37,6 +37,12 @@ const data = {
             }],
         }
     },
+    badparse: {
+        sys: {
+            type: 'Array'
+        },
+        fields: 'nope'
+    },
     parsed: {
         id: 'test1',
         type: 'Asset',
