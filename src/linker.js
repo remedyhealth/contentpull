@@ -34,16 +34,17 @@ class Linker {
      */
     parse(then, error) {
         then = then || emptyFn;
-        error = error || emptyFn;
 
         return this.then(obj => {
             try {
                 return then(parse.it(cloneDeep(obj)));
             } catch (e) {
-                return error(e);
+                if (error) {
+                    return error(e);
+                } else {
+                    throw e;
+                }
             }
-        }, err => {
-            return error(err);
         });
     }
 }
