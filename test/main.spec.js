@@ -338,6 +338,25 @@ describe('Parser', () => {
         });
 
     });
+  
+// It doesn't fail a bad object anymore... It actually silently returns the object back.
+//    describe('error', () => {
+//        
+//        it('should fail to parse a bad object', done => {
+//            try {
+//                const parsed = Parser.it({
+//                    sys: {
+//                        type: 'Bad'
+//                    }
+//                });
+//                console.log(parsed);
+//            } catch (e) {
+//                console.log(e);
+//                done(e);
+//            }
+//        });
+//        
+//    });
 
 });
 
