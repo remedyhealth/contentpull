@@ -1,10 +1,10 @@
 {
   "name": "@rhm/content-reader",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha",
     "doc": "gulp buildDoc"
   },
   "repository": {
@@ -26,6 +26,7 @@
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-jsdoc3": "^0.2.1",
+    "istanbul": "^0.4.3",
     "mocha": "^2.4.5"
   }
 }
