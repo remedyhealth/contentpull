@@ -338,25 +338,6 @@ describe('Parser', () => {
         });
 
     });
-  
-// It doesn't fail a bad object anymore... It actually silently returns the object back.
-//    describe('error', () => {
-//        
-//        it('should fail to parse a bad object', done => {
-//            try {
-//                const parsed = Parser.it({
-//                    sys: {
-//                        type: 'Bad'
-//                    }
-//                });
-//                console.log(parsed);
-//            } catch (e) {
-//                console.log(e);
-//                done(e);
-//            }
-//        });
-//        
-//    });
 
 });
 
@@ -421,6 +402,24 @@ describe('Linker', () => {
                 done();
             }, err => {
                 done(err);
+            });
+        });
+
+        it('should fail to parse a bad object as a chain', done => {
+            return new Linker(Promise.resolve(data.badparse)).parse().then(data => {
+                done(new Error("Expected an error..."));
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            });
+        });
+
+        it('should fail to parse a bad object in place of then', done => {
+            return new Linker(Promise.resolve(data.badparse)).parse(data => {
+                done(new Error("Expected an error..."));
+            }, err => {
+                err.message.should.be.a('string');
+                done();
             });
         });
 
