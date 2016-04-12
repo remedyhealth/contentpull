@@ -22,15 +22,9 @@ class ExtendableError extends Error {
          */
         this.message = message;
 
+        // Should always get here because we are in node
         if (typeof Error.captureStackTrace === 'function') {
             Error.captureStackTrace(this, this.constructor);
-        } else {
-
-            /**
-             * The stack trace.
-             * @type {Error.stack}
-             */
-            this.stack = (new Error(message)).stack;
         }
     }
 }
