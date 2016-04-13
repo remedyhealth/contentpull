@@ -15,7 +15,6 @@ class Parser {
 
         if (obj && obj.sys && obj.sys.type !== 'Array' && obj.sys.type !== 'Link') {
 
-
             // Add the important stuff
             obj.id = obj.sys.id;
             obj.type = obj.sys.type;
@@ -36,7 +35,7 @@ class Parser {
             // clean up before iterating over children
             delete obj.sys;
 
-            if (obj.type !== 'Space') {
+            if (obj.type !== 'Space' && obj.type !== 'Asset') {
                 for (let key in obj.fields) {
                     if (obj.fields[key] && obj.fields[key].sys) {
                         obj.fields[key] = this.it(obj.fields[key]);
@@ -44,6 +43,9 @@ class Parser {
                         obj.fields[key] = obj.fields[key].map(subfield => this.it(subfield));
                     }
                 }
+            } else if (obj.type === 'Asset') {
+                obj.fields.src = obj.fields.file.url;
+                delete obj.fields.file;
             }
         }
 

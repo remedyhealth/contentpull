@@ -4,20 +4,30 @@ const data = {
     unparsed: {
         sys: {
             id: 'test1',
-            type: 'Asset',
+            type: 'Entry',
             createdAt: '1',
             updatedAt: '2',
             revision: '3',
+            contentType: {
+                sys: {
+                    id: 'test'
+                }
+            }
         },
         fields: {
             str: 'test',
             obj: {
                 sys: {
                     id: 'test2',
-                    type: 'Asset',
+                    type: 'Entry',
                     createdAt: '1',
                     updatedAt: '2',
                     revision: '3',
+                    contentType: {
+                        sys: {
+                            id: 'test'
+                        }
+                    }
                 },
                 fields: {
                     test: 'test'
@@ -32,24 +42,34 @@ const data = {
                     revision: '3',
                 },
                 fields: {
-                    test: 'test'
+                    file: {
+                        url: 'http://test.com/img.jpg'
+                    }
                 },
             }],
         }
     },
+    badparse: {
+        sys: {
+            type: 'Array'
+        },
+        fields: 'nope'
+    },
     parsed: {
         id: 'test1',
-        type: 'Asset',
+        type: 'Entry',
         meta: {
             createdAt: '1',
             updatedAt: '2',
             revision: '3',
         },
+        contentType: 'test',
         fields: {
             str: 'test',
             obj: {
                 id: 'test2',
-                type: 'Asset',
+                type: 'Entry',
+                contentType: 'test',
                 meta: {
                     createdAt: '1',
                     updatedAt: '2',
@@ -68,8 +88,8 @@ const data = {
                     revision: '3',
                 },
                 fields: {
-                    test: 'test'
-                },
+                    src: 'http://test.com/img.jpg'
+                }
             }],
         }
     }
