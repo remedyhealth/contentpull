@@ -1,6 +1,6 @@
 {
   "name": "@rhm/content-reader",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/remedyhealth/content-reader#readme",
   "dependencies": {
-    "contentful": "^3.3.3",
+    "contentful": "^3.3.6",
     "lodash.clonedeep": "^4.3.2"
   },
   "devDependencies": {

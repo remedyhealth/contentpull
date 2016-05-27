@@ -38,9 +38,21 @@ class Parser {
             if (obj.type !== 'Space' && obj.type !== 'Asset') {
                 for (let key in obj.fields) {
                     if (obj.fields[key] && obj.fields[key].sys) {
-                        obj.fields[key] = this.it(obj.fields[key]);
+                        const val = this.it(obj.fields[key]);
+                        if (val) {
+                            obj.fields[key] = this.it(obj.fields[key]);
+                        } else {
+                            delete obj.fields[key];
+                        }
                     } else if (Array.isArray(obj.fields[key])) {
-                        obj.fields[key] = obj.fields[key].map(subfield => this.it(subfield));
+                        for (let i = obj.fields[key].length - 1; i >= 0; i--) {
+                            const val = this.it(obj.fields[key][i]);
+                            if (val) {
+                                obj.fields[key][i] = val;
+                            } else {
+                                obj.fields[key].splice(i, 1);
+                            }
+                        }
                     }
                 }
             } else if (obj.type === 'Asset') {
@@ -90,6 +102,10 @@ class Parser {
      */
     it(obj) {
         if (obj && obj.sys && obj.sys.type) {
+          
+            if (obj.sys.type === 'Link') {
+                return;
+            }
 
             // if it is an array, use
             return (obj.sys.type === 'Array') ? this.all(obj) : this.one(obj);
