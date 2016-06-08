@@ -10,34 +10,60 @@ const Linker = require('../src/linker');
 const Parser = require('../src/parser');
 const ReaderError = require('../src/error');
 const cloneDeep = require('lodash.clonedeep');
+const url = require('url');
 require('dotenv').config({ silent: true });
 
 // Dependencies (local)
 let reader;
-const env = process.env;
-const spaceId = env.SPACE_ID;
-const prodKey = env.PROD_KEY;
-const prevKey = env.PREV_KEY;
-const entryType = env.ENTRY_TYPE;
-const entryId = env.ENTRY_ID;
-const entryTitle = env.ENTRY_TITLE;
-const assetType = env.ASSET_TYPE;
-
-const mockSpace = require('./stubs/space');
-
-const rand = Date.now();
 const data = require('./mocha.data');
+const Mitm = require('mitm');
+const mitm = Mitm();
+
+// mock data
+const mockData = require('./stubs');
+const entryType = mockData.entry.sys.contentType.sys.id;
+const assetType = mockData.asset.fields.file.contentType;
+const entryId = mockData.entry.sys.id;
+const assetId = mockData.asset.sys.id;
+const entryTitle = mockData.entry.fields.title;
+const rand = Date.now();
 
 // create reader and mock server to use for tests
 before(done => {
+    
+    mitm.on('request', (req, res) => {
+        
+        const $url = url.parse(req.url);
+        let pathParts = $url.pathname.split('/');
+        pathParts.shift();
+        const part = pathParts[2];
+        
+        function end(data) {
+            return res.end(JSON.stringify(data));
+        }
+        
+        if (req.url.indexOf('qaEntryNOPE') > -1 || req.url.indexOf('image%2Fnope') > -1) {
+            res.statusCode = 400;
+            return end(mockData.error);
+        } else if (req.url.indexOf('emptyArray') > -1) {
+            return end(mockData.emptyArray);
+        } else if (part === 'entries') {
+            return end(mockData.entries);
+        } else if (part === 'assets') {
+            return end(mockData.assets);
+        } else {
+            return end(mockData.space);
+        }
+    });
+    
     reader = new Wrapper(
-        spaceId,
-        prodKey);
+        'spaceid',
+        'prodkey');
 
     // Throwaway
     new Wrapper(
-        spaceId,
-        prevKey,
+        'spaceid',
+        'prevkey',
         true);
 
     done();
@@ -53,9 +79,12 @@ describe('Wrapper', () => {
     describe('getSpace', () => {
 
         it('should return data about the registered space', done => {
-//            var spy = sinon.spy();
-//            reader.getSpace().then(spy);
-//            xhr.requests[0].respond(200, {"Content-Type": "application/json"}, mockSpace);
+            return reader.getSpace().then(res => {
+                res.sys.id.should.equal(mockData.space.sys.id);
+                done();
+            }, err => {
+                done(err);
+            });
         });
 
     });
@@ -207,7 +236,7 @@ describe('Wrapper', () => {
 
     describe('getEntryById', () => {
 
-        it('should return an single entry when requesting by id', done => {
+        it('should return a single entry when requesting by id', done => {
             return reader.getEntryById(entryId).then(entry => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(entryId);
@@ -221,8 +250,7 @@ describe('Wrapper', () => {
 
     describe('getAssetById', () => {
 
-        it('should return an single asset when requesting by id', done => {
-            const assetId = '***REMOVED***';
+        it('should return a single asset when requesting by id', done => {
             return reader.getAssetById(assetId).then(entry => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(assetId);
@@ -296,7 +324,7 @@ describe('Wrapper', () => {
 
         it('should return nothing if no entries match', done => {
             return reader.findEntriesByType(entryType, {
-                title: 'qaEntryNOPE'
+                title: 'emptyArray'
             }).then(res => {
                 res.total.should.equal(0);
                 done();

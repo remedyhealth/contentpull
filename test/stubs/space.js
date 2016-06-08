@@ -1,9 +1,9 @@
 module.exports = {
   "sys": {
     "type": "Space",
-    "id": "***REMOVED***"
+    "id": "space1"
   },
-  "name": "Remedy Test and QA",
+  "name": "Test space",
   "locales": [
     {
       "code": "en-US",
