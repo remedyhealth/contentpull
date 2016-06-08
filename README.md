@@ -48,30 +48,6 @@ reader.getEntryById('entry-id').then(function (entry) {
 });
 ```
 
-### Environment Variables (test)
-
-If you choose to unit test with `npm test`, you will need to set environment variables we all as be sure you set up your spaces accurately.
-
-* **SPACE_ID** - The space id you will be testing against.
-* **PROD_KEY** - The production access api key provided by contentful.
-* **PREV_KEY** - The preview access api key provided by contentful.
-* **ENTRY_TYPE** - The entry content type id that will be used for testing
-** NOTE: This entry type should have two fields: `title` (short text), and `ref` (single reference).
-* **ENTRY_ID** - The id of the specific entry to request from contentful.
-* **ENTRY_TITLE** - The title of the entry provided from `ENTRY_ID`.
-* **ASSET_TYPE** - The asset type uploaded to your space.
-
-Essentially this space will be used to QA your build. It is highly recommended to use a standalone space that wont break to maintain testing reliability.
-
-The space needs only one content type with two fields:
-
-* **title** (`short text`) - Used to match locally with `ENTRY_TITLE`.
-* **ref** (`single reference`) - Used to test circular dependencies.
-
-You will also be required to add a single asset. This is required to test gathering assets from contentful.
-
-Set the `ASSET_TYPE` variable to match the type of the image (i.e. **image/jpeg** or **image/png**).
-
 ### Additional Help
 
 Please refer to the generated JSDOC articles (`gulp doc`).
