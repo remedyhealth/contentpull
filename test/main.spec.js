@@ -25,7 +25,6 @@ const assetType = env.ASSET_TYPE;
 
 const rand = Date.now();
 const data = require('./mocha.data');
-const circularEntryId = '2sSdDG2HQ0GkEeYUOSooqK';
 
 console.log(spaceId);
 console.log(prodKey);
@@ -417,9 +416,9 @@ describe('Linker', () => {
         });
 
         it('should be able to parse a circularly referenced object', done => {
-            return reader.getEntryById(circularEntryId).parse(entry => {
+            return reader.getEntryById(entryId).parse(entry => {
                 let nested = entry.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref;
-                nested.id.should.equal(circularEntryId);
+                nested.id.should.equal(entryId);
                 nested.should.not.have.property('sys');
                 done();
             }, err => {
