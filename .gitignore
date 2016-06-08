@@ -36,3 +36,4 @@ jspm_packages
 # Project specific
 /docs
 /test.js
+.env
