@@ -297,7 +297,7 @@ describe('Wrapper', () => {
 
         it('should return nothing if no entries match', done => {
             return reader.findEntryByType(entryType, {
-                title: 'qaEntryNOPE'
+                title: 'emptyArray'
             }).then(res => {
                 done(new Error("Expected an error..."));
             }, err => {
