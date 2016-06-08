@@ -11,7 +11,6 @@ const Parser = require('../src/parser');
 const ReaderError = require('../src/error');
 const cloneDeep = require('lodash.clonedeep');
 const url = require('url');
-require('dotenv').config({ silent: true });
 
 // Dependencies (local)
 let reader;
