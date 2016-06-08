@@ -15,9 +15,9 @@ const cloneDeep = require('lodash.clonedeep');
 let reader;
 const rand = Date.now();
 const data = require('./mocha.data');
-const entryId = '***REMOVED***';
-const circularEntryId = '***REMOVED***';
-const spaceId = '***REMOVED***';
+const entryId = '1JlZm1pjX66E44cUyMQ2C2';
+const circularEntryId = '2sSdDG2HQ0GkEeYUOSooqK';
+const spaceId = 'ww6sikmud9wx';
 const qaEntry = 'qaEntry';
 const entryTitle = 'Test Entry';
 
@@ -25,12 +25,12 @@ const entryTitle = 'Test Entry';
 before(done => {
     reader = new Wrapper(
         spaceId,
-        '***REMOVED***');
+        '5345757812f5166432dfb3631d418d2f98c19318fe66fd60a6077da9570f77ce');
 
     // Throwaway
     new Wrapper(
         spaceId,
-        '***REMOVED***',
+        'cdd4ac0e82a3e230890b2c151ebd5fdfa17f118dd97698b0ef622126ff554b2d',
         true);
 
     done();
@@ -328,6 +328,12 @@ describe('Parser', () => {
             parsed.meta.should.have.property('total').that.equals(1);
             parsed.should.have.property('items').that.is.an('array');
             parsed.items[0].should.deep.equal(data.parsed);
+        });
+        
+        it('should not interfere with regular objects', () => {
+            const obj = {test: {is: true}};
+            const parsed = Parser.all(obj);
+            parsed.should.deep.equal(obj);
         });
 
     });
