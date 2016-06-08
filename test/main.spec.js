@@ -10,27 +10,36 @@ const Linker = require('../src/linker');
 const Parser = require('../src/parser');
 const ReaderError = require('../src/error');
 const cloneDeep = require('lodash.clonedeep');
+require('dotenv').config({ silent: true });
 
 // Dependencies (local)
 let reader;
+const env = process.env;
+const spaceId = env.SPACE_ID;
+const prodKey = env.PROD_KEY;
+const prevKey = env.PREV_KEY;
+const entryType = env.ENTRY_TYPE;
+const entryId = env.ENTRY_ID;
+const entryTitle = env.ENTRY_TITLE;
+const assetType = env.ASSET_TYPE;
+
 const rand = Date.now();
 const data = require('./mocha.data');
-const entryId = '1JlZm1pjX66E44cUyMQ2C2';
 const circularEntryId = '2sSdDG2HQ0GkEeYUOSooqK';
-const spaceId = 'ww6sikmud9wx';
-const qaEntry = 'qaEntry';
-const entryTitle = 'Test Entry';
+
+console.log(spaceId);
+console.log(prodKey);
 
 // create reader to use for tests
 before(done => {
     reader = new Wrapper(
         spaceId,
-        '5345757812f5166432dfb3631d418d2f98c19318fe66fd60a6077da9570f77ce');
+        prodKey);
 
     // Throwaway
     new Wrapper(
         spaceId,
-        'cdd4ac0e82a3e230890b2c151ebd5fdfa17f118dd97698b0ef622126ff554b2d',
+        prevKey,
         true);
 
     done();
@@ -65,11 +74,11 @@ describe('Wrapper', () => {
 
         it('should return entries that match criteria specified', done => {
             return reader.getEntries({
-                content_type: qaEntry
+                content_type: entryType
             }).then(res => {
                 res.should.have.property('items');
                 res.total.should.equal(1);
-                res.items[0].sys.contentType.sys.should.have.property('id', qaEntry);
+                res.items[0].sys.contentType.sys.should.have.property('id', entryType);
                 done();
             }, err => {
                 done(err);
@@ -140,7 +149,7 @@ describe('Wrapper', () => {
 
         it('should return first entry that matches criteria specified', done => {
             return reader.getEntry({
-                content_type: qaEntry
+                content_type: entryType
             }).then(res => {
                 res.sys.should.have.property('type', 'Entry');
                 done();
@@ -173,7 +182,7 @@ describe('Wrapper', () => {
         });
 
         it('should return first asset that matches criteria specified', done => {
-            const assetCriteria = 'image/jpeg';
+            const assetCriteria = assetType;
             return reader.getAsset({
                 'fields.file.contentType': assetCriteria
             }).then(res => {
@@ -227,7 +236,7 @@ describe('Wrapper', () => {
 
     describe('getEntriesByType', () => {
         it('should return entries by content type', done => {
-            return reader.getEntriesByType(qaEntry).then(entries => {
+            return reader.getEntriesByType(entryType).then(entries => {
                 entries.should.have.property('items');
                 entries.total.should.be.above(0);
                 done();
@@ -240,7 +249,7 @@ describe('Wrapper', () => {
     describe('findEntryByType', () => {
 
         it('should return all entries when no criteria is passed', done => {
-            return reader.findEntryByType(qaEntry).then(res => {
+            return reader.findEntryByType(entryType).then(res => {
                 res.sys.should.have.property('type', 'Entry');
                 done();
             }, err => {
@@ -249,7 +258,7 @@ describe('Wrapper', () => {
         });
 
         it('should return entries that match criteria specified', done => {
-            return reader.findEntryByType(qaEntry, {
+            return reader.findEntryByType(entryType, {
                 title: entryTitle
             }).then(res => {
                 res.sys.should.have.property('type', 'Entry');
@@ -261,7 +270,7 @@ describe('Wrapper', () => {
         });
 
         it('should return nothing if no entries match', done => {
-            return reader.findEntryByType(qaEntry, {
+            return reader.findEntryByType(entryType, {
                 title: 'qaEntryNOPE'
             }).then(res => {
                 done(new Error("Expected an error..."));
@@ -275,7 +284,7 @@ describe('Wrapper', () => {
     describe('findEntriesByType', () => {
 
         it('should return all entries that match the criteria', done => {
-            return reader.findEntriesByType(qaEntry, {
+            return reader.findEntriesByType(entryType, {
                 title: entryTitle
             }).then(res => {
                 res.should.have.property('items');
@@ -287,7 +296,7 @@ describe('Wrapper', () => {
         });
 
         it('should return nothing if no entries match', done => {
-            return reader.findEntriesByType(qaEntry, {
+            return reader.findEntriesByType(entryType, {
                 title: 'qaEntryNOPE'
             }).then(res => {
                 res.total.should.equal(0);
