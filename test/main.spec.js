@@ -23,10 +23,12 @@ const entryId = env.ENTRY_ID;
 const entryTitle = env.ENTRY_TITLE;
 const assetType = env.ASSET_TYPE;
 
+const mockSpace = require('./stubs/space');
+
 const rand = Date.now();
 const data = require('./mocha.data');
 
-// create reader to use for tests
+// create reader and mock server to use for tests
 before(done => {
     reader = new Wrapper(
         spaceId,
@@ -41,17 +43,19 @@ before(done => {
     done();
 });
 
+// clean up the mock server
+after(() => {
+    //xhr.restore();
+});
+
 describe('Wrapper', () => {
 
     describe('getSpace', () => {
 
         it('should return data about the registered space', done => {
-            return reader.getSpace().then(res => {
-                res.sys.id.should.equal(spaceId);
-                done();
-            }, err => {
-                done(err);
-            });
+//            var spy = sinon.spy();
+//            reader.getSpace().then(spy);
+//            xhr.requests[0].respond(200, {"Content-Type": "application/json"}, mockSpace);
         });
 
     });
