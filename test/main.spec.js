@@ -26,9 +26,6 @@ const assetType = env.ASSET_TYPE;
 const rand = Date.now();
 const data = require('./mocha.data');
 
-console.log(spaceId);
-console.log(prodKey);
-
 // create reader to use for tests
 before(done => {
     reader = new Wrapper(
@@ -99,7 +96,7 @@ describe('Wrapper', () => {
 
     describe('getAssets', () => {
 
-        it('should return all entries when no criteria is passed', done => {
+        it('should return all assets when no criteria is passed', done => {
             return reader.getAssets().then(res => {
                 res.should.have.property('total');
                 res.total.should.be.above(0);
@@ -109,14 +106,13 @@ describe('Wrapper', () => {
             });
         });
 
-        it('should return entries that match criteria specified', done => {
-            const assetCriteria = 'image/jpeg';
+        it('should return assets that match criteria specified', done => {
             return reader.getAssets({
-                'fields.file.contentType': assetCriteria
+                'fields.file.contentType': assetType
             }).then(res => {
                 res.should.have.property('items');
                 res.total.should.be.above(0);
-                res.items[0].fields.file.contentType.should.equal(assetCriteria);
+                res.items[0].fields.file.contentType.should.equal(assetType);
                 done();
             }, err => {
                 done(err);
