@@ -329,6 +329,12 @@ describe('Parser', () => {
             parsed.should.have.property('items').that.is.an('array');
             parsed.items[0].should.deep.equal(data.parsed);
         });
+        
+        it('should not interfere with regular objects', () => {
+            const obj = {test: {is: true}};
+            const parsed = Parser.all(obj);
+            parsed.should.deep.equal(obj);
+        });
 
     });
 
