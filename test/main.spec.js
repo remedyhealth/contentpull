@@ -26,6 +26,13 @@ before(done => {
     reader = new Wrapper(
         spaceId,
         '***REMOVED***');
+
+    // Throwaway
+    new Wrapper(
+        spaceId,
+        '***REMOVED***',
+        true);
+
     done();
 });
 
