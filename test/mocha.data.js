@@ -47,6 +47,11 @@ const data = {
                     }
                 },
             }],
+            link: {
+                sys: {
+                    type: 'Link'
+                }
+            }
         }
     },
     badparse: {
