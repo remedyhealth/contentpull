@@ -28,7 +28,7 @@ const entryTitle = mockData.entry.fields.title;
 const rand = Date.now();
 
 // create reader and mock server to use for tests
-before(done => {
+before(() => {
     
     mitm.on('request', (req, res) => {
         
@@ -64,8 +64,6 @@ before(done => {
         'spaceid',
         'prevkey',
         true);
-
-    done();
 });
 
 // clean up the mock server
@@ -77,14 +75,9 @@ describe('Wrapper', () => {
 
     describe('getSpace', () => {
 
-        it('should return data about the registered space', done => {
+        it('should return data about the registered space', () => {
             return reader.getSpace().then(res => {
                 res.sys.id.should.equal(mockData.space.sys.id);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -92,30 +85,20 @@ describe('Wrapper', () => {
 
     describe('getEntries', () => {
 
-        it('should return all entries when no criteria is passed', done => {
+        it('should return all entries when no criteria is passed', () => {
             return reader.getEntries().then(res => {
                 res.should.have.property('total');
                 res.total.should.be.above(0);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
-        it('should return entries that match criteria specified', done => {
+        it('should return entries that match criteria specified', () => {
             return reader.getEntries({
                 content_type: entryType
             }).then(res => {
                 res.should.have.property('items');
                 res.total.should.equal(1);
                 res.items[0].sys.contentType.sys.should.have.property('id', entryType);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -136,30 +119,20 @@ describe('Wrapper', () => {
 
     describe('getAssets', () => {
 
-        it('should return all assets when no criteria is passed', done => {
+        it('should return all assets when no criteria is passed', () => {
             return reader.getAssets().then(res => {
                 res.should.have.property('total');
                 res.total.should.be.above(0);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
-        it('should return assets that match criteria specified', done => {
+        it('should return assets that match criteria specified', () => {
             return reader.getAssets({
                 'fields.file.contentType': assetType
             }).then(res => {
                 res.should.have.property('items');
                 res.total.should.be.above(0);
                 res.items[0].fields.file.contentType.should.equal(assetType);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -179,27 +152,17 @@ describe('Wrapper', () => {
 
     describe('getEntry', () => {
 
-        it('should return first entry when no criteria is passed', done => {
+        it('should return first entry when no criteria is passed', () => {
             return reader.getEntry().then(res => {
                 res.sys.should.have.property('type', 'Entry');
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
-        it('should return first entry that matches criteria specified', done => {
+        it('should return first entry that matches criteria specified', () => {
             return reader.getEntry({
                 content_type: entryType
             }).then(res => {
                 res.sys.should.have.property('type', 'Entry');
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -219,28 +182,18 @@ describe('Wrapper', () => {
 
     describe('getAsset', () => {
 
-        it('should return first asset when no criteria is passed', done => {
+        it('should return first asset when no criteria is passed', () => {
             return reader.getAsset().then(res => {
                 res.sys.should.have.property('type', 'Asset');
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
-        it('should return first asset that matches criteria specified', done => {
+        it('should return first asset that matches criteria specified', () => {
             const assetCriteria = assetType;
             return reader.getAsset({
                 'fields.file.contentType': assetCriteria
             }).then(res => {
                 res.sys.should.have.property('type', 'Asset');
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -261,15 +214,10 @@ describe('Wrapper', () => {
 
     describe('getEntryById', () => {
 
-        it('should return a single entry when requesting by id', done => {
+        it('should return a single entry when requesting by id', () => {
             return reader.getEntryById(entryId).then(entry => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(entryId);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -277,57 +225,37 @@ describe('Wrapper', () => {
 
     describe('getAssetById', () => {
 
-        it('should return a single asset when requesting by id', done => {
+        it('should return a single asset when requesting by id', () => {
             return reader.getAssetById(assetId).then(entry => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(assetId);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
     });
 
     describe('getEntriesByType', () => {
-        it('should return entries by content type', done => {
+        it('should return entries by content type', () => {
             return reader.getEntriesByType(entryType).then(entries => {
                 entries.should.have.property('items');
                 entries.total.should.be.above(0);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
     });
 
     describe('findEntryByType', () => {
 
-        it('should return all entries when no criteria is passed', done => {
+        it('should return all entries when no criteria is passed', () => {
             return reader.findEntryByType(entryType).then(res => {
                 res.sys.should.have.property('type', 'Entry');
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
-        it('should return entries that match criteria specified', done => {
+        it('should return entries that match criteria specified', () => {
             return reader.findEntryByType(entryType, {
                 title: entryTitle
             }).then(res => {
                 res.sys.should.have.property('type', 'Entry');
                 res.fields.title.should.equal(entryTitle);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -347,30 +275,20 @@ describe('Wrapper', () => {
 
     describe('findEntriesByType', () => {
 
-        it('should return all entries that match the criteria', done => {
+        it('should return all entries that match the criteria', () => {
             return reader.findEntriesByType(entryType, {
                 title: entryTitle
             }).then(res => {
                 res.should.have.property('items');
                 res.total.should.be.above(0);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
-        it('should return nothing if no entries match', done => {
+        it('should return nothing if no entries match', () => {
             return reader.findEntriesByType(entryType, {
                 title: 'emptyArray'
             }).then(res => {
                 res.total.should.equal(0);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
     });
@@ -435,12 +353,9 @@ describe('Linker', () => {
 
     describe('then', () => {
 
-        it('should still run then functions', done => {
+        it('should still run then functions', () => {
             return new Linker(Promise.resolve(rand)).then(res => {
                 res.should.equal(rand);
-                done();
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -459,12 +374,9 @@ describe('Linker', () => {
             });
         });
 
-        it('should still run catch statements standalone', done => {
+        it('should still run catch statements standalone', () => {
             return new Linker(Promise.reject(rand)).catch(res => {
                 res.should.equal(rand);
-                done();
-            }).catch(err => {
-                done(err);
             });
         });
 
@@ -472,38 +384,23 @@ describe('Linker', () => {
 
     describe('parse', () => {
 
-        it('should parse in place of then', done => {
+        it('should parse in place of then', () => {
             return new Linker(Promise.resolve(data.unparsed)).parse(res => {
                 res.should.deep.equal(data.parsed);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
-        it('should parse as a chain before then', done => {
+        it('should parse as a chain before then', () => {
             return new Linker(Promise.resolve(data.unparsed)).parse().then(res => {
                 res.should.deep.equal(data.parsed);
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
-        it('should be able to parse a circularly referenced object', done => {
+        it('should be able to parse a circularly referenced object', () => {
             return reader.getEntryById(entryId).parse(entry => {
                 let nested = entry.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref;
                 nested.id.should.equal(entryId);
                 nested.should.not.have.property('sys');
-                done();
-            }, err => {
-                done(err);
-            }).catch(err => {
-                done(err);
             });
         });
 
