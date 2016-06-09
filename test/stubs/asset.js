@@ -27,7 +27,7 @@ module.exports = {
                 }
             },
             "fileName": "image.png",
-            "contentType": "image/png"
+            "contentType": "png" // image/png
         }
     }
 };
