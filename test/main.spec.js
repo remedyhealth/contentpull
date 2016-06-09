@@ -26,6 +26,13 @@ before(done => {
     reader = new Wrapper(
         spaceId,
         '***REMOVED***');
+
+    // Throwaway
+    new Wrapper(
+        spaceId,
+        '***REMOVED***',
+        true);
+
     done();
 });
 
@@ -321,6 +328,12 @@ describe('Parser', () => {
             parsed.meta.should.have.property('total').that.equals(1);
             parsed.should.have.property('items').that.is.an('array');
             parsed.items[0].should.deep.equal(data.parsed);
+        });
+        
+        it('should not interfere with regular objects', () => {
+            const obj = {test: {is: true}};
+            const parsed = Parser.all(obj);
+            parsed.should.deep.equal(obj);
         });
 
     });
