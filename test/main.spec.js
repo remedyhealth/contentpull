@@ -46,7 +46,7 @@ before(() => {
         }
         expectedParts.map(val => {
             if (req.url.indexOf(val) === -1) {
-                throw new Error(`Url request did not match expected (missing part).\n\nExpected Part: ${val}\nUrl: ${req.url}`);
+                throw new Error(`Url request did not match expected (missing part).\n\nMissing Part: ${val}\nUrl: ${req.url}`);
             }
         });
         const $url = url.parse(req.url);
