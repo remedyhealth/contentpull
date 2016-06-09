@@ -39,16 +39,14 @@ let reader;
 // create reader and mock server to use for tests
 before(() => {
     
-    const urlErr = new Error('Url request did not match expected.');
-    
     mitm.on('request', (req, res) => {
         
         if (req.url.indexOf(baseUrl) !== 0) {
-            throw urlErr;
+            throw new Error(`Url request did not match expected (bad base url).\n\nExpected: ${baseUrl}\nUrl: ${req.url}`);
         }
         expectedParts.map(val => {
             if (req.url.indexOf(val) === -1) {
-                throw urlErr;
+                throw new Error(`Url request did not match expected (missing part).\n\nExpected Part: ${val}\nUrl: ${req.url}`);
             }
         });
         const $url = url.parse(req.url);
