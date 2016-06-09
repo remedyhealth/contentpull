@@ -48,4 +48,6 @@ reader.getEntryById('entry-id').then(function (entry) {
 });
 ```
 
+### Additional Help
+
 Please refer to the generated JSDOC articles (`gulp doc`).
