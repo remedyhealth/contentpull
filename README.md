@@ -50,4 +50,9 @@ reader.getEntryById('entry-id').then(function (entry) {
 
 ### Additional Help
 
-Please refer to the generated JSDOC articles (`gulp doc`).
+You can use the following commands to point you in the right direction.
+
+* `npm run build-doc` - Creates documentation for all the source code and tutorials to help understanding in *docs* found in the root repository directory.
+* `npm test` - Runs the test scenerio and outputs a report in the *coverage* folder in the root directory.
+
+Please refer to the generated JSDOC articles (`npm run build-doc`).

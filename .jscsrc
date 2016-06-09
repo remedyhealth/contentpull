@@ -1,0 +1,12 @@
+{
+  "preset": "airbnb",
+  "esnext": true,
+  "requireArrowFunctions": true,
+  "disallowParenthesesAroundArrowParam": true,
+  "requireTemplateStrings": true,
+  "requireSpread": true,
+  "validateIndentation": 4,
+  "disallowSpacesInFunction": {
+    "beforeOpeningRoundBrace": true
+  }
+}

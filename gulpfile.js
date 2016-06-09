@@ -4,6 +4,7 @@ var gulp = require('gulp');
 var pkg = require('./package.json');
 var clean = require('gulp-clean');
 var jsdoc = require('gulp-jsdoc3');
+var lint = require('gulp-jscs');
 
 ///////////
 //
@@ -58,4 +59,14 @@ gulp.task('doc', ['buildDoc'], () => {
     gulp.watch(files, ['buildDoc']);
 });
 
-gulp.task('default', ['buildDoc']);
+gulp.task('lint', () => gulp.src([
+        './src/**/*.js',
+        './gulpfile.js',
+        './index.js',
+    ])
+    .pipe(lint())
+    .pipe(lint.reporter())
+    .pipe(lint.reporter('fail'))
+);
+
+gulp.task('default', ['lint', 'buildDoc']);
