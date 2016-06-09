@@ -10,9 +10,9 @@ const data = {
             revision: '3',
             contentType: {
                 sys: {
-                    id: 'test'
-                }
-            }
+                    id: 'test',
+                },
+            },
         },
         fields: {
             str: 'test',
@@ -25,12 +25,12 @@ const data = {
                     revision: '3',
                     contentType: {
                         sys: {
-                            id: 'test'
-                        }
-                    }
+                            id: 'test',
+                        },
+                    },
                 },
                 fields: {
-                    test: 'test'
+                    test: 'test',
                 },
             },
             arr: [{
@@ -43,17 +43,35 @@ const data = {
                 },
                 fields: {
                     file: {
-                        url: 'http://test.com/img.jpg'
-                    }
+                        url: 'http://test.com/img.jpg',
+                    },
+                },
+            }, {
+                sys: {
+                    type: 'Link',
                 },
             }],
+            link: {
+                sys: {
+                    type: 'Link',
+                },
+            },
+            space: {
+                sys: {
+                    type: 'Space',
+                    id: 'spaceid',
+                    createdAt: '1',
+                    updatedAt: '2',
+                    revision: '3',
+                },
+            },
         }
     },
     badparse: {
         sys: {
-            type: 'Array'
+            type: 'Array',
         },
-        fields: 'nope'
+        fields: 'nope',
     },
     parsed: {
         id: 'test1',
@@ -76,7 +94,7 @@ const data = {
                     revision: '3',
                 },
                 fields: {
-                    test: 'test'
+                    test: 'test',
                 },
             },
             arr: [{
@@ -88,11 +106,15 @@ const data = {
                     revision: '3',
                 },
                 fields: {
-                    src: 'http://test.com/img.jpg'
+                    src: 'http://test.com/img.jpg',
                 }
             }],
-        }
-    }
+            space: {
+                id: 'spaceid',
+                type: 'Space',
+            },
+        },
+    },
 };
 
 data.unparsedArr = {
@@ -100,14 +122,14 @@ data.unparsedArr = {
         type: 'Array',
     },
     total: 1,
-    items: [data.unparsed]
+    items: [data.unparsed],
 };
 
 data.parsedArr = {
     meta: {
-        total: 1
+        total: 1,
     },
-    items: [data.parsed]
+    items: [data.parsed],
 };
 
 module.exports = data;
