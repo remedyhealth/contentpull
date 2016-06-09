@@ -83,6 +83,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -97,6 +99,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -110,6 +114,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -121,6 +127,8 @@ describe('Wrapper', () => {
             }, err => {
                 err.message.should.be.a('string');
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -135,6 +143,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -148,6 +158,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -159,6 +171,8 @@ describe('Wrapper', () => {
             }, err => {
                 err.message.should.be.a('string');
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
     });
@@ -171,6 +185,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -181,6 +197,8 @@ describe('Wrapper', () => {
                 res.sys.should.have.property('type', 'Entry');
                 done();
             }, err => {
+                done(err);
+            }).catch(err => {
                 done(err);
             });
         });
@@ -193,6 +211,8 @@ describe('Wrapper', () => {
             }, err => {
                 err.message.should.be.a('string');
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
     });
@@ -204,6 +224,8 @@ describe('Wrapper', () => {
                 res.sys.should.have.property('type', 'Asset');
                 done();
             }, err => {
+                done(err);
+            }).catch(err => {
                 done(err);
             });
         });
@@ -217,6 +239,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -228,6 +252,8 @@ describe('Wrapper', () => {
             }, err => {
                 err.message.should.be.a('string');
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -241,6 +267,8 @@ describe('Wrapper', () => {
                 entry.sys.id.should.equal(entryId);
                 done();
             }, err => {
+                done(err);
+            }).catch(err => {
                 done(err);
             });
         });
@@ -256,6 +284,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
     });
@@ -267,6 +297,8 @@ describe('Wrapper', () => {
                 entries.total.should.be.above(0);
                 done();
             }, err => {
+                done(err);
+            }).catch(err => {
                 done(err);
             });
         });
@@ -280,6 +312,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -292,6 +326,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -303,6 +339,8 @@ describe('Wrapper', () => {
             }, err => {
                 err.message.should.be.a('string');
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
     });
@@ -318,6 +356,8 @@ describe('Wrapper', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -328,6 +368,8 @@ describe('Wrapper', () => {
                 res.total.should.equal(0);
                 done();
             }, err => {
+                done(err);
+            }).catch(err => {
                 done(err);
             });
         });
@@ -397,6 +439,8 @@ describe('Linker', () => {
             return new Linker(Promise.resolve(rand)).then(res => {
                 res.should.equal(rand);
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -410,6 +454,8 @@ describe('Linker', () => {
             }, err => {
                 err.should.equal(rand);
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -417,6 +463,8 @@ describe('Linker', () => {
             return new Linker(Promise.reject(rand)).catch(res => {
                 res.should.equal(rand);
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -430,6 +478,8 @@ describe('Linker', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -438,6 +488,8 @@ describe('Linker', () => {
                 res.should.deep.equal(data.parsed);
                 done();
             }, err => {
+                done(err);
+            }).catch(err => {
                 done(err);
             });
         });
@@ -450,6 +502,8 @@ describe('Linker', () => {
                 done();
             }, err => {
                 done(err);
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -459,6 +513,8 @@ describe('Linker', () => {
             }, err => {
                 err.message.should.be.a('string');
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
 
@@ -468,6 +524,8 @@ describe('Linker', () => {
             }, err => {
                 err.message.should.be.a('string');
                 done();
+            }).catch(err => {
+                done(err);
             });
         });
 
