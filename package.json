@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha",
-    "build-doc": "./node_modules/.bin/gulp buildDoc",
-    "lint": "./node_modules/.bin/gulp lint"
+    "lint": "./node_modules/.bin/gulp lint",
+    "prepublish": "npm run lint & npm test",
+    "build-doc": "./node_modules/.bin/gulp buildDoc"
   },
   "repository": {
     "type": "git",
