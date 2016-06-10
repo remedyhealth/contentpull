@@ -24,7 +24,7 @@ class Linker {
      * Parses the response before returning.
      * @param {function} then - The callback when a successfull response is made.
      * @param {function} error - The failed callback function.
-     * 
+     *
      * @example
      * // Get entry with parse callback
      * reader.getEntryById('entry-id').parse(res => { ... });

@@ -38,9 +38,9 @@ let reader;
 
 // create reader and mock server to use for tests
 before(() => {
-    
+
     mitm.on('request', (req, res) => {
-        
+
         if (req.url.indexOf(baseUrl) !== 0) {
             throw new Error(`Url request did not match expected (bad base url).\n\nExpected: ${baseUrl}\nUrl: ${req.url}`);
         }
@@ -53,11 +53,11 @@ before(() => {
         let pathParts = $url.pathname.split('/');
         pathParts.shift();
         const part = pathParts[2];
-        
+
         function end(data) {
             return res.end(JSON.stringify(data));
         }
-        
+
         if (req.url.indexOf(rejectedType) > -1 || req.url.indexOf(rejectedAsset) > -1) {
             res.statusCode = 400;
             return end(mockData.error);
@@ -71,7 +71,7 @@ before(() => {
             return end(mockData.space);
         }
     });
-    
+
     reader = new Wrapper(
         spaceId,
         'prodkey');
@@ -217,7 +217,12 @@ describe('Wrapper', () => {
         });
 
         it('should return first asset that matches criteria specified', () => {
-            expectedParts = ['/assets?', 'include=10', 'limit=1', `fields.file.contentType=${assetType}`];
+            expectedParts = [
+                '/assets?',
+                'include=10',
+                'limit=1',
+                `fields.file.contentType=${assetType}`,
+            ];
             return reader.getAsset({
                 'fields.file.contentType': assetType
             }).then(res => {
@@ -226,7 +231,12 @@ describe('Wrapper', () => {
         });
 
         it('should return nothing if no assets match', done => {
-            expectedParts = ['/assets?', 'include=10', 'limit=1', `fields.file.contentType=${rejectedAsset}`];
+            expectedParts = [
+                '/assets?',
+                'include=10',
+                'limit=1',
+                `fields.file.contentType=${rejectedAsset}`,
+            ];
             return reader.getAsset({
                 'fields.file.contentType': rejectedAsset
             }).then(res => {
@@ -244,7 +254,11 @@ describe('Wrapper', () => {
     describe('getEntryById', () => {
 
         it('should return a single entry when requesting by id', () => {
-            expectedParts = ['/entries?', 'limit=1', `sys.id=${entryId}`];
+            expectedParts = [
+                '/entries?',
+                'limit=1',
+                `sys.id=${entryId}`,
+            ];
             return reader.getEntryById(entryId).then(entry => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(entryId);
@@ -256,7 +270,12 @@ describe('Wrapper', () => {
     describe('getAssetById', () => {
 
         it('should return a single asset when requesting by id', () => {
-            expectedParts = ['/assets?', 'include=10', 'limit=1', `sys.id=${assetId}`];
+            expectedParts = [
+                '/assets?',
+                'include=10',
+                'limit=1',
+                `sys.id=${assetId}`,
+            ];
             return reader.getAssetById(assetId).then(entry => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(assetId);
@@ -266,7 +285,11 @@ describe('Wrapper', () => {
 
     describe('getEntriesByType', () => {
         it('should return entries by content type', () => {
-            expectedParts = ['/entries?', 'include=10', `content_type=${entryType}`];
+            expectedParts = [
+                '/entries?',
+                'include=10',
+                `content_type=${entryType}`,
+            ];
             return reader.getEntriesByType(entryType).then(entries => {
                 entries.should.have.property('items');
                 entries.total.should.be.above(0);
@@ -277,14 +300,25 @@ describe('Wrapper', () => {
     describe('findEntryByType', () => {
 
         it('should return all entries when no criteria is passed', () => {
-            expectedParts = ['/entries?', 'include=10', 'limit=1', `content_type=${entryType}`];
+            expectedParts = [
+                '/entries?',
+                'include=10',
+                'limit=1',
+                `content_type=${entryType}`,
+            ];
             return reader.findEntryByType(entryType).then(res => {
                 res.sys.should.have.property('type', 'Entry');
             });
         });
 
         it('should return entries that match criteria specified', () => {
-            expectedParts = ['/entries?', 'include=10', 'limit=1', `content_type=${entryType}`, `fields.title=${entryTitle}`];
+            expectedParts = [
+                '/entries?',
+                'include=10',
+                'limit=1',
+                `content_type=${entryType}`,
+                `fields.title=${entryTitle}`,
+            ];
             return reader.findEntryByType(entryType, {
                 title: entryTitle
             }).then(res => {
@@ -294,11 +328,18 @@ describe('Wrapper', () => {
         });
 
         it('should return nothing if no entries match', done => {
-            expectedParts = ['/entries?', 'include=10', 'limit=1', `content_type=${entryType}`, `fields.title=${emptyArray}`];
+            expectedParts = [
+                '/entries?',
+                'include=10',
+                'limit=1',
+                `content_type=${entryType}`,
+                `fields.title=${emptyArray}`,
+            ];
             return reader.findEntryByType(entryType, {
                 title: emptyArray
             }).then(res => {
                 done(defaultErr);
+
             }, err => {
                 err.message.should.be.a('string');
                 done();
@@ -311,7 +352,12 @@ describe('Wrapper', () => {
     describe('findEntriesByType', () => {
 
         it('should return all entries that match the criteria', () => {
-            expectedParts = ['/entries?', 'include=10', `content_type=${entryType}`, `fields.title=${entryTitle}`];
+            expectedParts = [
+                '/entries?',
+                'include=10',
+                `content_type=${entryType}`,
+                `fields.title=${entryTitle}`,
+            ];
             return reader.findEntriesByType(entryType, {
                 title: entryTitle
             }).then(res => {
@@ -361,9 +407,13 @@ describe('Parser', () => {
             parsed.should.have.property('items').that.is.an('array');
             parsed.items[0].should.deep.equal(data.parsed);
         });
-        
+
         it('should not interfere with regular objects', () => {
-            const obj = {test: {is: true}};
+            const obj = {
+                test: {
+                    is: true
+                }
+            };
             const parsed = Parser.all(obj);
             parsed.should.deep.equal(obj);
         });

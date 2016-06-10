@@ -75,7 +75,7 @@ class Parser {
         // If there is only one, go ahead and add it
         if (obj && obj.sys && obj.sys.type === 'Array') {
             obj.meta = {
-                total: obj.total
+                total: obj.total,
             };
             delete obj.sys;
             delete obj.skip;
@@ -86,9 +86,9 @@ class Parser {
         } else if (obj && obj.sys && obj.sys.type) {
             obj = {
                 meta: {
-                    total: 1
+                    total: 1,
                 },
-                items: [this.it(obj)]
+                items: [this.it(obj)],
             };
         }
 
@@ -102,7 +102,7 @@ class Parser {
      */
     it(obj) {
         if (obj && obj.sys && obj.sys.type) {
-          
+
             if (obj.sys.type === 'Link') {
                 return;
             }

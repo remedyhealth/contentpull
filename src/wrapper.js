@@ -17,7 +17,7 @@ class Wrapper {
         let params = {
             space: space,
             accessToken: accesstoken,
-            host: (preview) ? 'preview.contentful.com' : null
+            host: (preview) ? 'preview.contentful.com' : null,
         };
 
         /**
@@ -48,14 +48,15 @@ class Wrapper {
     /**
      * Returns a collection of object (entries or assets).
      * @param {JSON} params - The params to pass to contentful.
-     * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
+     * @param {Bool} isAsset - Whether or not the object is an asset.
+     * If false, will look for entries.
      * @returns {Linker} The promise instance.
      */
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
 
         return new Linker(fn.call(this, Object.assign({
-            include: 10
+            include: 10,
         }, params)));
     }
 
@@ -80,23 +81,20 @@ class Wrapper {
     /**
      * Returns an individual object (entry or asset).
      * @param {JSON} params - The params to pass to contentful.
-     * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
+     * @param {Bool} isAsset - Whether or not the object is an asset.
+     * If false, will look for entries.
      * @returns {Linker} The promise instance.
+     * @todo - Not very readable... (thanks jscs!)
      */
     _getObject(params, isAsset) {
         params = params || {};
         params.limit = 1;
-        return new Linker(new Promise((resolve, reject) => {
-            return this._getObjects(params, isAsset).then(objects => {
-                if (objects && objects.total > 0) {
-                    return resolve(objects.items[0]);
-                } else {
-                    return reject(new ReaderError("Entry not found."));
-                }
-            }, err => {
-                return reject(err);
-            });
-        }));
+        return new Linker(
+            new Promise((resolve, reject) => this._getObjects(params, isAsset)
+            .then(objects => (objects && objects.total > 0)
+                  ? resolve(objects.items[0])
+                  : reject(new ReaderError('Entry not found.')),
+                err => reject(err))));
     }
 
     /**
@@ -120,7 +118,8 @@ class Wrapper {
     /**
      * Returns an individual object by id (entry or asset).
      * @param {JSON} params - The params to pass to contentful.
-     * @param {Bool} isAsset - Whether or not the object is an asset. If false, will look for entries.
+     * @param {Bool} isAsset - Whether or not the object is an asset.
+     * If false, will look for entries.
      * @returns {Linker} The promise instance.
      */
     _getObjectById(id, params, isAsset) {
@@ -137,7 +136,7 @@ class Wrapper {
     getEntriesByType(contentType, params) {
         params = params || {};
         return this.getEntries(Object.assign({
-            content_type: contentType
+            content_type: contentType,
         }, params));
     }
 
@@ -159,7 +158,6 @@ class Wrapper {
         return this._getObjectById(id, params, true);
     }
 
-
     /**
      * Looks for one or more entries by content type.
      * @param {String} contentType - The type of content to query.
@@ -170,7 +168,7 @@ class Wrapper {
      */
     _findByType(contentType, fields, otherParams, onlyOne) {
         let params = {
-            content_type: contentType
+            content_type: contentType,
         };
 
         let fn = (onlyOne) ? this.getEntry : this.getEntries;

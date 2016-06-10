@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha",
-    "doc": "gulp buildDoc"
+    "lint": "./node_modules/.bin/gulp lint",
+    "prepublish": "npm run lint & npm test",
+    "build-doc": "./node_modules/.bin/gulp buildDoc"
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,7 @@
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
+    "gulp-jscs": "^3.0.2",
     "gulp-jsdoc3": "^0.2.1",
     "istanbul": "^0.4.3",
     "mitm": "^1.2.1",
