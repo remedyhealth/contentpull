@@ -78,4 +78,3 @@ reader.getEntryById(entryId).parse((entry) => {
     // entry is now parsed
 });
 ```
-
