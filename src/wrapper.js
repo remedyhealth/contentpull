@@ -22,7 +22,7 @@ class Wrapper {
          * Whether or not the client is set up for preview.
          * @type {Bool}
          */
-        this.isPreview = config.preview;
+        this.isPreview = !!config.preview;
 
         /**
          * The contentful client.

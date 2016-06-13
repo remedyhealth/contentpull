@@ -75,17 +75,34 @@ before(() => {
     reader = new Wrapper(
         spaceId,
         'prodkey');
-
-    // Throwaway
-    new Wrapper(
-        spaceId,
-        'prevkey',
-        true);
 });
 
 // clean up the mock server
 after(() => {
     //xhr.restore();
+});
+
+describe('Reader', () => {
+
+    describe('isPreview', () => {
+
+        it('should return true when in preview mode', () => {
+            const previewReader = new Wrapper(
+                spaceId,
+                'prevkey', {
+                    preview: true
+                }
+            );
+            
+            previewReader.isPreview.should.be.true;
+        });
+
+        it('should return false when in production mode', () => {
+            reader.isPreview.should.be.false;
+        });
+
+    });
+
 });
 
 describe('Wrapper', () => {
