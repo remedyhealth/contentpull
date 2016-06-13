@@ -14,7 +14,7 @@ class Wrapper {
      * @param {Bool=} config.preview - Whether or not to use the preview mode, or the default host.
      */
     constructor(space, accesstoken, config) {
-        
+
         // make sure config is set to SOMETHING...
         config = config || {};
 
@@ -93,10 +93,8 @@ class Wrapper {
         params.limit = 1;
         return new Linker(
             new Promise((resolve, reject) => this._getObjects(params, isAsset)
-            .then(objects => (objects && objects.total > 0)
-                  ? resolve(objects.items[0])
-                  : reject(new ReaderError('Entry not found.')),
-                err => reject(err))));
+                .then(objects => (objects && objects.total > 0) ? resolve(objects.items[0]) : reject(new ReaderError('Entry not found.')),
+                    err => reject(err))));
     }
 
     /**
