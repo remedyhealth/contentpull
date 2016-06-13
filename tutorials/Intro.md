@@ -1,8 +1,8 @@
-This module is meant to be interfaced in some was as a replacement for your *Data Access Layer (DAL)*.
+This module is meant to be interfaced in some was as a replacement for your **Data Access Layer (DAL)**.
 
 ### Quick Start
 
-*content-reader* was meant to be extended into your DAL. Consider the following example
+**content-reader** was meant to be extended into your DAL. Consider the following example
 
 ```javascript
 const content-reader = require('content-reader');
@@ -49,11 +49,11 @@ getEntryById(entryId) {
 
 ### Parsing
 
-This is where *content-reader* becomes extremely useful. The function in the above example
-would simply return example what *contentful.js* would return from an entry request.
+This is where **content-reader** becomes extremely useful. The function in the above example
+would simply return example what **contentful.js** would return from an entry request.
 
 This package supports parsing your content to be better aquanted for your use within your application.
-*Content-reader* will always return an "augmented" promise, in that it supports an additional feature to
+**Content-reader** will always return an "augmented" promise, in that it supports an additional feature to
 `parse` the data before resolving. This can be achieved in a number of ways:
 
 
