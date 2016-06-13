@@ -33,21 +33,8 @@ var isDebug = false;
 var reader = new contentReader(spaceid, accessToken, isDebug);
 ```
 
-### Promises
-
-The wrapper (along with contentful.js) uses a promise-driven architecture. All requests will responde with a promise which can be used to wait for the response to pass or fail.
-
-Assuming our `reader` has been set up from the code-block above, the following can be used to get an entry, where `entry-id` is the id of the entry in contentful.
-
-```
-reader.getEntryById('entry-id').then(function (entry) {
-    // assuming there is a title attribute
-    console.log(entry.title);
-}, function (err) {
-    console.log(err);
-});
-```
-
 ### Additional Help
 
-Please refer to the generated JSDOC articles (`npm run build-doc`).
+If you are viewing this README online, refer to our [wiki](https://github.com/remedyhealth/content-reader/wiki).
+
+If you have cloned or downloaded this repo, please refer to the generated JSDOC articles (`npm run build-doc`).
