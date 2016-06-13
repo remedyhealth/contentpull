@@ -522,7 +522,7 @@ describe('Error', () => {
 
     describe('ReaderError', () => {
 
-        var err = new ReaderError(rand);
+        const err = new ReaderError(rand);
 
         it('should be of custom type', () => {
             err.constructor.name.should.equal('ReaderError');

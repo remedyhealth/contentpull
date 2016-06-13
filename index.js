@@ -1,4 +1,4 @@
-var reader;
+let reader;
 try {
     reader = require('./src/wrapper');
 } catch (err) {

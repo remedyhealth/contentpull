@@ -1,10 +1,10 @@
 'use strict';
 
-var gulp = require('gulp');
-var pkg = require('./package.json');
-var clean = require('gulp-clean');
-var jsdoc = require('gulp-jsdoc3');
-var lint = require('gulp-jscs');
+const gulp = require('gulp');
+const pkg = require('./package.json');
+const clean = require('gulp-clean');
+const jsdoc = require('gulp-jsdoc3');
+const lint = require('gulp-jscs');
 
 ///////////
 //
@@ -52,11 +52,10 @@ gulp.task('buildDoc', ['cleanDoc'], () => gulp.src('./src/**/*.js', {
 );
 
 gulp.task('doc', ['buildDoc'], () => {
-    var files = [
+    gulp.watch([
         './src/**/*.js',
         './tutorials/**/*.md',
-    ];
-    gulp.watch(files, ['buildDoc']);
+    ], ['buildDoc']);
 });
 
 gulp.task('lint', () => gulp.src([
