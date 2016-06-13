@@ -56,7 +56,6 @@ This package supports parsing your content to be better aquanted for your use wi
 **Content-reader** will always return an "augmented" promise, in that it supports an additional feature to
 `parse` the data before resolving. This can be achieved in a number of ways:
 
-
 #### Chaining
 
 This method uses the parser as a chain that runs before resolving.
