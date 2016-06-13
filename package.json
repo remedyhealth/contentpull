@@ -28,9 +28,9 @@
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-jscs": "^3.0.2",
-    "gulp-jsdoc3": "^0.2.1",
+    "gulp-jsdoc3": "^0.3.0",
     "istanbul": "^0.4.3",
     "mitm": "^1.2.1",
-    "mocha": "^2.4.5"
+    "mocha": "^2.5.3"
   }
 }
