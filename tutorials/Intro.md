@@ -36,7 +36,7 @@ The wrapper (along with contentful.js) uses a [Promise](https://developer.mozill
 
 Assuming we are in the context of our `DataAccessLayer` from the code-block above, the following can be used to get an entry, where `entryId` is the id of the entry in contentful.
 
-```
+```javascript
 getEntryById(entryId) {
     return this._reader.getEntryById(entryId).then((entry) => {
         // assuming there is a title attribute
@@ -61,7 +61,7 @@ This package supports parsing your content to be better aquanted for your use wi
 This method uses the parser as a chain that runs before resolving.
 With this approach, you can have the content resolved, as part of the promise-chain.
 
-```
+```javascript
 reader.getEntryById(entryId).parse().then((entry) => {
     // entry is now parsed
 });
@@ -72,7 +72,7 @@ reader.getEntryById(entryId).parse().then((entry) => {
 With the replacement method, you can replace the `.then()` function with `.parse()`
 and it will functionaly work the same, only this time you will have parsed data.
 
-```
+```javascript
 reader.getEntryById(entryId).parse((entry) => {
     // entry is now parsed
 });

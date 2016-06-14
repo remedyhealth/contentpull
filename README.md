@@ -16,7 +16,7 @@ Include the package locally in your repository.
 
 The reader registers a client for communicating with the server. First create an instance of the reader with the following:
 
-```
+```javascript
 // The class
 var contentReader = require('@rhm/content-reader');
 
