@@ -6,7 +6,6 @@ chai.should();
 
 // The stars of the show!
 const Wrapper = require('../src/wrapper');
-const Linker = require('../src/linker');
 const Parser = require('../src/parser');
 const ReaderError = require('../src/error');
 
@@ -106,6 +105,86 @@ describe('Reader', () => {
 });
 
 describe('Wrapper', () => {
+    
+    
+
+    describe('_link:then', () => {
+
+        it('should still run then functions', () => {
+            return reader._link(Promise.resolve(rand)).then(res => {
+                res.should.equal(rand);
+            });
+        });
+
+    });
+
+    describe('_link:catch', () => {
+
+        it('should still run catch statements with then statements', done => {
+            return reader._link(Promise.reject(rand)).then(res => {
+                done(defaultErr);
+            }, err => {
+                err.should.equal(rand);
+                done();
+            }).catch(err => {
+                done(err);
+            });
+        });
+
+        it('should still run catch statements standalone', () => {
+            return reader._link(Promise.reject(rand)).catch(res => {
+                res.should.equal(rand);
+            });
+        });
+
+    });
+
+    describe('_link:parse', () => {
+
+        it('should parse in place of then', () => {
+            return reader._link(Promise.resolve(data.unparsed)).parse(res => {
+                res.should.deep.equal(data.parsed);
+            });
+        });
+
+        it('should parse as a chain before then', () => {
+            return reader._link(Promise.resolve(data.unparsed)).parse().then(res => {
+                res.should.deep.equal(data.parsed);
+            });
+        });
+
+        it('should be able to parse a circularly referenced object', () => {
+            expectedParts = ['/entries?', 'include=10', 'limit=1', `sys.id=${entryId}`];
+            return reader.getEntryById(entryId).parse(entry => {
+                let nested = entry.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref;
+                nested.id.should.equal(entryId);
+                nested.should.not.have.property('sys');
+            });
+        });
+
+        it('should fail to parse a bad object as a chain', done => {
+            return reader._link(Promise.resolve(data.badparse)).parse().then(data => {
+                done(defaultErr);
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            }).catch(err => {
+                done(err);
+            });
+        });
+
+        it('should fail to parse a bad object in place of then', done => {
+            return reader._link(Promise.resolve(data.badparse)).parse(data => {
+                done(defaultErr);
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            }).catch(err => {
+                done(err);
+            });
+        });
+
+    });
 
     describe('getSpace', () => {
 
@@ -447,88 +526,6 @@ describe('Parser', () => {
         it('should parse an array', () => {
             const parsed = Parser.it(data.unparsed);
             parsed.should.deep.equal(data.parsed);
-        });
-
-    });
-
-});
-
-describe('Linker', () => {
-
-    describe('then', () => {
-
-        it('should still run then functions', () => {
-            return new Linker(Promise.resolve(rand)).then(res => {
-                res.should.equal(rand);
-            });
-        });
-
-    });
-
-    describe('catch', () => {
-
-        it('should still run catch statements with then statements', done => {
-            return new Linker(Promise.reject(rand)).then(res => {
-                done(defaultErr);
-            }, err => {
-                err.should.equal(rand);
-                done();
-            }).catch(err => {
-                done(err);
-            });
-        });
-
-        it('should still run catch statements standalone', () => {
-            return new Linker(Promise.reject(rand)).catch(res => {
-                res.should.equal(rand);
-            });
-        });
-
-    });
-
-    describe('parse', () => {
-
-        it('should parse in place of then', () => {
-            return new Linker(Promise.resolve(data.unparsed)).parse(res => {
-                res.should.deep.equal(data.parsed);
-            });
-        });
-
-        it('should parse as a chain before then', () => {
-            return new Linker(Promise.resolve(data.unparsed)).parse().then(res => {
-                res.should.deep.equal(data.parsed);
-            });
-        });
-
-        it('should be able to parse a circularly referenced object', () => {
-            expectedParts = ['/entries?', 'include=10', 'limit=1', `sys.id=${entryId}`];
-            return reader.getEntryById(entryId).parse(entry => {
-                let nested = entry.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref;
-                nested.id.should.equal(entryId);
-                nested.should.not.have.property('sys');
-            });
-        });
-
-        it('should fail to parse a bad object as a chain', done => {
-            return new Linker(Promise.resolve(data.badparse)).parse().then(data => {
-                done(defaultErr);
-            }, err => {
-                err.message.should.be.a('string');
-                done();
-            }).catch(err => {
-                done(err);
-            });
-        });
-
-        it('should fail to parse a bad object in place of then', done => {
-            return new Linker(Promise.resolve(data.badparse)).parse(data => {
-                done(defaultErr);
-            }, err => {
-                err.message.should.be.a('string');
-                done();
-            }).catch(err => {
-                done(err);
-            });
         });
 
     });
