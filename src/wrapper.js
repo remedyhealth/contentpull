@@ -1,8 +1,8 @@
 'use strict';
 
 const contentful = require('contentful');
-const parse = require('./parser');
 const ReaderError = require('./error');
+const defaultParsers = require('./defaultParsers');
 const cloneDeep = require('lodash.clonedeep');
 const emptyFn = a => a;
 
@@ -14,11 +14,28 @@ class Wrapper {
      * @param {String} accesstoken - The access token provided by contentful.
      * @param {JSON} config - The configuration object.
      * @param {Bool=} config.preview - Whether or not to use the preview mode, or the default host.
+     * @param {Object=} config.parsers - The parser objects that can be overwritten.
+     * @param {function=} config.parsers.Space - The space parser.
+     * Accepts the space object and the parse instance.
+     * Should return the cleaned space object.
+     * @param {function=} config.parsers.Entry - The entry parser.
+     * Accepts the entry object and the parse instance.
+     * Should return the cleaned entry object.
+     * @param {function=} config.parsers.Asset - The asset parser.
+     * Accepts the asset object and the parse instance.
+     * Should return the cleaned asset object.
+     * @param {function=} config.parsers.Array - The array parser.
+     * Accepts the array object and the parse instance.
+     * Should return the cleaned array object.
+     * @param {function=} config.parsers.Link - The link parser.
+     * Accepts the link object and the parse instance.
+     * Should return the cleaned link object.
      */
     constructor(space, accesstoken, config) {
 
         // make sure config is set to SOMETHING...
         config = config || {};
+        config.parsers = config.parsers || {};
 
         /**
          * Whether or not the client is set up for preview.
@@ -30,20 +47,7 @@ class Wrapper {
          * parser configuration which is key(String) => value(function) pairs.
          * @type {Object}
          */
-        this._parsers = {
-            space: (space, parse) => {
-                return space;
-            },
-            entry: (entry, parse) => {
-                return entry;
-            },
-            asset: (space, parse) => {
-                return asset;
-            },
-            array: (array, parse) => {
-                return array;
-            }
-        };
+        this._parsers = Object.assign(defaultParsers, config.parsers);
 
         /**
          * The contentful client.
@@ -67,6 +71,7 @@ class Wrapper {
      */
     _link(o) {
         o.parse = this._parse;
+        o.instance = this;
         return o;
     }
 
@@ -87,7 +92,7 @@ class Wrapper {
 
         return this.then(obj => {
             try {
-                return then(parse.it(cloneDeep(obj)));
+                return then(this.instance._createParseTunnel(this.instance)(cloneDeep(obj)));
             } catch (e) {
                 if (error) {
                     return error(e);
@@ -96,6 +101,26 @@ class Wrapper {
                 }
             }
         });
+    }
+
+    /**
+     * Creates a parsing tunnel that loops recursively through object to parse.
+     * @param {Wrapper} instance - An instance of the wrapper.
+     * @returns {function} The function that will iterate over all objects.
+     */
+    _createParseTunnel(instance) {
+        const alreadyParsed = [];
+        const parseInstance = obj => {
+            if (obj && obj.sys && obj.sys.type && instance._parsers[obj.sys.type] && alreadyParsed.indexOf(obj) === -1) {
+                const parsed = instance._parsers[obj.sys.type](obj, parseInstance);
+                alreadyParsed.push(parsed);
+                return parsed;
+            }
+
+            return obj;
+        };
+
+        return parseInstance;
     }
 
     /**
@@ -150,10 +175,20 @@ class Wrapper {
     _getObject(params, isAsset) {
         params = params || {};
         params.limit = 1;
-        return this._link(
-            new Promise((resolve, reject) => this._getObjects(params, isAsset)
-                .then(objects => (objects && objects.total > 0) ? resolve(objects.items[0]) : reject(new ReaderError('Entry not found.')),
-                    err => reject(err))));
+
+        const promise = new Promise((resolve, reject) => {
+            this._getObjects(params, isAsset).then(objects => {
+                if (objects && objects.total > 0) {
+                    return resolve(objects.items[0]);
+                } else {
+                    return reject(new ReaderError('Entry not found.'));
+                }
+            },
+
+            err => reject(err));
+        });
+
+        return this._link(promise);
     }
 
     /**
