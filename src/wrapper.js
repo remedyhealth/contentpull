@@ -105,19 +105,19 @@ class Wrapper {
 
     /**
      * Creates a parsing tunnel that loops recursively through object to parse.
-     * @param {Wrapper} instance - An instance of the wrapper.
+     * @param {Wrapper} $this - An instance of the wrapper.
      * @returns {function} The function that will iterate over all objects.
      */
-    _createParseTunnel(instance) {
-        const alreadyParsed = [];
-        const parseInstance = obj => {
-            if (obj && obj.sys && obj.sys.type && instance._parsers[obj.sys.type] && alreadyParsed.indexOf(obj) === -1) {
-                const parsed = instance._parsers[obj.sys.type](obj, parseInstance);
-                alreadyParsed.push(parsed);
+    _createParseTunnel($this) {
+        const done = [];
+        const parseInstance = o => {
+            if (o && o.sys && o.sys.type && $this._parsers[o.sys.type] && done.indexOf(o) === -1) {
+                const parsed = $this._parsers[o.sys.type](o, parseInstance);
+                done.push(parsed);
                 return parsed;
             }
 
-            return obj;
+            return o;
         };
 
         return parseInstance;
