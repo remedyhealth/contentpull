@@ -1,3 +1,5 @@
+'use strict';
+
 let reader;
 try {
     reader = require('./src/wrapper');
