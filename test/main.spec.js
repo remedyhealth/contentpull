@@ -137,6 +137,40 @@ describe('Wrapper', () => {
         });
 
     });
+    
+    describe('Wrapper:_createParseTunnel', () => {
+
+        it('should parse a single object', () => {
+            const parsed = reader._createParseTunnel(reader)(cloneDeep(data.unparsed));
+            parsed.should.deep.equal(data.parsed);
+        });
+
+        it('should parse an array', () => {
+            const parsed = reader._createParseTunnel(reader)(cloneDeep(data.unparsedArr));
+            parsed.should.deep.equal(data.parsedArr);
+        });
+
+        it('should not interfere with regular objects', () => {
+            const obj = {
+                test: {
+                    is: true
+                }
+            };
+            const parsed = reader._createParseTunnel(reader)(obj);
+            parsed.should.deep.equal(obj);
+        });
+
+        it('should parse a single object', () => {
+            const parsed = reader._createParseTunnel(reader)(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+
+        it('should parse an array', () => {
+            const parsed = reader._createParseTunnel(reader)(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+
+    });
 
     describe('_link:parse', () => {
 
@@ -472,65 +506,6 @@ describe('Wrapper', () => {
     });
 
 });
-
-// @todo - parser has been refactored
-//describe('Parser', () => {
-//
-//    describe('one', () => {
-//
-//        it('should parse a single object', () => {
-//            const parsed = Parser.one(cloneDeep(data.unparsed));
-//            parsed.should.deep.equal(data.parsed);
-//        });
-//
-//        it('should reject an array', () => {
-//            const parsed = Parser.one(cloneDeep(data.unparsedArr));
-//            parsed.should.deep.equal(data.unparsedArr);
-//        });
-//
-//    });
-//
-//    describe('all', () => {
-//
-//        it('should parse an array', () => {
-//            const parsed = Parser.all(cloneDeep(data.unparsedArr));
-//            parsed.should.deep.equal(data.parsedArr);
-//        });
-//
-//        it('should put a single object in the form of a parsed array', () => {
-//            const parsed = Parser.all(cloneDeep(data.unparsed));
-//            parsed.meta.should.have.property('total').that.equals(1);
-//            parsed.should.have.property('items').that.is.an('array');
-//            parsed.items[0].should.deep.equal(data.parsed);
-//        });
-//
-//        it('should not interfere with regular objects', () => {
-//            const obj = {
-//                test: {
-//                    is: true
-//                }
-//            };
-//            const parsed = Parser.all(obj);
-//            parsed.should.deep.equal(obj);
-//        });
-//
-//    });
-//
-//    describe('it', () => {
-//
-//        it('should parse a single object', () => {
-//            const parsed = Parser.it(data.unparsed);
-//            parsed.should.deep.equal(data.parsed);
-//        });
-//
-//        it('should parse an array', () => {
-//            const parsed = Parser.it(data.unparsed);
-//            parsed.should.deep.equal(data.parsed);
-//        });
-//
-//    });
-//
-//});
 
 describe('Error', () => {
 
