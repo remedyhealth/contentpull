@@ -32,7 +32,7 @@ data before it is used in your application.
 
 ### Promises
 
-The wrapper (along with contentful.js) uses a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)-driven architecture. All requests will responde with a promise.
+The wrapper (along with contentful.js) uses a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)-driven architecture. All requests will respond with a promise.
 
 Assuming we are in the context of our `DataAccessLayer` from the code-block above, the following can be used to get an entry, where `entryId` is the id of the entry in contentful.
 
@@ -52,7 +52,7 @@ getEntryById(entryId) {
 This is where **content-reader** becomes extremely useful. The function in the above example
 would simply return example what **contentful.js** would return from an entry request.
 
-This package supports parsing your content to be better aquanted for your use within your application.
+This package supports parsing your content specific for your use within your application.
 **Content-reader** will always return an "augmented" promise, in that it supports an additional feature to
 `parse` the data before resolving. This can be achieved in a number of ways:
 
@@ -70,7 +70,7 @@ reader.getEntryById(entryId).parse().then((entry) => {
 #### Replacement
 
 With the replacement method, you can replace the `.then()` function with `.parse()`
-and it will functionaly work the same, only this time you will have parsed data.
+and it will functionally work the same, only this time you will have parsed data.
 
 ```
 reader.getEntryById(entryId).parse((entry) => {
