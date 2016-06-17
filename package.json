@@ -1,7 +1,7 @@
 {
   "name": "content-pull",
   "version": "0.1.8",
-  "description": "",
+  "description": "A contentful.js wrapper that adds simply sugar functions and the ability to parse responses.",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha",
