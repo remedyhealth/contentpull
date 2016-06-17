@@ -41,7 +41,8 @@ var parsers = {
 
 // The instance of the puller
 var puller = new Contentpull(spaceid, accessToken, {
-    preview: isPreview
+    preview: isPreview,
+    parsers: parsers
 });
 ```
 
