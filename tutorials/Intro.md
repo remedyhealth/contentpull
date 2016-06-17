@@ -38,7 +38,7 @@ Assuming we are in the context of our `DataAccessLayer` from the code-block abov
 
 ```javascript
 getEntryById(entryId) {
-    return this._pull.getEntryById(entryId).then((entry) => {
+    return this.getEntryById(entryId).then((entry) => {
         // assuming there is a title attribute
         console.log(entry.fields.title);
     }, function (err) {
