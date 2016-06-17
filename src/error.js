@@ -6,6 +6,6 @@ const ExtendableError = require('./utils/extendable-error');
  * A customized error object.
  * @extends ExtendableError
  */
-class ReaderError extends ExtendableError {};
+class PullerError extends ExtendableError {};
 
-module.exports = ReaderError;
+module.exports = PullerError;

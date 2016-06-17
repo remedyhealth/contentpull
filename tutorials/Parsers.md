@@ -71,7 +71,7 @@ Running through the parser, now the object will be considerably cleaner
 Just be sure that you assign this parser in the configuration:
 
 ```Javascript
-const reader = new ContentReader('spaceid', 'apikey', {
+const puller = new Contentpull('spaceid', 'apikey', {
     parsers: {
         'Array': arrayParser
     }

@@ -1,5 +1,5 @@
 {
-  "name": "@rhm/content-reader",
+  "name": "content-pull",
   "version": "0.1.8",
   "description": "",
   "main": "index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/remedyhealth/content-reader.git"
+    "url": "git+https://github.com/remedyhealth/content-pull.git"
   },
   "author": "",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/remedyhealth/content-reader/issues"
+    "url": "https://github.com/remedyhealth/content-pull/issues"
   },
-  "homepage": "https://github.com/remedyhealth/content-reader#readme",
+  "homepage": "https://github.com/remedyhealth/content-pull#readme",
   "dependencies": {
     "contentful": "^3.3.6",
     "lodash.clonedeep": "^4.3.2"

@@ -1,7 +1,7 @@
 'use strict';
 
 const contentful = require('contentful');
-const ReaderError = require('./error');
+const PullerError = require('./error');
 const defaultParsers = require('./defaultParsers');
 const cloneDeep = require('lodash.clonedeep');
 const emptyFn = a => a;
@@ -9,7 +9,7 @@ const emptyFn = a => a;
 class Wrapper {
 
     /**
-     * Creates a new instance of the content-reader, which wraps around contentful.js
+     * Creates a new instance of content-pull, which wraps around contentful.js
      * @param {String} space - The space to read from.
      * @param {String} accesstoken - The access token provided by contentful.
      * @param {JSON} config - The configuration object.
@@ -67,7 +67,7 @@ class Wrapper {
      * Extends `Promise` to allow a parsing before resolving.
      * @param {Promise} o - The original promise instance.
      * @returns {Promise} The promise instance.
-     * @example reader.getSomething(params).parse(function(res) { ... });
+     * @example puller.getSomething(params).parse(function(res) { ... });
      */
     _link(o) {
         o.parse = this._parse;
@@ -82,10 +82,10 @@ class Wrapper {
      *
      * @example
      * // Get entry with parse callback
-     * reader.getEntryById('entry-id').parse(res => { ... });
+     * puller.getEntryById('entry-id').parse(res => { ... });
      *
      * // Get entry with parse chain
-     * reader.getEntryById('entry-id').parse().then(res => { ... });
+     * puller.getEntryById('entry-id').parse().then(res => { ... });
      */
     _parse(then, error) {
         then = then || emptyFn;
@@ -181,7 +181,7 @@ class Wrapper {
                 if (objects && objects.total > 0) {
                     return resolve(objects.items[0]);
                 } else {
-                    return reject(new ReaderError('Entry not found.'));
+                    return reject(new PullerError('Entry not found.'));
                 }
             },
 
