@@ -2,14 +2,14 @@ This module is meant to be interfaced in some was as a replacement for your **Da
 
 ### Quick Start
 
-**content-reader** was meant to be extended into your DAL. Consider the following example
+**content-pull** was meant to be extended into your DAL. Consider the following example
 
 ```javascript
-const content-reader = require('content-reader');
+const Contentpull = require('content-pull');
 
-class DataAccessLayer extends content-reader {
+class DataAccessLayer extends Contentpull {
     constructor() {
-        this._reader = super(
+        this._puller = super(
             'space-id',
             'api-key'
         );
@@ -27,7 +27,7 @@ class DataAccessLayer extends content-reader {
 module.exports = DataAccessLayer;
 ```
 
-The above example shows how the content-reader can be used to simplify and parse all
+The above example shows how content-pull can be used to simplify and parse all
 data before it is used in your application.
 
 ### Promises
@@ -36,9 +36,9 @@ The wrapper (along with contentful.js) uses a [Promise](https://developer.mozill
 
 Assuming we are in the context of our `DataAccessLayer` from the code-block above, the following can be used to get an entry, where `entryId` is the id of the entry in contentful.
 
-```
+```javascript
 getEntryById(entryId) {
-    return this._reader.getEntryById(entryId).then((entry) => {
+    return this._pull.getEntryById(entryId).then((entry) => {
         // assuming there is a title attribute
         console.log(entry.fields.title);
     }, function (err) {
@@ -49,11 +49,11 @@ getEntryById(entryId) {
 
 ### Parsing
 
-This is where **content-reader** becomes extremely useful. The function in the above example
+This is where **content-pull** becomes extremely useful. The function in the above example
 would simply return example what **contentful.js** would return from an entry request.
 
 This package supports parsing your content to be better aquanted for your use within your application.
-**Content-reader** will always return an "augmented" promise, in that it supports an additional feature to
+**content-pull** will always return an "augmented" promise, in that it supports an additional feature to
 `parse` the data before resolving. This can be achieved in a number of ways:
 
 #### Chaining
@@ -61,8 +61,8 @@ This package supports parsing your content to be better aquanted for your use wi
 This method uses the parser as a chain that runs before resolving.
 With this approach, you can have the content resolved, as part of the promise-chain.
 
-```
-reader.getEntryById(entryId).parse().then((entry) => {
+```javascript
+puller.getEntryById(entryId).parse().then((entry) => {
     // entry is now parsed
 });
 ```
@@ -72,8 +72,8 @@ reader.getEntryById(entryId).parse().then((entry) => {
 With the replacement method, you can replace the `.then()` function with `.parse()`
 and it will functionaly work the same, only this time you will have parsed data.
 
-```
-reader.getEntryById(entryId).parse((entry) => {
+```javascript
+puller.getEntryById(entryId).parse((entry) => {
     // entry is now parsed
 });
 ```

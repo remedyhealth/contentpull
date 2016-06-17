@@ -1,9 +1,11 @@
-var reader;
+'use strict';
+
+let puller;
 try {
-    reader = require('./src/wrapper');
+    puller = require('./src/wrapper');
 } catch (err) {
     console.log(err);
     process.exit(1);
 }
 
-module.exports = reader;
+module.exports = puller;
