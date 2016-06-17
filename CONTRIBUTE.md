@@ -81,5 +81,5 @@ an issue number.
   updated in two weeks are subject to be closed.
 
 [org]: https://github.com/remedyhealth
-[repo]: https://github.com/remedyhealth/content-reader
-[newissue]: https://github.com/remedyhealth/content-reader/issues/new
+[repo]: https://github.com/remedyhealth/content-pull
+[newissue]: https://github.com/remedyhealth/content-pull/issues/new

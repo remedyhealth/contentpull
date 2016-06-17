@@ -1,48 +1,134 @@
 'use strict';
 
 const contentful = require('contentful');
-const Linker = require('./linker');
-const ReaderError = require('./error');
+const PullerError = require('./error');
+const defaultParsers = require('./defaultParsers');
+const cloneDeep = require('lodash.clonedeep');
+const emptyFn = a => a;
 
 class Wrapper {
 
     /**
-     * Creates a new instance of the content-reader, which wraps around contentful.js
+     * Creates a new instance of content-pull, which wraps around contentful.js
      * @param {String} space - The space to read from.
      * @param {String} accesstoken - The access token provided by contentful.
-     * @param {Bool=} preview - Whether or not to use the preview mode, or the default host.
+     * @param {JSON} config - The configuration object.
+     * @param {Bool=} config.preview - Whether or not to use the preview mode, or the default host.
+     * @param {Object=} config.parsers - The parser objects that can be overwritten.
+     * @param {function=} config.parsers.Space - The space parser.
+     * Accepts the space object and the parse instance.
+     * Should return the cleaned space object.
+     * @param {function=} config.parsers.Entry - The entry parser.
+     * Accepts the entry object and the parse instance.
+     * Should return the cleaned entry object.
+     * @param {function=} config.parsers.Asset - The asset parser.
+     * Accepts the asset object and the parse instance.
+     * Should return the cleaned asset object.
+     * @param {function=} config.parsers.Array - The array parser.
+     * Accepts the array object and the parse instance.
+     * Should return the cleaned array object.
+     * @param {function=} config.parsers.Link - The link parser.
+     * Accepts the link object and the parse instance.
+     * Should return the cleaned link object.
      */
-    constructor(space, accesstoken, preview) {
+    constructor(space, accesstoken, config) {
 
-        let params = {
-            space: space,
-            accessToken: accesstoken,
-            host: (preview) ? 'preview.contentful.com' : null,
-        };
+        // make sure config is set to SOMETHING...
+        config = config || {};
+        config.parsers = config.parsers || {};
 
         /**
          * Whether or not the client is set up for preview.
          * @type {Bool}
          */
-        this.isPreview = preview;
+        this.isPreview = !!config.preview;
+
+        /**
+         * parser configuration which is key(String) => value(function) pairs.
+         * @type {Object}
+         */
+        this._parsers = Object.assign(defaultParsers, config.parsers);
 
         /**
          * The contentful client.
          * @type {CDAClient}
          * @see https://contentful.github.io/contentful.js/contentful/3.3.0/CDAClient.html
          */
-        this.client = contentful.createClient(params);
+        this.client = contentful.createClient({
+            space: space,
+            accessToken: accesstoken,
+            host: (config.preview) ? 'preview.contentful.com' : null,
+        });
 
         return this;
     }
 
     /**
+     * Extends `Promise` to allow a parsing before resolving.
+     * @param {Promise} o - The original promise instance.
+     * @returns {Promise} The promise instance.
+     * @example puller.getSomething(params).parse(function(res) { ... });
+     */
+    _link(o) {
+        o.parse = this._parse;
+        o.instance = this;
+        return o;
+    }
+
+    /**
+     * Parses the response before returning.
+     * @param {function} then - The callback when a successfull response is made.
+     * @param {function} error - The failed callback function.
+     *
+     * @example
+     * // Get entry with parse callback
+     * puller.getEntryById('entry-id').parse(res => { ... });
+     *
+     * // Get entry with parse chain
+     * puller.getEntryById('entry-id').parse().then(res => { ... });
+     */
+    _parse(then, error) {
+        then = then || emptyFn;
+
+        return this.then(obj => {
+            try {
+                return then(this.instance._createParseTunnel(this.instance)(cloneDeep(obj)));
+            } catch (e) {
+                if (error) {
+                    return error(e);
+                } else {
+                    throw e;
+                }
+            }
+        });
+    }
+
+    /**
+     * Creates a parsing tunnel that loops recursively through object to parse.
+     * @param {Wrapper} $this - An instance of the wrapper.
+     * @returns {function} The function that will iterate over all objects.
+     */
+    _createParseTunnel($this) {
+        const done = [];
+        const parseInstance = o => {
+            if (o && o.sys && o.sys.type && $this._parsers[o.sys.type] && done.indexOf(o) === -1) {
+                const parsed = $this._parsers[o.sys.type](o, parseInstance);
+                done.push(parsed);
+                return parsed;
+            }
+
+            return o;
+        };
+
+        return parseInstance;
+    }
+
+    /**
      * Returns the space for the client.
      * @returns {Promise} The promise instance.
-     * @todo - Need to add the Linker to this and parse properly.
      */
     getSpace() {
-        return new Linker(this.client.getSpace());
+        return this._link(this.client.getSpace());
     }
 
     /**
@@ -50,12 +136,12 @@ class Wrapper {
      * @param {JSON} params - The params to pass to contentful.
      * @param {Bool} isAsset - Whether or not the object is an asset.
      * If false, will look for entries.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
 
-        return new Linker(fn.call(this, Object.assign({
+        return this._link(fn.call(this, Object.assign({
             include: 10,
         }, params)));
     }
@@ -63,7 +149,7 @@ class Wrapper {
     /**
      * Returns a collection of entries.
      * @param {JSON} params - The params to pass to contentful.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     getEntries(params) {
         return this._getObjects(params);
@@ -72,7 +158,7 @@ class Wrapper {
     /**
      * Returns a collection of assets.
      * @param {JSON} params - The params to pass to contentful.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     getAssets(params) {
         return this._getObjects(params, true);
@@ -83,24 +169,32 @@ class Wrapper {
      * @param {JSON} params - The params to pass to contentful.
      * @param {Bool} isAsset - Whether or not the object is an asset.
      * If false, will look for entries.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      * @todo - Not very readable... (thanks jscs!)
      */
     _getObject(params, isAsset) {
         params = params || {};
         params.limit = 1;
-        return new Linker(
-            new Promise((resolve, reject) => this._getObjects(params, isAsset)
-            .then(objects => (objects && objects.total > 0)
-                  ? resolve(objects.items[0])
-                  : reject(new ReaderError('Entry not found.')),
-                err => reject(err))));
+
+        const promise = new Promise((resolve, reject) => {
+            this._getObjects(params, isAsset).then(objects => {
+                if (objects && objects.total > 0) {
+                    return resolve(objects.items[0]);
+                } else {
+                    return reject(new PullerError('Entry not found.'));
+                }
+            },
+
+            err => reject(err));
+        });
+
+        return this._link(promise);
     }
 
     /**
      * Returns an individual entry.
      * @param {JSON} params - The params to pass to contentful.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     getEntry(params) {
         return this._getObject(params);
@@ -109,7 +203,7 @@ class Wrapper {
     /**
      * Returns an individual asset.
      * @param {JSON} params - The params to pass to contentful.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     getAsset(params) {
         return this._getObject(params, true);
@@ -120,7 +214,7 @@ class Wrapper {
      * @param {JSON} params - The params to pass to contentful.
      * @param {Bool} isAsset - Whether or not the object is an asset.
      * If false, will look for entries.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     _getObjectById(id, params, isAsset) {
         params = params || {};
@@ -143,7 +237,7 @@ class Wrapper {
     /**
      * Returns an individual entry by id.
      * @param {String} id - The id.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     getEntryById(id, params) {
         return this._getObjectById(id, params);
@@ -152,7 +246,7 @@ class Wrapper {
     /**
      * Returns an individual asset by id.
      * @param {String} id - The id.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     getAssetById(id, params) {
         return this._getObjectById(id, params, true);
@@ -164,7 +258,7 @@ class Wrapper {
      * @param {JSON} fields - The fields to search by using key => value.
      * @param {JSON} otherParams - Any params that need to override for extra criteria.
      * @param {Bool} onlyOne - Whether or not one is expected, or more.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     _findByType(contentType, fields, otherParams, onlyOne) {
         let params = {
@@ -187,7 +281,7 @@ class Wrapper {
      * @param {String} contentType - The type of content to query.
      * @param {JSON} fields - The fields to search by using key => value.
      * @param {JSON} otherParams - Any params that need to override for extra criteria.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     findEntryByType(contentType, fields, otherParams) {
         return this._findByType(contentType, fields, otherParams, true);
@@ -198,7 +292,7 @@ class Wrapper {
      * @param {String} contentType - The type of content to query.
      * @param {JSON} fields - The fields to search by using key => value.
      * @param {JSON} otherParams - Any params that need to override for extra criteria.
-     * @returns {Linker} The promise instance.
+     * @returns {Promise} The promise instance.
      */
     findEntriesByType(contentType, fields, otherParams) {
         return this._findByType(contentType, fields, otherParams);

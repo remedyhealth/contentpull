@@ -6,9 +6,7 @@ chai.should();
 
 // The stars of the show!
 const Wrapper = require('../src/wrapper');
-const Linker = require('../src/linker');
-const Parser = require('../src/parser');
-const ReaderError = require('../src/error');
+const PullerError = require('../src/error');
 
 // Third-parties
 const cloneDeep = require('lodash.clonedeep');
@@ -34,9 +32,9 @@ const rand = Date.now();
 const defaultErr = new Error("Expected an error...");
 let baseUrl = '/spaces/' + spaceId + '/';
 let expectedParts = [];
-let reader;
+let puller;
 
-// create reader and mock server to use for tests
+// create puller and mock server to use for tests
 before(() => {
 
     mitm.on('request', (req, res) => {
@@ -72,15 +70,9 @@ before(() => {
         }
     });
 
-    reader = new Wrapper(
+    puller = new Wrapper(
         spaceId,
         'prodkey');
-
-    // Throwaway
-    new Wrapper(
-        spaceId,
-        'prevkey',
-        true);
 });
 
 // clean up the mock server
@@ -88,13 +80,150 @@ after(() => {
     //xhr.restore();
 });
 
+describe('Puller', () => {
+
+    describe('isPreview', () => {
+
+        it('should return true when in preview mode', () => {
+            const previewPuller = new Wrapper(
+                spaceId,
+                'prevkey', {
+                    preview: true
+                }
+            );
+            
+            previewPuller.isPreview.should.be.true;
+        });
+
+        it('should return false when in production mode', () => {
+            puller.isPreview.should.be.false;
+        });
+
+    });
+
+});
+
 describe('Wrapper', () => {
+    
+    
+
+    describe('_link:then', () => {
+
+        it('should still run then functions', () => {
+            return puller._link(Promise.resolve(rand)).then(res => {
+                res.should.equal(rand);
+            });
+        });
+
+    });
+
+    describe('_link:catch', () => {
+
+        it('should still run catch statements with then statements', done => {
+            return puller._link(Promise.reject(rand)).then(res => {
+                done(defaultErr);
+            }, err => {
+                err.should.equal(rand);
+                done();
+            }).catch(err => {
+                done(err);
+            });
+        });
+
+        it('should still run catch statements standalone', () => {
+            return puller._link(Promise.reject(rand)).catch(res => {
+                res.should.equal(rand);
+            });
+        });
+
+    });
+    
+    describe('Wrapper:_createParseTunnel', () => {
+
+        it('should parse a single object', () => {
+            const parsed = puller._createParseTunnel(puller)(cloneDeep(data.unparsed));
+            parsed.should.deep.equal(data.parsed);
+        });
+
+        it('should parse an array', () => {
+            const parsed = puller._createParseTunnel(puller)(cloneDeep(data.unparsedArr));
+            parsed.should.deep.equal(data.parsedArr);
+        });
+
+        it('should not interfere with regular objects', () => {
+            const obj = {
+                test: {
+                    is: true
+                }
+            };
+            const parsed = puller._createParseTunnel(puller)(obj);
+            parsed.should.deep.equal(obj);
+        });
+
+        it('should parse a single object', () => {
+            const parsed = puller._createParseTunnel(puller)(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+
+        it('should parse an array', () => {
+            const parsed = puller._createParseTunnel(puller)(data.unparsed);
+            parsed.should.deep.equal(data.parsed);
+        });
+
+    });
+
+    describe('_link:parse', () => {
+
+        it('should parse in place of then', () => {
+            return puller._link(Promise.resolve(data.unparsed)).parse(res => {
+                res.should.deep.equal(data.parsed);
+            });
+        });
+
+        it('should parse as a chain before then', () => {
+            return puller._link(Promise.resolve(data.unparsed)).parse().then(res => {
+                res.should.deep.equal(data.parsed);
+            });
+        });
+
+        it('should be able to parse a circularly referenced object', () => {
+            expectedParts = ['/entries?', 'include=10', 'limit=1', `sys.id=${entryId}`];
+            return puller.getEntryById(entryId).parse(entry => {
+                let nested = entry.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref;
+                nested.id.should.equal(entryId);
+                nested.should.not.have.property('sys');
+            });
+        });
+
+        it('should fail to parse a bad object as a chain', done => {
+            return puller._link(Promise.resolve(data.badparse)).parse().then(data => {
+                done(defaultErr);
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            }).catch(err => {
+                done(err);
+            });
+        });
+
+        it('should fail to parse a bad object in place of then', done => {
+            return puller._link(Promise.resolve(data.badparse)).parse(data => {
+                done(defaultErr);
+            }, err => {
+                err.message.should.be.a('string');
+                done();
+            }).catch(err => {
+                done(err);
+            });
+        });
+
+    });
 
     describe('getSpace', () => {
 
         it('should return data about the registered space', () => {
             expectedParts = [];
-            return reader.getSpace().then(res => {
+            return puller.getSpace().then(res => {
                 res.sys.id.should.equal(mockData.space.sys.id);
             });
         });
@@ -105,7 +234,7 @@ describe('Wrapper', () => {
 
         it('should return all entries when no criteria is passed', () => {
             expectedParts = ['/entries?', 'include=10'];
-            return reader.getEntries().then(res => {
+            return puller.getEntries().then(res => {
                 res.should.have.property('total');
                 res.total.should.be.above(0);
             });
@@ -113,7 +242,7 @@ describe('Wrapper', () => {
 
         it('should return entries that match criteria specified', () => {
             expectedParts = ['/entries?', 'include=10', `content_type=${entryType}`];
-            return reader.getEntries({
+            return puller.getEntries({
                 content_type: entryType
             }).then(res => {
                 res.should.have.property('items');
@@ -124,7 +253,7 @@ describe('Wrapper', () => {
 
         it('should return nothing if no entries match', done => {
             expectedParts = ['/entries?', 'include=10', `content_type=${rejectedType}`];
-            return reader.getEntries({
+            return puller.getEntries({
                 content_type: rejectedType
             }).then(res => {
                 done(defaultErr);
@@ -142,7 +271,7 @@ describe('Wrapper', () => {
 
         it('should return all assets when no criteria is passed', () => {
             expectedParts = ['/assets?', 'include=10'];
-            return reader.getAssets().then(res => {
+            return puller.getAssets().then(res => {
                 res.should.have.property('total');
                 res.total.should.be.above(0);
             });
@@ -150,7 +279,7 @@ describe('Wrapper', () => {
 
         it('should return assets that match criteria specified', () => {
             expectedParts = ['/assets?', 'include=10', `fields.file.contentType=${assetType}`];
-            return reader.getAssets({
+            return puller.getAssets({
                 'fields.file.contentType': assetType
             }).then(res => {
                 res.should.have.property('items');
@@ -161,7 +290,7 @@ describe('Wrapper', () => {
 
         it('should return nothing if no assets match', done => {
             expectedParts = ['/assets?', 'include=10', `fields.file.contentType=${rejectedAsset}`];
-            return reader.getAssets({
+            return puller.getAssets({
                 'fields.file.contentType': rejectedAsset
             }).then(res => {
                 done(defaultErr);
@@ -178,14 +307,14 @@ describe('Wrapper', () => {
 
         it('should return first entry when no criteria is passed', () => {
             expectedParts = ['/entries?', 'include=10', 'limit=1'];
-            return reader.getEntry().then(res => {
+            return puller.getEntry().then(res => {
                 res.sys.should.have.property('type', 'Entry');
             });
         });
 
         it('should return first entry that matches criteria specified', () => {
             expectedParts = ['/entries?', 'include=10', 'content_type', 'limit=1', `content_type=${entryType}`];
-            return reader.getEntry({
+            return puller.getEntry({
                 content_type: entryType
             }).then(res => {
                 res.sys.should.have.property('type', 'Entry');
@@ -194,7 +323,7 @@ describe('Wrapper', () => {
 
         it('should return nothing if no entries match', done => {
             expectedParts = ['/entries?', 'include=10', 'limit=1', `content_type=${rejectedType}`];
-            return reader.getEntry({
+            return puller.getEntry({
                 content_type: rejectedType
             }).then(res => {
                 done(defaultErr);
@@ -211,7 +340,7 @@ describe('Wrapper', () => {
 
         it('should return first asset when no criteria is passed', () => {
             expectedParts = ['/assets?', 'include=10', 'limit=1'];
-            return reader.getAsset().then(res => {
+            return puller.getAsset().then(res => {
                 res.sys.should.have.property('type', 'Asset');
             });
         });
@@ -223,7 +352,7 @@ describe('Wrapper', () => {
                 'limit=1',
                 `fields.file.contentType=${assetType}`,
             ];
-            return reader.getAsset({
+            return puller.getAsset({
                 'fields.file.contentType': assetType
             }).then(res => {
                 res.sys.should.have.property('type', 'Asset');
@@ -237,7 +366,7 @@ describe('Wrapper', () => {
                 'limit=1',
                 `fields.file.contentType=${rejectedAsset}`,
             ];
-            return reader.getAsset({
+            return puller.getAsset({
                 'fields.file.contentType': rejectedAsset
             }).then(res => {
                 done(defaultErr);
@@ -259,7 +388,7 @@ describe('Wrapper', () => {
                 'limit=1',
                 `sys.id=${entryId}`,
             ];
-            return reader.getEntryById(entryId).then(entry => {
+            return puller.getEntryById(entryId).then(entry => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(entryId);
             });
@@ -276,7 +405,7 @@ describe('Wrapper', () => {
                 'limit=1',
                 `sys.id=${assetId}`,
             ];
-            return reader.getAssetById(assetId).then(entry => {
+            return puller.getAssetById(assetId).then(entry => {
                 entry.sys.should.have.property('id');
                 entry.sys.id.should.equal(assetId);
             });
@@ -290,7 +419,7 @@ describe('Wrapper', () => {
                 'include=10',
                 `content_type=${entryType}`,
             ];
-            return reader.getEntriesByType(entryType).then(entries => {
+            return puller.getEntriesByType(entryType).then(entries => {
                 entries.should.have.property('items');
                 entries.total.should.be.above(0);
             });
@@ -306,7 +435,7 @@ describe('Wrapper', () => {
                 'limit=1',
                 `content_type=${entryType}`,
             ];
-            return reader.findEntryByType(entryType).then(res => {
+            return puller.findEntryByType(entryType).then(res => {
                 res.sys.should.have.property('type', 'Entry');
             });
         });
@@ -319,7 +448,7 @@ describe('Wrapper', () => {
                 `content_type=${entryType}`,
                 `fields.title=${entryTitle}`,
             ];
-            return reader.findEntryByType(entryType, {
+            return puller.findEntryByType(entryType, {
                 title: entryTitle
             }).then(res => {
                 res.sys.should.have.property('type', 'Entry');
@@ -335,7 +464,7 @@ describe('Wrapper', () => {
                 `content_type=${entryType}`,
                 `fields.title=${emptyArray}`,
             ];
-            return reader.findEntryByType(entryType, {
+            return puller.findEntryByType(entryType, {
                 title: emptyArray
             }).then(res => {
                 done(defaultErr);
@@ -358,7 +487,7 @@ describe('Wrapper', () => {
                 `content_type=${entryType}`,
                 `fields.title=${entryTitle}`,
             ];
-            return reader.findEntriesByType(entryType, {
+            return puller.findEntriesByType(entryType, {
                 title: entryTitle
             }).then(res => {
                 res.should.have.property('items');
@@ -368,7 +497,7 @@ describe('Wrapper', () => {
 
         it('should return nothing if no entries match', () => {
             expectedParts = ['/entries?', 'include=10', `content_type=${entryType}`, `fields.title=${emptyArray}`];
-            return reader.findEntriesByType(entryType, {
+            return puller.findEntriesByType(entryType, {
                 title: emptyArray
             }).then(res => {
                 res.total.should.equal(0);
@@ -378,154 +507,14 @@ describe('Wrapper', () => {
 
 });
 
-describe('Parser', () => {
-
-    describe('one', () => {
-
-        it('should parse a single object', () => {
-            const parsed = Parser.one(cloneDeep(data.unparsed));
-            parsed.should.deep.equal(data.parsed);
-        });
-
-        it('should reject an array', () => {
-            const parsed = Parser.one(cloneDeep(data.unparsedArr));
-            parsed.should.deep.equal(data.unparsedArr);
-        });
-
-    });
-
-    describe('all', () => {
-
-        it('should parse an array', () => {
-            const parsed = Parser.all(cloneDeep(data.unparsedArr));
-            parsed.should.deep.equal(data.parsedArr);
-        });
-
-        it('should put a single object in the form of a parsed array', () => {
-            const parsed = Parser.all(cloneDeep(data.unparsed));
-            parsed.meta.should.have.property('total').that.equals(1);
-            parsed.should.have.property('items').that.is.an('array');
-            parsed.items[0].should.deep.equal(data.parsed);
-        });
-
-        it('should not interfere with regular objects', () => {
-            const obj = {
-                test: {
-                    is: true
-                }
-            };
-            const parsed = Parser.all(obj);
-            parsed.should.deep.equal(obj);
-        });
-
-    });
-
-    describe('it', () => {
-
-        it('should parse a single object', () => {
-            const parsed = Parser.it(data.unparsed);
-            parsed.should.deep.equal(data.parsed);
-        });
-
-        it('should parse an array', () => {
-            const parsed = Parser.it(data.unparsed);
-            parsed.should.deep.equal(data.parsed);
-        });
-
-    });
-
-});
-
-describe('Linker', () => {
-
-    describe('then', () => {
-
-        it('should still run then functions', () => {
-            return new Linker(Promise.resolve(rand)).then(res => {
-                res.should.equal(rand);
-            });
-        });
-
-    });
-
-    describe('catch', () => {
-
-        it('should still run catch statements with then statements', done => {
-            return new Linker(Promise.reject(rand)).then(res => {
-                done(defaultErr);
-            }, err => {
-                err.should.equal(rand);
-                done();
-            }).catch(err => {
-                done(err);
-            });
-        });
-
-        it('should still run catch statements standalone', () => {
-            return new Linker(Promise.reject(rand)).catch(res => {
-                res.should.equal(rand);
-            });
-        });
-
-    });
-
-    describe('parse', () => {
-
-        it('should parse in place of then', () => {
-            return new Linker(Promise.resolve(data.unparsed)).parse(res => {
-                res.should.deep.equal(data.parsed);
-            });
-        });
-
-        it('should parse as a chain before then', () => {
-            return new Linker(Promise.resolve(data.unparsed)).parse().then(res => {
-                res.should.deep.equal(data.parsed);
-            });
-        });
-
-        it('should be able to parse a circularly referenced object', () => {
-            expectedParts = ['/entries?', 'include=10', 'limit=1', `sys.id=${entryId}`];
-            return reader.getEntryById(entryId).parse(entry => {
-                let nested = entry.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref;
-                nested.id.should.equal(entryId);
-                nested.should.not.have.property('sys');
-            });
-        });
-
-        it('should fail to parse a bad object as a chain', done => {
-            return new Linker(Promise.resolve(data.badparse)).parse().then(data => {
-                done(defaultErr);
-            }, err => {
-                err.message.should.be.a('string');
-                done();
-            }).catch(err => {
-                done(err);
-            });
-        });
-
-        it('should fail to parse a bad object in place of then', done => {
-            return new Linker(Promise.resolve(data.badparse)).parse(data => {
-                done(defaultErr);
-            }, err => {
-                err.message.should.be.a('string');
-                done();
-            }).catch(err => {
-                done(err);
-            });
-        });
-
-    });
-
-});
-
 describe('Error', () => {
 
-    describe('ReaderError', () => {
+    describe('PullerError', () => {
 
-        var err = new ReaderError(rand);
+        const err = new PullerError(rand);
 
         it('should be of custom type', () => {
-            err.constructor.name.should.equal('ReaderError');
+            err.constructor.name.should.equal('PullerError');
         });
 
         it('should have a message', () => {
