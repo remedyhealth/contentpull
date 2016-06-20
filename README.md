@@ -4,7 +4,7 @@ A contentful.js wrapper that adds simple functions to handle queries and optiona
 
 ### Reference
 
-See [contentful.js](https://github.com/contentful/contentful.js) for more information as this system wraps around contentful's.
+See [contentful.js](https://github.com/contentful/contentful.js) for more information as that package represents the base of this one.
 
 ### Installation
 

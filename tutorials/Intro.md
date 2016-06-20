@@ -2,7 +2,7 @@ This module is meant to be interfaced in some was as a replacement for your **Da
 
 ### Quick Start
 
-**content-pull** was meant to be extended into your DAL. Consider the following example
+**content-pull** was meant to be extended into your DAL. Consider the following example:
 
 ```javascript
 const Contentpull = require('content-pull');
@@ -27,8 +27,19 @@ class DataAccessLayer extends Contentpull {
 module.exports = DataAccessLayer;
 ```
 
-The above example shows how content-pull can be used to simplify and parse all
+The above example shows how **content-pull** can be used to simplify and parse all
 data before it is used in your application.
+
+Assuming the above file exists in the current directory as `dal.js`, you can use the next example to create an instance of your DAL:
+
+```javascript
+const Dal = require('./dal');
+const dal = new Dal();
+
+dal.getAllPosts().then(posts => {
+    console.log(posts.items.length + " returned from contentful");
+});
+```
 
 ### Promises
 
@@ -38,7 +49,7 @@ Assuming we are in the context of our `DataAccessLayer` from the code-block abov
 
 ```javascript
 getEntryById(entryId) {
-    return super.getEntryById(entryId).then((entry) => {
+    return this.getEntryById(entryId).then((entry) => {
         // assuming there is a title attribute
         console.log(entry.fields.title);
     }, function (err) {
