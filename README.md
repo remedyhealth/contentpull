@@ -24,6 +24,8 @@ Include the package locally in your repository.
 
 ### Basic Usage
 
+> To see an interactive guide, visit our [tonic](https://tonicdev.com/mrsteele/content-pull) notebook.
+
 The puller registers a client for communicating with the server. First create an instance of the puller with the following:
 
 ```javascript
