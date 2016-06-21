@@ -39,7 +39,7 @@ var accessToken = 'abcdefg1234567';
 // If preview is true, contentful will run in preview mode
 var isPreview = false;
 
-// built-in parsers exist, but you can override your own
+// built-in parsers exist, but you can override any of them
 var parsers = {
     // choose the content type parser you want to override
     Array: function (arr, parser) {
