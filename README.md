@@ -4,10 +4,10 @@ A contentful.js wrapper that adds simple functions to handle queries and optiona
 
 ### Status
 
-[![npm](https://img.shields.io/npm/v/content-pull.svg?maxAge=86400&style=flat-square)]()
-[![GitHub commits](https://img.shields.io/github/commits-since/remedyhealth/content-pull/v1.0.0.svg?maxAge=86400&style=flat-square)]()
-[![npm](https://img.shields.io/npm/l/content-pull.svg?maxAge=2592000&style=flat-square)]()
-[![pull requests](https://img.shields.io/badge/pull%20requests-accepting-brightgreen.svg?style=flat-square)]()
+[![npm](https://img.shields.io/npm/v/content-pull.svg?maxAge=86400&style=flat)](https://www.npmjs.com/package/content-pull)
+[![GitHub commits](https://img.shields.io/github/commits-since/remedyhealth/content-pull/v1.0.0.svg?maxAge=86400&style=flat)](https://github.com/remedyhealth/content-pull/commits/master)
+[![npm](https://img.shields.io/npm/l/content-pull.svg?maxAge=2592000&style=flat)](https://raw.githubusercontent.com/remedyhealth/content-pull/master/LICENSE)
+[![pull requests](https://img.shields.io/badge/pull%20requests-accepting-brightgreen.svg?style=flat)](https://github.com/remedyhealth/content-pull/fork)
 
 ### Reference
 
