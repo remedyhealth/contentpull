@@ -1,4 +1,4 @@
-This module is meant to be interfaced in some was as a replacement for your **Data Access Layer (DAL)**.
+This module is meant to be interfaced in some way as a replacement for your **Data Access Layer (DAL)**.
 
 ### Quick Start
 
@@ -8,12 +8,6 @@ This module is meant to be interfaced in some was as a replacement for your **Da
 const Contentpull = require('content-pull');
 
 class DataAccessLayer extends Contentpull {
-    constructor() {
-        this._puller = super(
-            'space-id',
-            'api-key'
-        );
-    }
     
     getAllPosts() {
         return this.getEntriesByType('post').parse();
@@ -34,7 +28,9 @@ Assuming the above file exists in the current directory as `dal.js`, you can use
 
 ```javascript
 const Dal = require('./dal');
-const dal = new Dal();
+
+// NOTE: We recommend you do not hard-code your spaceid or access key.
+const dal = new Dal('space-id', 'api-key');
 
 dal.getAllPosts().then(posts => {
     console.log(posts.items.length + " returned from contentful");
