@@ -1,10 +1,10 @@
 # Content-Pull
 
-This package is a contentful.js wrapper. Use it to assist with getting entires, assets, and resolve nested object in requests.
+A contentful.js wrapper that adds simple functions to handle queries and optionally parses data before resolving promises.
 
 ### Reference
 
-See [contentful.js](https://github.com/contentful/contentful.js) for more information as this system wraps around contentful's.
+See [contentful.js](https://github.com/contentful/contentful.js) for more information as that package represents the base of this one.
 
 ### Installation
 
@@ -29,6 +29,7 @@ var accessToken = 'abcdefg1234567';
 // If preview is true, contentful will run in preview mode
 var isPreview = false;
 
+// built-in parsers exist, but you can override your own
 var parsers = {
     // choose the content type parser you want to override
     Array: function (arr, parser) {
@@ -40,7 +41,8 @@ var parsers = {
 
 // The instance of the puller
 var puller = new Contentpull(spaceid, accessToken, {
-    preview: isPreview
+    preview: isPreview,
+    parsers: parsers
 });
 ```
 

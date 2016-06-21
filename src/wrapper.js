@@ -46,11 +46,12 @@ class Wrapper {
         /**
          * parser configuration which is key(String) => value(function) pairs.
          * @type {Object}
+         * @ignore
          */
         this._parsers = Object.assign(defaultParsers, config.parsers);
 
         /**
-         * The contentful client.
+         * The contentful client created originally by contentful.js.
          * @type {CDAClient}
          * @see https://contentful.github.io/contentful.js/contentful/3.3.0/CDAClient.html
          */
@@ -68,6 +69,7 @@ class Wrapper {
      * @param {Promise} o - The original promise instance.
      * @returns {Promise} The promise instance.
      * @example puller.getSomething(params).parse(function(res) { ... });
+     * @ignore
      */
     _link(o) {
         o.parse = this._parse;
@@ -86,6 +88,7 @@ class Wrapper {
      *
      * // Get entry with parse chain
      * puller.getEntryById('entry-id').parse().then(res => { ... });
+     * @ignore
      */
     _parse(then, error) {
         then = then || emptyFn;
@@ -107,6 +110,7 @@ class Wrapper {
      * Creates a parsing tunnel that loops recursively through object to parse.
      * @param {Wrapper} $this - An instance of the wrapper.
      * @returns {function} The function that will iterate over all objects.
+     * @ignore
      */
     _createParseTunnel($this) {
         const done = [];
@@ -137,6 +141,7 @@ class Wrapper {
      * @param {Bool} isAsset - Whether or not the object is an asset.
      * If false, will look for entries.
      * @returns {Promise} The promise instance.
+     * @ignore
      */
     _getObjects(params, isAsset) {
         let fn = (isAsset) ? this.client.getAssets : this.client.getEntries;
@@ -171,6 +176,7 @@ class Wrapper {
      * If false, will look for entries.
      * @returns {Promise} The promise instance.
      * @todo - Not very readable... (thanks jscs!)
+     * @ignore
      */
     _getObject(params, isAsset) {
         params = params || {};
@@ -215,6 +221,7 @@ class Wrapper {
      * @param {Bool} isAsset - Whether or not the object is an asset.
      * If false, will look for entries.
      * @returns {Promise} The promise instance.
+     * @ignore
      */
     _getObjectById(id, params, isAsset) {
         params = params || {};
@@ -259,6 +266,7 @@ class Wrapper {
      * @param {JSON} otherParams - Any params that need to override for extra criteria.
      * @param {Bool} onlyOne - Whether or not one is expected, or more.
      * @returns {Promise} The promise instance.
+     * @ignore
      */
     _findByType(contentType, fields, otherParams, onlyOne) {
         let params = {

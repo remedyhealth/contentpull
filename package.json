@@ -13,8 +13,8 @@
     "type": "git",
     "url": "git+https://github.com/remedyhealth/content-pull.git"
   },
-  "author": "",
-  "license": "UNLICENSED",
+  "author": "Remedy Health Media <support@remedyhealthmedia.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/remedyhealth/content-pull/issues"
   },
