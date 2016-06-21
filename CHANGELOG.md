@@ -1,3 +1,12 @@
+v1.0.0 - Public Release
+- Enhancements to all documentation (tutorials, readme, and contribute)
+- Enhanced parser system to allow overrides in the config
+- New testing mechnics to stub contentful requests
+- Full coverage!
+- All code properly linted
+- Simplified parsing augmentation
+- Added package commands for testing, linting and documentation
+
 v0.1.8
 - Parser removes unresolved links
 - Adding CHANGELOG.md
