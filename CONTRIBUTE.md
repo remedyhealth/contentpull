@@ -1,6 +1,6 @@
 # How to contribute
 
-Third-party patches are essential for keeping content-pull in a
+Third-party patches are essential for keeping contentpull in a
 steady state of advancement. We want to keep it as easy as possible to
 contribute changes that get things working in your environment. There are
 a few guidelines that we need contributors to follow so that we can have a
@@ -81,5 +81,5 @@ an issue number.
   updated in two weeks are subject to be closed.
 
 [org]: https://github.com/remedyhealth
-[repo]: https://github.com/remedyhealth/content-pull
-[newissue]: https://github.com/remedyhealth/content-pull/issues/new
+[repo]: https://github.com/remedyhealth/contentpull
+[newissue]: https://github.com/remedyhealth/contentpull/issues/new

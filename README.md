@@ -5,12 +5,12 @@ A contentful.js wrapper that adds simple functions to handle queries and optiona
 ### Status
 
 [![codeship](https://img.shields.io/codeship/69d35670-df2d-0133-e854-1ae6aaced788/master.svg?maxAge=2592000&style=flat)](#)
-[![dependencies](https://david-dm.org/remedyhealth/content-pull.svg)](#)
-[![npm](https://img.shields.io/npm/v/content-pull.svg?maxAge=86400&style=flat)](https://www.npmjs.com/package/content-pull)
+[![dependencies](https://david-dm.org/remedyhealth/contentpull.svg)](#)
+[![npm](https://img.shields.io/npm/v/contentpull.svg?maxAge=86400&style=flat)](https://www.npmjs.com/package/contentpull)
 
-[![GitHub commits](https://img.shields.io/github/commits-since/remedyhealth/content-pull/v1.0.0.svg?maxAge=86400&style=flat)](https://github.com/remedyhealth/content-pull/commits/master)
-[![npm](https://img.shields.io/npm/l/content-pull.svg?maxAge=2592000&style=flat)](https://raw.githubusercontent.com/remedyhealth/content-pull/master/LICENSE)
-[![pull requests](https://img.shields.io/badge/pull%20requests-accepting-brightgreen.svg?style=flat)](https://github.com/remedyhealth/content-pull/fork)
+[![GitHub commits](https://img.shields.io/github/commits-since/remedyhealth/contentpull/v1.0.0.svg?maxAge=86400&style=flat)](https://github.com/remedyhealth/contentpull/commits/master)
+[![npm](https://img.shields.io/npm/l/contentpull.svg?maxAge=2592000&style=flat)](https://raw.githubusercontent.com/remedyhealth/contentpull/master/LICENSE)
+[![pull requests](https://img.shields.io/badge/pull%20requests-accepting-brightgreen.svg?style=flat)](https://github.com/remedyhealth/contentpull/fork)
 
 ### Reference
 
@@ -20,17 +20,17 @@ See [contentful.js](https://github.com/contentful/contentful.js) for more inform
 
 Include the package locally in your repository.
 
-`npm install content-pull --save`
+`npm install contentpull --save`
 
 ### Basic Usage
 
-> To see an interactive guide, visit our [tonic](https://tonicdev.com/mrsteele/content-pull) notebook.
+> To see an interactive guide, visit our [tonic](https://tonicdev.com/mrsteele/contentpull) notebook.
 
 The puller registers a client for communicating with the server. First create an instance of the puller with the following:
 
 ```javascript
 // The class
-var Contentpull = require('content-pull');
+var Contentpull = require('contentpull');
 
 // This is your space id (provided by contentful)
 var spaceid = 'space-id';
@@ -60,6 +60,6 @@ var puller = new Contentpull(spaceid, accessToken, {
 
 ### Additional Help
 
-If you are viewing this README online, refer to our [wiki](https://github.com/remedyhealth/content-pull/wiki).
+If you are viewing this README online, refer to our [wiki](https://github.com/remedyhealth/contentpull/wiki).
 
 If you have cloned or downloaded this repo, please refer to the generated JSDOC articles (`npm run build-doc`).

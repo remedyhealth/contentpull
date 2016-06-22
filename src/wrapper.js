@@ -9,7 +9,7 @@ const emptyFn = a => a;
 class Wrapper {
 
     /**
-     * Creates a new instance of content-pull, which wraps around contentful.js
+     * Creates a new instance of contentpull, which wraps around contentful.js
      * @param {String} space - The space to read from.
      * @param {String} accesstoken - The access token provided by contentful.
      * @param {JSON} config - The configuration object.
