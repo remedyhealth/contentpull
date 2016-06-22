@@ -1,4 +1,4 @@
-# ContentPull
+# Contentpull
 
 A contentful.js wrapper that adds simple functions to handle queries and optionally parses data before resolving promises.
 
