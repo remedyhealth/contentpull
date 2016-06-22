@@ -2,10 +2,10 @@ This module is meant to be interfaced in some way as a replacement for your **Da
 
 ### Quick Start
 
-**content-pull** was meant to be extended into your DAL. Consider the following example:
+**contentpull** was meant to be extended into your DAL. Consider the following example:
 
 ```javascript
-const Contentpull = require('content-pull');
+const Contentpull = require('contentpull');
 
 class DataAccessLayer extends Contentpull {
     
@@ -21,7 +21,7 @@ class DataAccessLayer extends Contentpull {
 module.exports = DataAccessLayer;
 ```
 
-The above example shows how **content-pull** can be used to simplify and parse all
+The above example shows how **contentpull** can be used to simplify and parse all
 data before it is used in your application.
 
 Assuming the above file exists in the current directory as `dal.js`, you can use the next example to create an instance of your DAL:
@@ -56,11 +56,11 @@ getEntryById(entryId) {
 
 ### Parsing
 
-This is where **content-pull** becomes extremely useful. The function in the above example
+This is where **contentpull** becomes extremely useful. The function in the above example
 would simply return example what **contentful.js** would return from an entry request.
 
 This package supports parsing your content specific for your use within your application.
-**content-pull** will always return an "augmented" promise, in that it supports an additional feature to
+**contentpull** will always return an "augmented" promise, in that it supports an additional feature to
 `parse` the data before resolving. This can be achieved in a number of ways:
 
 #### Chaining

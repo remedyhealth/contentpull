@@ -38,7 +38,7 @@ gulp.task('buildDoc', ['cleanDoc'], () => gulp.src('./src/**/*.js', {
             'plugins/markdown',
         ],
         templates: {
-            systemName: 'content-pull',
+            systemName: 'contentpull',
             footer: '<!-- You can add content to the footer here -->',
             copyright: 'Copyright &copy; 2016 Remedy Health Media',
             linenums: true,

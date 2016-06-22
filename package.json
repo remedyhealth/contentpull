@@ -1,5 +1,5 @@
 {
-  "name": "content-pull",
+  "name": "contentpull",
   "version": "1.0.0",
   "description": "A contentful.js wrapper that adds simply sugar functions and the ability to parse responses.",
   "main": "index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/remedyhealth/content-pull.git"
+    "url": "git+https://github.com/remedyhealth/contentpull.git"
   },
   "author": "Remedy Health Media <support@remedyhealthmedia.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/remedyhealth/content-pull/issues"
+    "url": "https://github.com/remedyhealth/contentpull/issues"
   },
-  "homepage": "https://github.com/remedyhealth/content-pull#readme",
+  "homepage": "https://github.com/remedyhealth/contentpull#readme",
   "dependencies": {
     "contentful": "^3.3.6",
     "lodash.clonedeep": "^4.3.2"
