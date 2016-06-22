@@ -4,12 +4,12 @@ A contentful.js wrapper that adds simple functions to handle queries and optiona
 
 ### Status
 
-[![codeship](https://img.shields.io/codeship/69d35670-df2d-0133-e854-1ae6aaced788/master.svg?maxAge=2592000&style=flat)](#)
-[![dependencies](https://david-dm.org/remedyhealth/contentpull.svg)](#)
-[![npm](https://img.shields.io/npm/v/contentpull.svg?maxAge=86400&style=flat)](https://www.npmjs.com/package/contentpull)
+[![codeship](https://img.shields.io/codeship/69d35670-df2d-0133-e854-1ae6aaced788/master.svg?maxAge=2592000&style=flat#)](#)
+[![dependencies](https://david-dm.org/remedyhealth/contentpull.svg#)](#)
+[![npm](https://img.shields.io/npm/v/contentpull.svg?maxAge=86400&style=flat#)](https://www.npmjs.com/package/contentpull)
 
-[![GitHub commits](https://img.shields.io/github/commits-since/remedyhealth/contentpull/v1.0.0.svg?maxAge=86400&style=flat)](https://github.com/remedyhealth/contentpull/commits/master)
-[![npm](https://img.shields.io/npm/l/contentpull.svg?maxAge=2592000&style=flat)](https://raw.githubusercontent.com/remedyhealth/contentpull/master/LICENSE)
+[![GitHub commits](https://img.shields.io/github/commits-since/remedyhealth/contentpull/v1.0.0.svg?maxAge=86400&style=flat#)](https://github.com/remedyhealth/contentpull/commits/master)
+[![npm](https://img.shields.io/npm/l/contentpull.svg?maxAge=2592000&style=flat#)](https://raw.githubusercontent.com/remedyhealth/contentpull/master/LICENSE)
 [![pull requests](https://img.shields.io/badge/pull%20requests-accepting-brightgreen.svg?style=flat)](https://github.com/remedyhealth/contentpull/fork)
 
 ### Reference
