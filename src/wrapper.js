@@ -74,9 +74,16 @@ class Wrapper {
         return this._link(this.client.getSpace());
     }
     
+    /**
+     * Gets all objects from contentful.
+     * @param {JSON} params - The parameters to pass to contentful.
+     * @param {Bool=} isAsset - If the object is an asset or not.
+     * @returns {Promise} The promise instance.
+     * @ignore
+     */
     _getAllObjects(params, isAsset) {
         params = params || {};
-        const max = 1;
+        const max = 1000;
         params.limit = max; //override
         let objectTotal = -params.skip || 0;
         return this._link(this._getObjects(params, isAsset).then(objects => {
@@ -273,32 +280,11 @@ class Wrapper {
     //
     ///////////////
 
-    backup(localPath) {
-
-        const space = this.getSpace();
-        const assets = this._getAllObjects({}, true);
-        const entries = this._getAllObjects({
-            resolveLinks: false,
-        });
-
-        return this._link(Promise.all([space, entries, assets]).then(data => {
-            const combined = {
-                space: data[0],
-                entries: data[1],
-                assets: data[2],
-            };
-            return new Promise((resolve, reject) => {
-                fs.writeFile(path.resolve(localPath), JSON.stringify(combined), "utf8", err => {
-                    if (err) {
-                        return reject(err);
-                    }
-
-                    return resolve(combined);
-                });
-            });
-        }));
-    }
-
+    /**
+     * Combines multiple array objects if needed.
+     * @param {CDA:Array[]} arrs - Contentful array objects.
+     * @returns {CDA:Array} The combined array object.
+     */
     _combineArrays(arrs) {
         let r = {
             sys: {

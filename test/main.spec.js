@@ -2,7 +2,9 @@
 
 // Tests suite
 const chai = require('chai');
+const chaiSubset = require('chai-subset');
 chai.should();
+chai.use(chaiSubset);
 
 // The stars of the show!
 const Wrapper = require('../src/wrapper');
@@ -62,7 +64,13 @@ before(() => {
         } else if (req.url.indexOf(emptyArray) > -1) {
             return end(mockData.emptyArray);
         } else if (part === 'entries') {
-            return end(mockData.entries);
+            let ret = JSON.parse(JSON.stringify(mockData.entries));
+            if (req.url.indexOf('limit=1000') !== -1 && req.url.indexOf('skip') === -1) {
+                for (let i = 1; i < mockData.entries.total - 1; i++) {
+                    ret.items.push(ret.items[0]);
+                }
+            }
+            return end(ret);
         } else if (part === 'assets') {
             return end(mockData.assets);
         } else {
@@ -245,8 +253,6 @@ describe('Wrapper', () => {
             return puller.getEntries({
                 content_type: entryType
             }).then(res => {
-                res.should.have.property('items');
-                res.total.should.equal(1);
                 res.items[0].sys.contentType.sys.should.have.property('id', entryType);
             });
         });
@@ -503,6 +509,35 @@ describe('Wrapper', () => {
                 res.total.should.equal(0);
             });
         });
+    });
+    
+    describe('_getAllObjects', () => {
+        
+        it('should be able to gather all content even if over 1000 entries exist', () => {
+            expectedParts = ['entries?', 'include=10', 'limit=1000'];
+            return puller._getAllObjects().then(objects => {
+                objects.items.length.should.equal(mockData.entries.total);
+            });
+        });
+        
+        it('should still be able to be parsed', () => {
+            return puller._getAllObjects().parse().then(objects => {
+                objects.items[0].meta.should.be.an('object');
+            });
+        });
+        
+    });
+    
+    describe('_combineArray', () => {
+        
+        it('should combine array objects', () => {
+            var combined = puller._combineArrays([mockData.entries, mockData.assets]);
+            
+            combined.total.should.equal(mockData.entries.items.length + mockData.assets.items.length);
+            combined.items.should.containSubset([{sys: {type: 'Entry'}}]);
+            combined.items.should.containSubset([{sys: {type: 'Asset'}}]);
+        });
+        
     });
 
 });
