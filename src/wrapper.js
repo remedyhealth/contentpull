@@ -73,7 +73,7 @@ class Wrapper {
     getSpace() {
         return this._link(this.client.getSpace());
     }
-    
+
     /**
      * Gets all objects from contentful.
      * @param {JSON} params - The parameters to pass to contentful.
@@ -98,10 +98,8 @@ class Wrapper {
                     skip: max * count,
                 })));
             }
-            
-            return Promise.all(p).then(all => {
-                return this._combineArrays(all);
-            });
+
+            return Promise.all(p).then(all => this._combineArrays(all));
         }));
     }
 
