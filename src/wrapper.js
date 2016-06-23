@@ -385,12 +385,8 @@ function actuallyUse(name, fn) {
     
 Wrapper.use = fn => {
     fn = fn || {};
-    if (typeof fn === 'function') {
-        if (!actuallyUse(fn.name, fn)) {
-            throw new TypeError('Functions passed as an extension must be named.');
-        }
-    } else if (!actuallyUse(fn.name, fn.fn)) {
-        throw new TypeError('The "name" and the "fn" property should both be set.');
+    if (!actuallyUse(fn.name, fn.fn || fn)) {
+        throw new TypeError("Either pass in a named function, or an Object with a 'name' and a 'fn' property.");
     }
 };
 
