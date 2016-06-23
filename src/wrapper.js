@@ -368,4 +368,30 @@ class Wrapper {
     }
 }
 
+///////////////
+//
+// Extensions
+//
+///////////////
+
+function actuallyUse(name, fn) {
+    if (name && fn && typeof name === 'string' && name !== '' && typeof fn === 'function') {
+        Wrapper.prototype[name] = fn;
+        return true;
+    }
+    
+    return false;
+}
+    
+Wrapper.use = fn => {
+    fn = fn || {};
+    if (typeof fn === 'function') {
+        if (!actuallyUse(fn.name, fn)) {
+            throw new TypeError('Functions passed as an extension must be named.');
+        }
+    } else if (!actuallyUse(fn.name, fn.fn)) {
+        throw new TypeError('The "name" and the "fn" property should both be set.');
+    }
+};
+
 module.exports = Wrapper;
