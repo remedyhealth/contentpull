@@ -99,9 +99,7 @@ class Wrapper {
                 })));
             }
 
-            return Promise.all(p).then(all => {
-                return this._combineArrays(all);
-            });
+            return Promise.all(p).then(all => this._combineArrays(all));
         }));
     }
 
@@ -383,7 +381,7 @@ Wrapper.use = args => {
         return;
     }
 
-    throw new TypeError("Either pass in a named function, or an Object with a 'name' and a 'fn' property.");
+    throw new TypeError("Use a named function, or an object with a 'name' and a 'fn' property.");
 
 };
 
