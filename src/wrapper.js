@@ -73,7 +73,7 @@ class Wrapper {
     getSpace() {
         return this._link(this.client.getSpace());
     }
-    
+
     /**
      * Gets all objects from contentful.
      * @param {JSON} params - The parameters to pass to contentful.
@@ -98,7 +98,7 @@ class Wrapper {
                     skip: max * count,
                 })));
             }
-            
+
             return Promise.all(p).then(all => {
                 return this._combineArrays(all);
             });
@@ -374,20 +374,17 @@ class Wrapper {
 //
 ///////////////
 
-function actuallyUse(name, fn) {
+Wrapper.use = args => {
+    args = args || {};
+    const name = args.name;
+    const fn = args.fn || args;
     if (name && fn && typeof name === 'string' && name !== '' && typeof fn === 'function') {
         Wrapper.prototype[name] = fn;
-        return true;
+        return;
     }
-    
-    return false;
-}
-    
-Wrapper.use = fn => {
-    fn = fn || {};
-    if (!actuallyUse(fn.name, fn.fn || fn)) {
-        throw new TypeError("Either pass in a named function, or an Object with a 'name' and a 'fn' property.");
-    }
+
+    throw new TypeError("Either pass in a named function, or an Object with a 'name' and a 'fn' property.");
+
 };
 
 module.exports = Wrapper;
