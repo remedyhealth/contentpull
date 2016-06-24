@@ -372,10 +372,10 @@ class Wrapper {
 //
 ///////////////
 
-Wrapper.use = args => {
+Wrapper.use = (args, fn) => {
     args = args || {};
-    const name = args.name;
-    const fn = args.fn || args;
+    const name = args.name || args;
+    fn = fn || args.fn || args;
     if (name && fn && typeof name === 'string' && name !== '' && typeof fn === 'function') {
         Wrapper.prototype[name] = fn;
         return;

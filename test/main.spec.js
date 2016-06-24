@@ -566,6 +566,16 @@ describe('Wrapper', () => {
             puller.test().should.equal(testPhrase);
         });
         
+        it('should allow extensions with function names and function arguments', () => {
+            const testPhrase = 'working!';
+            Wrapper.use('test', () => {
+                return testPhrase;
+            });
+            
+            Wrapper.prototype.test.should.be.an('function');
+            puller.test().should.equal(testPhrase);
+        });
+        
         it('should reject unnamed functions', done => {
             try {
                 Wrapper.use(() => {});
