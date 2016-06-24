@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    
+
     /**
      * Parses space objects.
      * + id
