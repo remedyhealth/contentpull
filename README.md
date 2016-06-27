@@ -102,7 +102,7 @@ Contentpull.use({
 ```
 
 Please take a look at our example 
-[extension](https://github.com/remedyhealth/contentpull-backup): `contentpull-backup`.
+[contentpull-backup](https://github.com/remedyhealth/contentpull-backup).
 
 ### Additional Help
 
