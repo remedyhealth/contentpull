@@ -62,7 +62,7 @@ var puller = new Contentpull(spaceid, accessToken, {
 
 You can create your own plugins using the static `.use` function.
 
-All of the following examples are valid for wriging extensions to be used in Contentpull
+All of the following examples are valid for writing extensions to be used in Contentpull
 
 ```javascript
 
@@ -73,7 +73,7 @@ function getEntriesByContentType() {
 
 /*
 
-All of the following all the following to work:
+Each example allows the following to work:
 
 puller.getEntriesByContentType('books');
 
