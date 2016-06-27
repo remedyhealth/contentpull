@@ -1,6 +1,8 @@
 'use strict';
 
 const contentful = require('contentful');
+const fs = require('fs');
+const path = require('path');
 const PullerError = require('./error');
 const defaultParsers = require('./defaultParsers');
 const cloneDeep = require('lodash.clonedeep');
@@ -65,74 +67,40 @@ class Wrapper {
     }
 
     /**
-     * Extends `Promise` to allow a parsing before resolving.
-     * @param {Promise} o - The original promise instance.
-     * @returns {Promise} The promise instance.
-     * @example puller.getSomething(params).parse(function(res) { ... });
-     * @ignore
-     */
-    _link(o) {
-        o.parse = this._parse;
-        o.instance = this;
-        return o;
-    }
-
-    /**
-     * Parses the response before returning.
-     * @param {function} then - The callback when a successfull response is made.
-     * @param {function} error - The failed callback function.
-     *
-     * @example
-     * // Get entry with parse callback
-     * puller.getEntryById('entry-id').parse(res => { ... });
-     *
-     * // Get entry with parse chain
-     * puller.getEntryById('entry-id').parse().then(res => { ... });
-     * @ignore
-     */
-    _parse(then, error) {
-        then = then || emptyFn;
-
-        return this.then(obj => {
-            try {
-                return then(this.instance._createParseTunnel(this.instance)(cloneDeep(obj)));
-            } catch (e) {
-                if (error) {
-                    return error(e);
-                } else {
-                    throw e;
-                }
-            }
-        });
-    }
-
-    /**
-     * Creates a parsing tunnel that loops recursively through object to parse.
-     * @param {Wrapper} $this - An instance of the wrapper.
-     * @returns {function} The function that will iterate over all objects.
-     * @ignore
-     */
-    _createParseTunnel($this) {
-        const done = [];
-        const parseInstance = o => {
-            if (o && o.sys && o.sys.type && $this._parsers[o.sys.type] && done.indexOf(o) === -1) {
-                const parsed = $this._parsers[o.sys.type](o, parseInstance);
-                done.push(parsed);
-                return parsed;
-            }
-
-            return o;
-        };
-
-        return parseInstance;
-    }
-
-    /**
      * Returns the space for the client.
      * @returns {Promise} The promise instance.
      */
     getSpace() {
         return this._link(this.client.getSpace());
+    }
+
+    /**
+     * Gets all objects from contentful.
+     * @param {JSON} params - The parameters to pass to contentful.
+     * @param {Bool=} isAsset - If the object is an asset or not.
+     * @returns {Promise} The promise instance.
+     * @ignore
+     */
+    _getAllObjects(params, isAsset) {
+        params = params || {};
+        const max = 1000;
+        params.limit = max; //override
+        let objectTotal = -params.skip || 0;
+        return this._link(this._getObjects(params, isAsset).then(objects => {
+            const p = [Promise.resolve(objects)];
+            let count = 0;
+            objectTotal += objects.total;
+            while (objectTotal > max) {
+                count++;
+                objectTotal -= max;
+                p.push(this._getObjects(Object.assign(params, {
+                    limit: max,
+                    skip: max * count,
+                })));
+            }
+
+            return Promise.all(p).then(all => this._combineArrays(all));
+        }));
     }
 
     /**
@@ -189,9 +157,7 @@ class Wrapper {
                 } else {
                     return reject(new PullerError('Entry not found.'));
                 }
-            },
-
-            err => reject(err));
+            }, err => reject(err));
         });
 
         return this._link(promise);
@@ -306,6 +272,98 @@ class Wrapper {
         return this._findByType(contentType, fields, otherParams);
     }
 
+    ///////////////
+    //
+    // Utilities
+    //
+    ///////////////
+
+    /**
+     * Combines multiple array objects if needed.
+     * @param {CDA:Array[]} arrs - Contentful array objects.
+     * @returns {CDA:Array} The combined array object.
+     */
+    _combineArrays(arrs) {
+        let r = {
+            sys: {
+                type: 'Array',
+            },
+            total: 0,
+            skip: 0,
+            limit: arrs.map(arr => arr.limit).reduce((a, b) => a + b, 0),
+            items: [],
+        };
+
+        arrs.map(arr => {
+            r.total += arr.items.length;
+            r.items = r.items.concat(arr.items);
+        });
+
+        return r;
+    }
+
+    /**
+     * Extends `Promise` to allow a parsing before resolving.
+     * @param {Promise} o - The original promise instance.
+     * @returns {Promise} The promise instance.
+     * @example puller.getSomething(params).parse(function(res) { ... });
+     * @ignore
+     */
+    _link(o) {
+        o.parse = this._parse;
+        o.instance = this;
+        return o;
+    }
+
+    /**
+     * Parses the response before returning.
+     * @param {function} then - The callback when a successfull response is made.
+     * @param {function} error - The failed callback function.
+     *
+     * @example
+     * // Get entry with parse callback
+     * puller.getEntryById('entry-id').parse(res => { ... });
+     *
+     * // Get entry with parse chain
+     * puller.getEntryById('entry-id').parse().then(res => { ... });
+     * @ignore
+     */
+    _parse(then, error) {
+        then = then || emptyFn;
+
+        return this.then(obj => {
+            try {
+                return then(this.instance._createParseTunnel(this.instance)(cloneDeep(obj)));
+            } catch (e) {
+                if (error) {
+                    return error(e);
+                } else {
+                    throw e;
+                }
+            }
+        });
+    }
+
+    /**
+     * Creates a parsing tunnel that loops recursively through object to parse.
+     * @param {Wrapper} $this - An instance of the wrapper.
+     * @returns {function} The function that will iterate over all objects.
+     * @ignore
+     */
+    _createParseTunnel($this) {
+        const done = [];
+        const parseInstance = o => {
+            if (o && o.sys && o.sys.type && $this._parsers[o.sys.type] && done.indexOf(o) === -1) {
+                const parsed = $this._parsers[o.sys.type](o, parseInstance);
+                done.push(parsed);
+                return parsed;
+            }
+
+            return o;
+        };
+
+        return parseInstance;
+    }
 }
 
 module.exports = Wrapper;
