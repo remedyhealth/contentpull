@@ -13,6 +13,18 @@
     "type": "git",
     "url": "git+https://github.com/remedyhealth/contentpull.git"
   },
+  "keywords": [
+    "contentpull",
+    "contentpull.js",
+    "contentpul",
+    "contentpul.js",
+    "contentful",
+    "contentful.js",
+    "CDA",
+    "parser",
+    "reader",
+    "promise"
+  ],
   "author": "Remedy Health Media <support@remedyhealthmedia.com>",
   "license": "MIT",
   "bugs": {

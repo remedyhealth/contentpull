@@ -68,7 +68,7 @@ class Wrapper {
 
     /**
      * Returns the space for the client.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      */
     getSpace() {
         return this._link(this.client.getSpace());
@@ -78,7 +78,7 @@ class Wrapper {
      * Gets all objects from contentful.
      * @param {JSON} params - The parameters to pass to contentful.
      * @param {Bool=} isAsset - If the object is an asset or not.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      * @ignore
      */
     _getAllObjects(params, isAsset) {
@@ -108,7 +108,7 @@ class Wrapper {
      * @param {JSON} params - The params to pass to contentful.
      * @param {Bool} isAsset - Whether or not the object is an asset.
      * If false, will look for entries.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      * @ignore
      */
     _getObjects(params, isAsset) {
@@ -122,7 +122,7 @@ class Wrapper {
     /**
      * Returns a collection of entries.
      * @param {JSON} params - The params to pass to contentful.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      */
     getEntries(params) {
         return this._getObjects(params);
@@ -131,7 +131,7 @@ class Wrapper {
     /**
      * Returns a collection of assets.
      * @param {JSON} params - The params to pass to contentful.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      */
     getAssets(params) {
         return this._getObjects(params, true);
@@ -142,7 +142,7 @@ class Wrapper {
      * @param {JSON} params - The params to pass to contentful.
      * @param {Bool} isAsset - Whether or not the object is an asset.
      * If false, will look for entries.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      * @todo - Not very readable... (thanks jscs!)
      * @ignore
      */
@@ -166,7 +166,7 @@ class Wrapper {
     /**
      * Returns an individual entry.
      * @param {JSON} params - The params to pass to contentful.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      */
     getEntry(params) {
         return this._getObject(params);
@@ -175,7 +175,7 @@ class Wrapper {
     /**
      * Returns an individual asset.
      * @param {JSON} params - The params to pass to contentful.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      */
     getAsset(params) {
         return this._getObject(params, true);
@@ -186,7 +186,7 @@ class Wrapper {
      * @param {JSON} params - The params to pass to contentful.
      * @param {Bool} isAsset - Whether or not the object is an asset.
      * If false, will look for entries.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      * @ignore
      */
     _getObjectById(id, params, isAsset) {
@@ -210,7 +210,7 @@ class Wrapper {
     /**
      * Returns an individual entry by id.
      * @param {String} id - The id.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      */
     getEntryById(id, params) {
         return this._getObjectById(id, params);
@@ -219,7 +219,7 @@ class Wrapper {
     /**
      * Returns an individual asset by id.
      * @param {String} id - The id.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      */
     getAssetById(id, params) {
         return this._getObjectById(id, params, true);
@@ -231,7 +231,7 @@ class Wrapper {
      * @param {JSON} fields - The fields to search by using key => value.
      * @param {JSON} otherParams - Any params that need to override for extra criteria.
      * @param {Bool} onlyOne - Whether or not one is expected, or more.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      * @ignore
      */
     _findByType(contentType, fields, otherParams, onlyOne) {
@@ -255,7 +255,7 @@ class Wrapper {
      * @param {String} contentType - The type of content to query.
      * @param {JSON} fields - The fields to search by using key => value.
      * @param {JSON} otherParams - Any params that need to override for extra criteria.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      */
     findEntryByType(contentType, fields, otherParams) {
         return this._findByType(contentType, fields, otherParams, true);
@@ -266,7 +266,7 @@ class Wrapper {
      * @param {String} contentType - The type of content to query.
      * @param {JSON} fields - The fields to search by using key => value.
      * @param {JSON} otherParams - Any params that need to override for extra criteria.
-     * @returns {Promise} The promise instance.
+     * @returns {Promise<Object>} The promise instance.
      */
     findEntriesByType(contentType, fields, otherParams) {
         return this._findByType(contentType, fields, otherParams);
@@ -282,6 +282,7 @@ class Wrapper {
      * Combines multiple array objects if needed.
      * @param {CDA:Array[]} arrs - Contentful array objects.
      * @returns {CDA:Array} The combined array object.
+     * @ignore
      */
     _combineArrays(arrs) {
         let r = {
@@ -304,8 +305,8 @@ class Wrapper {
 
     /**
      * Extends `Promise` to allow a parsing before resolving.
-     * @param {Promise} o - The original promise instance.
-     * @returns {Promise} The promise instance.
+     * @param {Promise<Object>} o - The original promise instance.
+     * @returns {Promise<Object>} The promise instance.
      * @example puller.getSomething(params).parse(function(res) { ... });
      * @ignore
      */
@@ -365,5 +366,24 @@ class Wrapper {
         return parseInstance;
     }
 }
+
+///////////////
+//
+// Extensions
+//
+///////////////
+
+Wrapper.use = (args, fn) => {
+    args = args || {};
+    const name = args.name || args;
+    fn = fn || args.fn || args;
+    if (name && fn && typeof name === 'string' && name !== '' && typeof fn === 'function') {
+        Wrapper.prototype[name] = fn;
+        return;
+    }
+
+    throw new TypeError("Use a named function, or an object with a 'name' and a 'fn' property.");
+
+};
 
 module.exports = Wrapper;

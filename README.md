@@ -58,6 +58,49 @@ var puller = new Contentpull(spaceid, accessToken, {
 });
 ```
 
+### Writing plugins
+
+You can create your own plugins using the static `.use` function.
+
+All of the following examples are valid for writing extensions to be used in Contentpull
+
+```javascript
+
+// the augmentation
+function getEntriesByContentType() {
+    this.getEntriesByType.apply(this, arguments);
+}
+
+/*
+
+Each example allows the following to work:
+
+puller.getEntriesByContentType('books');
+
+*/
+
+/**
+ * {String} name - The function name.
+ * {function} fn - The function reference.
+ */
+Contentpull.use('getEntriesByContentType', getEntriesByContentType);
+
+/**
+ * {function} fn - The function reference (must be named).
+ */
+Contentpull.use(getEntriesByContentType)
+
+/**
+ * {Object} args - The arguments.
+ * {String} args.name - The function name.
+ * {function} args.fn - The function reference.
+ */
+Contentpull.use({
+    name: 'getEntriesByContentType',
+    fn: getEntriesByContentType
+});
+```
+
 ### Additional Help
 
 If you are viewing this README online, refer to our [wiki](https://github.com/remedyhealth/contentpull/wiki).

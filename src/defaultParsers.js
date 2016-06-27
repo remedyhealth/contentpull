@@ -1,6 +1,16 @@
 'use strict';
 
 module.exports = {
+
+    /**
+     * Parses space objects.
+     * + id
+     * + type
+     * - sys
+     * @param {Object} space - The unparsed space object.
+     * @param {function} parse - The parse tunnel instance.
+     * @returns {Object} The now parsed object.
+     */
     Space: (space, parse) => {
 
         // Add the important stuff
@@ -13,6 +23,20 @@ module.exports = {
         return space;
     },
 
+    /**
+     * Parses entry objects.
+     * + id
+     * + type
+     * + contentType
+     * + meta
+     * + meta.createdAt
+     * + meta.updatedAt
+     * + meta.revision
+     * - sys
+     * @param {Object} entry - The unparsed entry object.
+     * @param {function} parse - The parse tunnel instance.
+     * @returns {Object} The now parsed object.
+     */
     Entry: (entry, parse) => {
 
         // Add the important stuff
@@ -54,6 +78,19 @@ module.exports = {
         return entry;
     },
 
+    /**
+     * Parses asset objects.
+     * + id
+     * + type
+     * + meta
+     * + meta.createdAt
+     * + meta.updatedAt
+     * + meta.revision
+     * - sys
+     * @param {Object} asset - The unparsed asset object.
+     * @param {function} parse - The parse tunnel instance.
+     * @returns {Object} The now parsed object.
+     */
     Asset: (asset, parse) => {
         // Add the important stuff
         asset.id = asset.sys.id;
@@ -75,6 +112,19 @@ module.exports = {
         return asset;
     },
 
+    /**
+     * Parses array objects.
+     * + meta
+     * + meta.total
+     * - sys
+     * - skip
+     * - limit
+     * - includes
+     * - total
+     * @param {Object} entry - The unparsed entry object.
+     * @param {function} parse - The parse tunnel instance.
+     * @returns {Object} The now parsed object.
+     */
     Array: (array, parse) => {
         array.meta = {
             total: array.total,

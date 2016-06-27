@@ -1,7 +1,8 @@
-'use strict'
+'use strict';
 
 // Tests suite
 const chai = require('chai');
+const expect = chai.expect;
 const chaiSubset = require('chai-subset');
 chai.should();
 chai.use(chaiSubset);
@@ -536,6 +537,63 @@ describe('Wrapper', () => {
             combined.total.should.equal(mockData.entries.items.length + mockData.assets.items.length);
             combined.items.should.containSubset([{sys: {type: 'Entry'}}]);
             combined.items.should.containSubset([{sys: {type: 'Asset'}}]);
+        });
+        
+    });
+    
+    describe('use', () => {
+        
+        it('should allow extensions with raw functions', () => {
+            const testPhrase = 'works!';
+            Wrapper.use(function test() {
+                return testPhrase;
+            });
+            
+            Wrapper.prototype.test.should.be.an('function');
+            puller.test().should.equal(testPhrase);
+        });
+        
+        it('should allow extensions with objects', () => {
+            const testPhrase = 'still works!';
+            Wrapper.use({
+                name: 'test',
+                fn: function() {
+                    return testPhrase;
+                }
+            });
+            
+            Wrapper.prototype.test.should.be.an('function');
+            puller.test().should.equal(testPhrase);
+        });
+        
+        it('should allow extensions with function names and function arguments', () => {
+            const testPhrase = 'working!';
+            Wrapper.use('test', () => {
+                return testPhrase;
+            });
+            
+            Wrapper.prototype.test.should.be.an('function');
+            puller.test().should.equal(testPhrase);
+        });
+        
+        it('should reject unnamed functions', done => {
+            try {
+                Wrapper.use(() => {});
+                done(defaultErr);
+            } catch (e) {
+                e.should.be.a('error');
+                done();
+            }
+        });
+        
+        it('should reject empty arguments', done => {
+            try {
+                Wrapper.use();
+                done(defaultErr);
+            } catch (e) {
+                e.should.be.a('error');
+                done();
+            }
         });
         
     });
