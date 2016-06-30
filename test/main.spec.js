@@ -11,6 +11,7 @@ chai.use(chaiSubset)
 // The stars of the show!
 const Wrapper = require('../src/wrapper')
 const WrapperDist = require('../dist/wrapper')
+const EntryPoint = require('../')
 
 // Third-parties
 const cloneDeep = require('lodash.clonedeep')
@@ -75,6 +76,12 @@ before(() => {
     } else {
       return end(mockData.space)
     }
+  })
+})
+
+describe('EntryPoint', () => {
+  it('should load either the source or the dist', () => {
+    EntryPoint.should.be.oneOf([Wrapper, WrapperDist])
   })
 })
 
