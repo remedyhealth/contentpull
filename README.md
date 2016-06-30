@@ -101,6 +101,9 @@ Contentpull.use({
 });
 ```
 
+Please take a look at our example 
+[contentpull-backup](https://github.com/remedyhealth/contentpull-backup).
+
 ### Additional Help
 
 If you are viewing this README online, refer to our [wiki](https://github.com/remedyhealth/contentpull/wiki).

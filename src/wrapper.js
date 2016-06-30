@@ -1,8 +1,6 @@
 'use strict';
 
 const contentful = require('contentful');
-const fs = require('fs');
-const path = require('path');
 const PullerError = require('./error');
 const defaultParsers = require('./defaultParsers');
 const cloneDeep = require('lodash.clonedeep');
