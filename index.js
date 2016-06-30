@@ -1,3 +1,5 @@
+'use strict'
+
 let puller
 try {
   puller = require('./dist/wrapper')
