@@ -2,6 +2,7 @@
 logs
 *.log
 npm-debug.log*
+.nyc_output*
 
 # Runtime data
 pids
@@ -21,7 +22,7 @@ coverage
 .lock-wscript
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
+dist
 
 # Dependency directories
 node_modules

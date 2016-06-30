@@ -1,17 +1,25 @@
 {
   "name": "contentpull",
-  "version": "1.0.0",
   "description": "A contentful.js wrapper that adds simply sugar functions and the ability to parse responses.",
+  "version": "0.0.0-semantically-released",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha",
-    "lint": "./node_modules/.bin/gulp lint",
-    "prepublish": "npm run lint & npm test",
-    "build-doc": "./node_modules/.bin/gulp buildDoc"
+    "commit": "git-cz",
+    "standard": "standard",
+    "build-doc": "gulp buildDoc",
+    "cover": "nyc npm t && npm run coverage-report",
+    "coverage-check": "nyc check-coverage --branches 100 --statements 100 --functions 100 --lines 100",
+    "coverage-report": "nyc report --reporter=lcov",
+    "test": "_mocha --compilers js:babel-register",
+    "prebuild": "rimraf dist",
+    "build": "babel --copy-files --out-dir dist src",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "travis": "npm run standard && npm run build && npm run cover && npm run coveralls && npm run coverage-check",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/remedyhealth/contentpull.git"
+    "url": "https://github.com/remedyhealth/contentpull.git"
   },
   "keywords": [
     "contentpull",
@@ -36,14 +44,45 @@
     "lodash.clonedeep": "^4.3.2"
   },
   "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-eslint": "^6.1.0",
+    "babel-plugin-transform-object-assign": "^6.8.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-register": "^6.9.0",
     "chai": "^3.5.0",
     "chai-subset": "^1.2.2",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
-    "gulp-jscs": "^3.0.2",
-    "gulp-jsdoc3": "^0.3.0",
-    "istanbul": "^0.4.3",
+    "commitizen": "^2.8.2",
+    "coveralls": "^2.11.9",
+    "cz-conventional-changelog": "^1.1.6",
     "mitm": "^1.2.1",
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "mocha-lcov-reporter": "^1.2.0",
+    "nyc": "^6.6.1",
+    "rimraf": "^2.5.2",
+    "semantic-release": "^4.3.5",
+    "standard": "^7.1.2"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  },
+  "babel": {
+    "presets": ["es2015"],
+    "plugins": ["transform-object-assign"]
+  },
+  "nyc": {
+    "exclude": [
+      "dist",
+      "test"
+    ]
   }
 }

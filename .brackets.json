@@ -1,9 +1,9 @@
 {
-    "language": {
-        "javascript": {
-            "linting.prefer": "JSCS",
-            "linting.usePreferredOnly": true
-        }
-    },
-    "spaceUnits": 4
+  "spaceUnits": 2,
+  "language": {
+    "javascript": {
+      "linting.prefer": "JSCS",
+      "linting.usePreferredOnly": true
+    }
+  }
 }

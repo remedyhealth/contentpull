@@ -1,11 +1,14 @@
-'use strict';
-
-let puller;
+let puller
 try {
-    puller = require('./src/wrapper');
+  puller = require('./dist/wrapper')
 } catch (err) {
-    console.log(err);
-    process.exit(1);
+  if (err.code === 'MODULE_NOT_FOUND') {
+    require('babel-register')
+    puller = require('./src/wrapper')
+  } else {
+    console.log(err)
+    process.exit(1)
+  }
 }
 
-module.exports = puller;
+module.exports = puller
