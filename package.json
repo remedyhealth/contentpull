@@ -6,7 +6,7 @@
   "scripts": {
     "commit": "git-cz",
     "standard": "standard",
-    "build-doc": "gulp buildDoc",
+    "doc": "rimraf docs && jsdoc -c doc.json",
     "cover": "nyc npm t && npm run coverage-report",
     "coverage-check": "nyc check-coverage --branches 100 --statements 100 --functions 100 --lines 100",
     "coverage-report": "nyc report --reporter=lcov",
@@ -54,6 +54,7 @@
     "commitizen": "^2.8.2",
     "coveralls": "^2.11.9",
     "cz-conventional-changelog": "^1.1.6",
+    "jsdoc": "^3.4.0",
     "mitm": "^1.2.1",
     "mocha": "^2.5.3",
     "mocha-lcov-reporter": "^1.2.0",
@@ -76,8 +77,12 @@
     "parser": "babel-eslint"
   },
   "babel": {
-    "presets": ["es2015"],
-    "plugins": ["transform-object-assign"]
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "transform-object-assign"
+    ]
   },
   "nyc": {
     "include": [
