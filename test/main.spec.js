@@ -1,26 +1,24 @@
 /* global describe, it, before */
 
-'use strict'
-
 // Tests suite
-const chai = require('chai')
-const chaiSubset = require('chai-subset')
+import chai from 'chai'
+import chaiSubset from 'chai-subset'
 chai.should()
 chai.use(chaiSubset)
 
 // The stars of the show!
-const Wrapper = require('../src/wrapper')
-const WrapperDist = require('../dist/wrapper')
-const EntryPoint = require('../')
+import Wrapper from '../src/wrapper'
+import WrapperDist from '../dist/wrapper'
+import EntryPoint from '../'
 
 // Third-parties
-const cloneDeep = require('lodash.clonedeep')
-const url = require('url')
-const Mitm = require('mitm')
+import cloneDeep from 'lodash.clonedeep'
+import url from 'url'
+import Mitm from 'mitm'
 const mitm = Mitm()
 
 // Mock Data
-const mockData = require('./stubs')
+import mockData from './stubs'
 const spaceId = mockData.space.sys.id
 const entryType = mockData.entry.sys.contentType.sys.id
 const assetType = mockData.asset.fields.file.contentType
@@ -29,7 +27,7 @@ const assetId = mockData.asset.sys.id
 const entryTitle = mockData.entry.fields.title
 
 // Local helpers
-const data = require('./data')
+import data from './data'
 const rejectedType = 'qaEntryNOPE'
 const rejectedAsset = 'imageNOPE'
 const emptyArray = 'emptyArray'
