@@ -1,8 +1,6 @@
-'use strict'
-
-const contentful = require('contentful')
-const defaultParsers = require('./defaultParsers')
-const cloneDeep = require('lodash.clonedeep')
+import contentful from 'contentful'
+import defaultParsers from './defaultParsers'
+import cloneDeep from 'lodash.clonedeep'
 const emptyFn = a => a
 
 class Wrapper {
@@ -369,4 +367,4 @@ Wrapper.use = (args, fn) => {
   throw new TypeError("Use a named function, or an object with a 'name' and a 'fn' property.")
 }
 
-module.exports = Wrapper
+export default Wrapper
