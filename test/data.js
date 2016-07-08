@@ -1,6 +1,4 @@
-'use strict'
-
-const data = {
+let data = {
   unparsed: {
     sys: {
       id: 'test1',
@@ -132,4 +130,4 @@ data.parsedArr = {
   items: [data.parsed]
 }
 
-module.exports = data
+export default data
