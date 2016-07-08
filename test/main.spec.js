@@ -394,21 +394,7 @@ const setupPullerTests = (C, name) => {
         })
       })
 
-      describe('getEntriesByType', () => {
-        it('should return entries by content type', () => {
-          expectedParts = [
-            '/entries?',
-            'include=10',
-            `content_type=${entryType}`
-          ]
-          return puller.getEntriesByType(entryType).then(entries => {
-            entries.should.have.property('items')
-            entries.total.should.be.above(0)
-          })
-        })
-      })
-
-      describe('findEntryByType', () => {
+      describe('getEntryByType', () => {
         it('should return all entries when no criteria is passed', () => {
           expectedParts = [
             '/entries?',
@@ -416,7 +402,7 @@ const setupPullerTests = (C, name) => {
             'limit=1',
             `content_type=${entryType}`
           ]
-          return puller.findEntryByType(entryType).then(res => {
+          return puller.getEntryByType(entryType).then(res => {
             res.sys.should.have.property('type', 'Entry')
           })
         })
@@ -429,7 +415,7 @@ const setupPullerTests = (C, name) => {
             `content_type=${entryType}`,
             `fields.title=${entryTitle}`
           ]
-          return puller.findEntryByType(entryType, {
+          return puller.getEntryByType(entryType, {
             title: entryTitle
           }).then(res => {
             res.sys.should.have.property('type', 'Entry')
@@ -445,7 +431,7 @@ const setupPullerTests = (C, name) => {
             `content_type=${entryType}`,
             `fields.title=${emptyArray}`
           ]
-          return puller.findEntryByType(entryType, {
+          return puller.getEntryByType(entryType, {
             title: emptyArray
           }).then(res => {
             done(defaultErr)
@@ -458,7 +444,7 @@ const setupPullerTests = (C, name) => {
         })
       })
 
-      describe('findEntriesByType', () => {
+      describe('getEntriesByType', () => {
         it('should return all entries that match the criteria', () => {
           expectedParts = [
             '/entries?',
@@ -466,7 +452,7 @@ const setupPullerTests = (C, name) => {
             `content_type=${entryType}`,
             `fields.title=${entryTitle}`
           ]
-          return puller.findEntriesByType(entryType, {
+          return puller.getEntriesByType(entryType, {
             title: entryTitle
           }).then(res => {
             res.should.have.property('items')
@@ -476,7 +462,7 @@ const setupPullerTests = (C, name) => {
 
         it('should return nothing if no entries match', () => {
           expectedParts = ['/entries?', 'include=10', `content_type=${entryType}`, `fields.title=${emptyArray}`]
-          return puller.findEntriesByType(entryType, {
+          return puller.getEntriesByType(entryType, {
             title: emptyArray
           }).then(res => {
             res.total.should.equal(0)

@@ -4,9 +4,11 @@
   "version": "0.0.0-semantically-released",
   "main": "index.js",
   "scripts": {
+    "precommit": "npm run standard && npm run build && npm run cover",
     "commit": "git-cz",
     "standard": "standard",
-    "doc": "rimraf docs && jsdoc -c doc.json",
+    "predoc": "rimraf docs",
+    "doc": "jsdoc -c doc.json",
     "cover": "nyc npm t && npm run coverage-report",
     "coverage-check": "nyc check-coverage --branches 100 --statements 100 --functions 100 --lines 100",
     "coverage-report": "nyc report --reporter=lcov",
@@ -14,7 +16,7 @@
     "prebuild": "rimraf dist",
     "build": "babel --copy-files --out-dir dist src",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "travis": "npm run standard && npm run build && npm run cover && npm run coveralls && npm run coverage-check",
+    "travis": "npm run precommit && npm run coveralls && npm run coverage-check",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {

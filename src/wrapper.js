@@ -190,18 +190,6 @@ class Wrapper {
   }
 
   /**
-   * Gets entries by a specified content type
-   * @param {String} contentType - The content type to get.
-   * @param {Object=} params - Additional params to use.
-   */
-  getEntriesByType (contentType, params) {
-    params = params || {}
-    return this.getEntries(Object.assign({
-      content_type: contentType
-    }, params))
-  }
-
-  /**
    * Returns an individual entry by id.
    * @param {String} id - The id.
    * @returns {Promise<Object>} The promise instance.
@@ -228,7 +216,7 @@ class Wrapper {
    * @returns {Promise<Object>} The promise instance.
    * @ignore
    */
-  _findByType (contentType, fields, otherParams, onlyOne) {
+  _getByType (contentType, fields, otherParams, onlyOne) {
     let params = {
       content_type: contentType
     }
@@ -251,8 +239,8 @@ class Wrapper {
    * @param {JSON} otherParams - Any params that need to override for extra criteria.
    * @returns {Promise<Object>} The promise instance.
    */
-  findEntryByType (contentType, fields, otherParams) {
-    return this._findByType(contentType, fields, otherParams, true)
+  getEntryByType (contentType, fields, otherParams) {
+    return this._getByType(contentType, fields, otherParams, true)
   }
 
   /**
@@ -262,8 +250,8 @@ class Wrapper {
    * @param {JSON} otherParams - Any params that need to override for extra criteria.
    * @returns {Promise<Object>} The promise instance.
    */
-  findEntriesByType (contentType, fields, otherParams) {
-    return this._findByType(contentType, fields, otherParams)
+  getEntriesByType (contentType, fields, otherParams) {
+    return this._getByType(contentType, fields, otherParams)
   }
 
   /**
