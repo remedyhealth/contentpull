@@ -67,7 +67,7 @@
   },
   "files": [
     "dist",
-    "src",
+    "browser.js",
     "README.md"
   ],
   "config": {
@@ -78,6 +78,7 @@
   "standard": {
     "parser": "babel-eslint"
   },
+  "browser": "./browser.js",
   "babel": {
     "presets": [
       "es2015"
