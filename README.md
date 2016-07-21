@@ -102,7 +102,7 @@ Contentpull.use({
 });
 ```
 
-Please take a look at our example 
+Please take a look at our example
 [contentpull-backup](https://github.com/remedyhealth/contentpull-backup).
 
 ### Additional Help
@@ -110,3 +110,7 @@ Please take a look at our example
 If you are viewing this README online, refer to our [wiki](https://github.com/remedyhealth/contentpull/wiki).
 
 If you have cloned or downloaded this repo, please refer to the generated JSDOC articles (`npm run build-doc`).
+
+### LICENSE
+
+MIT
