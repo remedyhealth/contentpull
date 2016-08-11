@@ -41,7 +41,8 @@ let data = {
         },
         fields: {
           file: {
-            url: 'http://test.com/img.jpg'
+            url: 'http://test.com/img.jpg',
+            contentType: 'png'
           }
         }
       }, {
@@ -104,7 +105,8 @@ let data = {
           revision: '3'
         },
         fields: {
-          src: 'http://test.com/img.jpg'
+          src: 'http://test.com/img.jpg',
+          contentType: 'png'
         }
       }],
       space: {
