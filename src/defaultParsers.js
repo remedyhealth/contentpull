@@ -102,6 +102,7 @@ export default {
     // clean up before iterating over children
     delete asset.sys
 
+    asset.fields.contentType = asset.fields.file.contentType
     asset.fields.src = asset.fields.file.url
     delete asset.fields.file
 
