@@ -138,6 +138,13 @@ const setupPullerTests = (C, name) => {
       })
 
       describe('Wrapper:_createParseTunnel', () => {
+        it('should not parse falsy', () => {
+          const _puller = cloneDeep(puller)
+          _puller._parsers['Entry'] = false
+          const parsed = _puller._createParseTunnel(_puller)(cloneDeep(data.unparsed))
+          parsed.should.deep.equal(data.unparsed)
+        })
+
         it('should parse a single object', () => {
           const parsed = puller._createParseTunnel(puller)(cloneDeep(data.unparsed))
           parsed.should.deep.equal(data.parsed)
