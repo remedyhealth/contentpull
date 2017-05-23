@@ -1,10 +1,9 @@
 /* global describe, it, before */
+/* eslint no-unused-expressions: 0 */
 
 // Tests suite
 import chai from 'chai'
 import chaiSubset from 'chai-subset'
-chai.should()
-chai.use(chaiSubset)
 
 // The stars of the show!
 import Wrapper from '../src/wrapper'
@@ -15,10 +14,17 @@ import EntryPoint from '../'
 import cloneDeep from 'lodash.clonedeep'
 import url from 'url'
 import Mitm from 'mitm'
+
+// required samples
+import mockData from './stubs'
+import data from './data'
+
+// setting things up
+chai.should()
+chai.use(chaiSubset)
 const mitm = Mitm()
 
 // Mock Data
-import mockData from './stubs'
 const spaceId = mockData.space.sys.id
 const entryType = mockData.entry.sys.contentType.sys.id
 const assetType = mockData.asset.fields.file.contentType
@@ -27,7 +33,6 @@ const assetId = mockData.asset.sys.id
 const entryTitle = mockData.entry.fields.title
 
 // Local helpers
-import data from './data'
 const rejectedType = 'qaEntryNOPE'
 const rejectedAsset = 'imageNOPE'
 const emptyArray = 'emptyArray'
@@ -120,7 +125,7 @@ const setupPullerTests = (C, name) => {
 
       describe('_link:catch', () => {
         it('should still run catch statements with then statements', done => {
-          return puller._link(Promise.reject(rand)).then(res => {
+          puller._link(Promise.reject(rand)).then(res => {
             done(defaultErr)
           }, err => {
             err.should.equal(rand)
@@ -199,7 +204,7 @@ const setupPullerTests = (C, name) => {
         })
 
         it('should fail to parse a bad object as a chain', done => {
-          return puller._link(Promise.resolve(data.badparse)).parse().then(data => {
+          puller._link(Promise.resolve(data.badparse)).parse().then(data => {
             done(defaultErr)
           }, err => {
             err.message.should.be.a('string')
@@ -210,7 +215,7 @@ const setupPullerTests = (C, name) => {
         })
 
         it('should fail to parse a bad object in place of then', done => {
-          return puller._link(Promise.resolve(data.badparse)).parse(data => {
+          puller._link(Promise.resolve(data.badparse)).parse(data => {
             done(defaultErr)
           }, err => {
             err.message.should.be.a('string')
@@ -250,7 +255,8 @@ const setupPullerTests = (C, name) => {
 
         it('should return nothing if no entries match', done => {
           expectedParts = ['/entries?', 'include=10', `content_type=${rejectedType}`]
-          return puller.getEntries({
+
+          puller.getEntries({
             content_type: rejectedType
           }).then(res => {
             done(defaultErr)
@@ -285,7 +291,7 @@ const setupPullerTests = (C, name) => {
 
         it('should return nothing if no assets match', done => {
           expectedParts = ['/assets?', 'include=10', `fields.file.contentType=${rejectedAsset}`]
-          return puller.getAssets({
+          puller.getAssets({
             'fields.file.contentType': rejectedAsset
           }).then(res => {
             done(defaultErr)
@@ -317,7 +323,8 @@ const setupPullerTests = (C, name) => {
 
         it('should return nothing if no entries match', done => {
           expectedParts = ['/entries?', 'include=10', 'limit=1', `content_type=${rejectedType}`]
-          return puller.getEntry({
+
+          puller.getEntry({
             content_type: rejectedType
           }).then(res => {
             done(defaultErr)
@@ -359,7 +366,8 @@ const setupPullerTests = (C, name) => {
             'limit=1',
             `fields.file.contentType=${rejectedAsset}`
           ]
-          return puller.getAsset({
+
+          puller.getAsset({
             'fields.file.contentType': rejectedAsset
           }).then(res => {
             done(defaultErr)
@@ -438,7 +446,8 @@ const setupPullerTests = (C, name) => {
             `content_type=${entryType}`,
             `fields.title=${emptyArray}`
           ]
-          return puller.getEntryByType(entryType, {
+
+          puller.getEntryByType(entryType, {
             title: emptyArray
           }).then(res => {
             done(defaultErr)
@@ -469,7 +478,8 @@ const setupPullerTests = (C, name) => {
 
         it('should return nothing if no entries match', () => {
           expectedParts = ['/entries?', 'include=10', `content_type=${entryType}`, `fields.title=${emptyArray}`]
-          return puller.getEntriesByType(entryType, {
+
+          puller.getEntriesByType(entryType, {
             title: emptyArray
           }).then(res => {
             res.total.should.equal(0)

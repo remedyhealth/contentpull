@@ -1,3 +1,13 @@
+const createMeta = (entry) => {
+  entry.meta = {
+    createdAt: entry.sys.createdAt,
+    updatedAt: entry.sys.updatedAt,
+    revision: entry.sys.revision
+  }
+
+  delete entry.sys
+}
+
 export default {
 
   /**
@@ -41,15 +51,7 @@ export default {
 
     entry.contentType = entry.sys.contentType.sys.id
 
-    // Add meta fields
-    entry.meta = {
-      createdAt: entry.sys.createdAt,
-      updatedAt: entry.sys.updatedAt,
-      revision: entry.sys.revision
-    }
-
-    // clean up before iterating over children
-    delete entry.sys
+    createMeta(entry)
 
     for (let key in entry.fields) {
       if (entry.fields[key] && entry.fields[key].sys) {
@@ -92,15 +94,7 @@ export default {
     asset.id = asset.sys.id
     asset.type = asset.sys.type
 
-    // Add meta fields
-    asset.meta = {
-      createdAt: asset.sys.createdAt,
-      updatedAt: asset.sys.updatedAt,
-      revision: asset.sys.revision
-    }
-
-    // clean up before iterating over children
-    delete asset.sys
+    createMeta(asset)
 
     asset.fields.contentType = asset.fields.file.contentType
     asset.fields.src = asset.fields.file.url
