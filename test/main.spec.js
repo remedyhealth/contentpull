@@ -1,10 +1,9 @@
 /* global describe, it, before */
+/* eslint no-unused-expressions: 0 */
 
 // Tests suite
 import chai from 'chai'
 import chaiSubset from 'chai-subset'
-chai.should()
-chai.use(chaiSubset)
 
 // The stars of the show!
 import Wrapper from '../src/wrapper'
@@ -15,10 +14,17 @@ import EntryPoint from '../'
 import cloneDeep from 'lodash.clonedeep'
 import url from 'url'
 import Mitm from 'mitm'
+
+// required samples
+import mockData from './stubs'
+import data from './data'
+
+// setting things up
+chai.should()
+chai.use(chaiSubset)
 const mitm = Mitm()
 
 // Mock Data
-import mockData from './stubs'
 const spaceId = mockData.space.sys.id
 const entryType = mockData.entry.sys.contentType.sys.id
 const assetType = mockData.asset.fields.file.contentType
@@ -27,7 +33,6 @@ const assetId = mockData.asset.sys.id
 const entryTitle = mockData.entry.fields.title
 
 // Local helpers
-import data from './data'
 const rejectedType = 'qaEntryNOPE'
 const rejectedAsset = 'imageNOPE'
 const emptyArray = 'emptyArray'

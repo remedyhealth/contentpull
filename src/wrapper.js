@@ -4,7 +4,6 @@ import cloneDeep from 'lodash.clonedeep'
 const emptyFn = a => a
 
 class Wrapper {
-
   /**
    * Creates a new instance of contentpull, which wraps around contentful.js
    * @param {String} space - The space to read from.
