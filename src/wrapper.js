@@ -35,7 +35,7 @@ class Wrapper {
     includes = 10
   } = {}) {
     /**
-     * Whether or not the client is set up for preview.
+     * The default depth for the includes to be passed with each request.
      * @type {Number}
      */
     this.includes = includes
