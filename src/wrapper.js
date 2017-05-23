@@ -29,7 +29,11 @@ class Wrapper {
    * Accepts the link object and the parse instance.
    * Should return the cleaned link object.
    */
-  constructor (space, accesstoken, { parsers = {}, preview = false, includes = 10 } = {}) {
+  constructor (space, accesstoken, {
+    parsers = {},
+    preview = false,
+    includes = 10
+  } = {}) {
     /**
      * Whether or not the client is set up for preview.
      * @type {Number}
