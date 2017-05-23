@@ -9,7 +9,7 @@
     "lint": "standard",
     "predoc": "rimraf docs",
     "doc": "jsdoc -c doc.json",
-    "test": "npm run build && _mocha --compilers js:babel-register",
+    "test": "npm run build && nyc _mocha --compilers js:babel-register",
     "prebuild": "rimraf dist",
     "build": "babel --copy-files --out-dir dist src",
     "coverage": "nyc report --reporter=lcov",
