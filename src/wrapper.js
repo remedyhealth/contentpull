@@ -10,7 +10,7 @@ class Wrapper {
    * @param {String} accesstoken - The access token provided by contentful.
    * @param {JSON} config - The configuration object.
    * @param {Bool=} config.preview - Whether or not to use the preview mode, or the default host.
-   * @param {Number} [config.includes=10] - The default to use for includes.
+   * @param {Number} [config.include=10] - The default to use for includes.
    * @param {Object=} config.parsers - The parser objects that can be overwritten.
    * @param {function=} config.parsers.Space - The space parser.
    * Accepts the space object and the parse instance.
@@ -31,13 +31,13 @@ class Wrapper {
   constructor (space, accesstoken, {
     parsers = {},
     preview = false,
-    includes = 10
+    include = 10
   } = {}) {
     /**
      * The default depth for the includes to be passed with each request.
      * @type {Number}
      */
-    this.includes = includes
+    this.include = include
 
     /**
      * Whether or not the client is set up for preview.
@@ -116,7 +116,7 @@ class Wrapper {
     let fn = (isAsset) ? this.client.getAssets : this.client.getEntries
 
     return this._link(fn.call(this, {
-      include: this.includes,
+      include: this.include,
       ...params
     }))
   }
