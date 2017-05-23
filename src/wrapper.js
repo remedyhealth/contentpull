@@ -1,4 +1,4 @@
-import contentful from 'contentful'
+import { createClient } from 'contentful'
 import defaultParsers from './defaultParsers'
 import cloneDeep from 'lodash.clonedeep'
 const emptyFn = a => a
@@ -11,6 +11,7 @@ class Wrapper {
    * @param {String} accesstoken - The access token provided by contentful.
    * @param {JSON} config - The configuration object.
    * @param {Bool=} config.preview - Whether or not to use the preview mode, or the default host.
+   * @param {Number} [config.includes=10] - The default to use for includes.
    * @param {Object=} config.parsers - The parser objects that can be overwritten.
    * @param {function=} config.parsers.Space - The space parser.
    * Accepts the space object and the parse instance.
@@ -28,33 +29,35 @@ class Wrapper {
    * Accepts the link object and the parse instance.
    * Should return the cleaned link object.
    */
-  constructor (space, accesstoken, config) {
-    // make sure config is set to SOMETHING...
-    config = config || {}
-    config.parsers = config.parsers || {}
+  constructor (space, accesstoken, { parsers = {}, preview = false, includes = 10 } = {}) {
+    /**
+     * Whether or not the client is set up for preview.
+     * @type {Number}
+     */
+    this.includes = includes
 
     /**
      * Whether or not the client is set up for preview.
      * @type {Bool}
      */
-    this.isPreview = !!config.preview
+    this.isPreview = !!preview
 
     /**
      * parser configuration which is key(String) => value(function) pairs.
      * @type {Object}
      * @ignore
      */
-    this._parsers = Object.assign(defaultParsers, config.parsers)
+    this._parsers = {...defaultParsers, ...parsers}
 
     /**
      * The contentful client created originally by contentful.js.
      * @type {CDAClient}
      * @see https://contentful.github.io/contentful.js/contentful/3.3.0/CDAClient.html
      */
-    this.client = contentful.createClient({
+    this.client = createClient({
       space: space,
       accessToken: accesstoken,
-      host: (config.preview) ? 'preview.contentful.com' : null
+      host: (this.isPreview) ? 'preview.contentful.com' : null
     })
 
     return this
@@ -87,10 +90,11 @@ class Wrapper {
       while (objectTotal > max) {
         count++
         objectTotal -= max
-        p.push(this._getObjects(Object.assign(params, {
+        p.push(this._getObjects({
+          ...params,
           limit: max,
           skip: max * count
-        })))
+        }))
       }
 
       return Promise.all(p).then(all => this._combineArrays(all))
@@ -108,9 +112,10 @@ class Wrapper {
   _getObjects (params, isAsset) {
     let fn = (isAsset) ? this.client.getAssets : this.client.getEntries
 
-    return this._link(fn.call(this, Object.assign({
-      include: 10
-    }, params)))
+    return this._link(fn.call(this, {
+      include: this.includes,
+      ...params
+    }))
   }
 
   /**
@@ -227,9 +232,10 @@ class Wrapper {
       params[`fields.${i}`] = fields[i]
     }
 
-    params = Object.assign(params, otherParams)
-
-    return fn.call(this, params)
+    return fn.call(this, {
+      ...params,
+      ...otherParams
+    })
   }
 
   /**
