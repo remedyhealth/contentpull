@@ -83,7 +83,8 @@ class Wrapper {
    */
   _getAllObjects (params, isAsset) {
     params = params || {}
-    const max = 1000
+    const max = params.request_limit || 1000
+    delete params.request_limit
     params.limit = max
     let objectTotal = -params.skip || 0
     return this._link(this._getObjects(params, isAsset).then(objects => {
