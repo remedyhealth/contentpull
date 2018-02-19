@@ -59,7 +59,7 @@
     "nyc": "^11.0.1",
     "rimraf": "^2.6.1",
     "semantic-release": "^12.2.2",
-    "standard": "^10.0.2"
+    "standard": "^11.0.0"
   },
   "files": [
     "dist",
