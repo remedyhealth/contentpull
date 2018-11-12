@@ -9,9 +9,7 @@
     "lint": "standard",
     "predoc": "rimraf docs",
     "doc": "jsdoc -c doc.json",
-    "test": "npm run build && nyc _mocha --compilers js:babel-register",
-    "prebuild": "rimraf dist",
-    "build": "babel --copy-files --out-dir dist src",
+    "test": "nyc _mocha",
     "travis": "npm run precommit && npm t && nyc report --reporter=lcov"
   },
   "repository": {
@@ -41,39 +39,21 @@
     "lodash.clonedeep": "^4.5.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-eslint": "8.0.3",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-register": "^6.24.1",
-    "chai": "^4.0.1",
+    "chai": "^4.2.0",
     "chai-subset": "^1.5.0",
     "husky": "^1.1.3",
     "jsdoc": "^3.5.5",
-    "mitm": "^1.3.2",
+    "mitm": "^1.4.0",
     "mocha": "^5.0.0",
     "mocha-lcov-reporter": "^1.3.0",
-    "nyc": "^11.0.1",
+    "nyc": "^13.1.0",
     "rimraf": "^2.6.1",
-    "standard": "^10.0.2"
+    "standard": "^12.0.1"
   },
   "files": [
-    "dist",
-    "browser.js",
+    "src",
     "README.md"
   ],
-  "standard": {
-    "parser": "babel-eslint"
-  },
-  "browser": "./browser.js",
-  "babel": {
-    "presets": [
-      "es2015"
-    ],
-    "plugins": [
-      "transform-object-rest-spread"
-    ]
-  },
   "nyc": {
     "include": [
       "src/**/*.js"

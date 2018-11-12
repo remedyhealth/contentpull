@@ -1,6 +1,6 @@
-import { createClient } from 'contentful'
-import defaultParsers from './defaultParsers'
-import cloneDeep from 'lodash.clonedeep'
+const { createClient } = require('contentful')
+const defaultParsers = require('./defaultParsers')
+const cloneDeep = require('lodash.clonedeep')
 const emptyFn = a => a
 
 class Wrapper {
@@ -50,7 +50,7 @@ class Wrapper {
      * @type {Object}
      * @ignore
      */
-    this._parsers = {...defaultParsers, ...parsers}
+    this._parsers = Object.assign({}, defaultParsers, parsers)
 
     /**
      * The contentful client created originally by contentful.js.
@@ -365,4 +365,4 @@ Wrapper.use = (args, fn) => {
   throw new TypeError("Use a named function, or an object with a 'name' and a 'fn' property.")
 }
 
-export default Wrapper
+module.exports = Wrapper

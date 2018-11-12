@@ -2,22 +2,21 @@
 /* eslint no-unused-expressions: 0 */
 
 // Tests suite
-import chai from 'chai'
-import chaiSubset from 'chai-subset'
+const chai = require('chai')
+const chaiSubset = require('chai-subset')
 
 // The stars of the show!
-import Wrapper from '../src/wrapper'
-import WrapperDist from '../dist/wrapper'
-import EntryPoint from '../'
+const Wrapper = require('../src/wrapper')
+const EntryPoint = require('../')
 
 // Third-parties
-import cloneDeep from 'lodash.clonedeep'
-import url from 'url'
-import Mitm from 'mitm'
+const cloneDeep = require('lodash.clonedeep')
+const url = require('url')
+const Mitm = require('mitm')
 
 // required samples
-import mockData from './stubs'
-import data from './data'
+const mockData = require('./stubs')
+const data = require('./data')
 
 // setting things up
 chai.should()
@@ -84,7 +83,7 @@ before(() => {
 
 describe('EntryPoint', () => {
   it('should load either the source or the dist', () => {
-    EntryPoint.should.be.oneOf([Wrapper, WrapperDist])
+    EntryPoint.should.be.oneOf([Wrapper])
   })
 })
 
@@ -579,4 +578,3 @@ const setupPullerTests = (C, name) => {
 }
 
 setupPullerTests(Wrapper, 'Source')
-setupPullerTests(WrapperDist, 'Dist')

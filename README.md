@@ -109,7 +109,7 @@ Please take a look at our example
 
 If you are viewing this README online, refer to our [wiki](https://github.com/remedyhealth/contentpull/wiki).
 
-If you have cloned or downloaded this repo, please refer to the generated JSDOC articles (`npm run build-doc`).
+If you have cloned or downloaded this repo, please refer to the generated JSDOC articles (`npm run doc`).
 
 ### LICENSE
 

@@ -1,6 +1,6 @@
-import entry from './entry'
+const entry = require('./entry')
 
-export default {
+module.exports = {
   sys: {
     type: 'Array'
   },

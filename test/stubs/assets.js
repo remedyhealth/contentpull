@@ -1,6 +1,6 @@
-import asset from './asset'
+const asset = require('./asset')
 
-export default {
+module.exports = {
   sys: {
     type: 'Array'
   },

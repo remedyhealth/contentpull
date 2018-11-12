@@ -1,12 +1,12 @@
-import space from './space'
-import asset from './asset'
-import assets from './assets'
-import entry from './entry'
-import entries from './entries'
-import error from './error'
-import emptyArray from './emptyArray'
+const space = require('./space')
+const asset = require('./asset')
+const assets = require('./assets')
+const entry = require('./entry')
+const entries = require('./entries')
+const error = require('./error')
+const emptyArray = require('./emptyArray')
 
-export default {
+module.exports = {
   space,
   asset,
   assets,
