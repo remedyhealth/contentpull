@@ -12,7 +12,7 @@
     "test": "npm run build && nyc _mocha --compilers js:babel-register",
     "prebuild": "rimraf dist",
     "build": "babel --copy-files --out-dir dist src",
-    "travis": "npm run precommit && npm run t && nyc report --reporter=lcov"
+    "travis": "npm run precommit && npm t && nyc report --reporter=lcov"
   },
   "repository": {
     "type": "git",
