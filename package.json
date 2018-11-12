@@ -4,8 +4,8 @@
   "version": "0.0.0-semantically-released",
   "main": "index.js",
   "scripts": {
-    "precommit": "npm run lint && npm t",
-    "commit": "git-cz",
+    "precommit": "npm run lint",
+    "prepush": "npm t",
     "lint": "standard",
     "predoc": "rimraf docs",
     "doc": "jsdoc -c doc.json",
@@ -13,8 +13,7 @@
     "prebuild": "rimraf dist",
     "build": "babel --copy-files --out-dir dist src",
     "coverage": "nyc report --reporter=lcov",
-    "travis": "npm run precommit && npm run coverage",
-    "semantic-release": "semantic-release"
+    "travis": "npm run precommit && npm run coverage"
   },
   "repository": {
     "type": "git",
