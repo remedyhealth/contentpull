@@ -115,10 +115,9 @@ class Wrapper {
   _getObjects (params, isAsset) {
     let fn = (isAsset) ? this.client.getAssets : this.client.getEntries
 
-    return this._link(fn.call(this, {
-      include: this.include,
-      ...params
-    }))
+    return this._link(fn.call(this, Object.assign({}, {
+      include: this.include
+    }, params)))
   }
 
   /**
