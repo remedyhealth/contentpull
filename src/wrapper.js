@@ -94,11 +94,10 @@ class Wrapper {
       while (objectTotal > max) {
         count++
         objectTotal -= max
-        p.push(this._getObjects({
-          ...params,
+        p.push(this._getObjects(Object.assign({}, params, {
           limit: max,
           skip: max * count
-        }))
+        })))
       }
 
       return Promise.all(p).then(all => this._combineArrays(all))
