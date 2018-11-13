@@ -1,7 +1,7 @@
 {
   "name": "contentpull",
   "description": "A contentful.js wrapper that adds simply sugar functions and the ability to parse responses.",
-  "version": "0.0.0-semantically-released",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
     "precommit": "npm run lint",
