@@ -234,10 +234,7 @@ class Wrapper {
       params[`fields.${i}`] = fields[i]
     }
 
-    return fn.call(this, {
-      ...params,
-      ...otherParams
-    })
+    return fn.call(this, Object.assign({}, params, otherParams))
   }
 
   /**
