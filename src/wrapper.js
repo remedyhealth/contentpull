@@ -1,6 +1,6 @@
-import { createClient } from 'contentful'
-import defaultParsers from './defaultParsers'
-import cloneDeep from 'lodash.clonedeep'
+const { createClient } = require('contentful')
+const defaultParsers = require('./defaultParsers')
+const cloneDeep = require('lodash.clonedeep')
 const emptyFn = a => a
 
 class Wrapper {
@@ -50,7 +50,7 @@ class Wrapper {
      * @type {Object}
      * @ignore
      */
-    this._parsers = {...defaultParsers, ...parsers}
+    this._parsers = Object.assign({}, defaultParsers, parsers)
 
     /**
      * The contentful client created originally by contentful.js.
@@ -94,11 +94,10 @@ class Wrapper {
       while (objectTotal > max) {
         count++
         objectTotal -= max
-        p.push(this._getObjects({
-          ...params,
+        p.push(this._getObjects(Object.assign({}, params, {
           limit: max,
           skip: max * count
-        }))
+        })))
       }
 
       return Promise.all(p).then(all => this._combineArrays(all))
@@ -116,10 +115,9 @@ class Wrapper {
   _getObjects (params, isAsset) {
     let fn = (isAsset) ? this.client.getAssets : this.client.getEntries
 
-    return this._link(fn.call(this, {
-      include: this.include,
-      ...params
-    }))
+    return this._link(fn.call(this, Object.assign({}, {
+      include: this.include
+    }, params)))
   }
 
   /**
@@ -236,10 +234,7 @@ class Wrapper {
       params[`fields.${i}`] = fields[i]
     }
 
-    return fn.call(this, {
-      ...params,
-      ...otherParams
-    })
+    return fn.call(this, Object.assign({}, params, otherParams))
   }
 
   /**
@@ -365,4 +360,4 @@ Wrapper.use = (args, fn) => {
   throw new TypeError("Use a named function, or an object with a 'name' and a 'fn' property.")
 }
 
-export default Wrapper
+module.exports = Wrapper

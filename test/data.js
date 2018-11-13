@@ -132,4 +132,4 @@ data.parsedArr = {
   items: [data.parsed]
 }
 
-export default data
+module.exports = data

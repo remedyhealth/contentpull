@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   sys: {
     type: 'Space',
     id: 'space1'

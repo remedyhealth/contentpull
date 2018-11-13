@@ -8,7 +8,7 @@ const createMeta = (entry) => {
   delete entry.sys
 }
 
-export default {
+module.exports = {
 
   /**
    * Parses space objects.

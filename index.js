@@ -2,15 +2,10 @@
 
 let puller
 try {
-  puller = require('./dist/wrapper').default
+  puller = require('./src/wrapper')
 } catch (err) {
-  if (err.code === 'MODULE_NOT_FOUND') {
-    require('babel-register')
-    puller = require('./src/wrapper').default
-  } else {
-    console.log(err)
-    process.exit(1)
-  }
+  console.log(err)
+  process.exit(1)
 }
 
 module.exports = puller
