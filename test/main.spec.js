@@ -54,7 +54,7 @@ before(() => {
     const $url = url.parse(req.url)
     let pathParts = $url.pathname.split('/')
     pathParts.shift()
-    const part = pathParts[2]
+    const part = pathParts[4]
 
     const end = data => {
       return res.end(JSON.stringify(data))
