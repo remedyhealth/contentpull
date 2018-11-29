@@ -53,17 +53,19 @@ class Wrapper {
      */
     this._parsers = Object.assign({}, defaultParsers, parsers)
 
+    this.config = {
+      space,
+      accessToken,
+      environment,
+      host: (this.isPreview) ? 'preview.contentful.com' : null
+    }
+
     /**
      * The contentful client created originally by contentful.js.
      * @type {CDAClient}
      * @see https://contentful.github.io/contentful.js/contentful/3.3.0/CDAClient.html
      */
-    this.client = createClient({
-      space,
-      accessToken,
-      environment,
-      host: (this.isPreview) ? 'preview.contentful.com' : null
-    })
+    this.client = createClient(this.config)
 
     return this
   }
