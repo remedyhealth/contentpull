@@ -113,6 +113,28 @@ const setupPullerTests = (C, name) => {
       })
     })
 
+    describe('environments', () => {
+      it('should default to "master"', () => {
+        const p = new C(
+          spaceId,
+          'prevkey'
+        )
+
+        p.config.environment.should.equal('master')
+      })
+
+      it('should support setting envs', () => {
+        const p = new C(
+          spaceId,
+          'prevkey', {
+            environment: 'haha'
+          }
+        )
+
+        p.config.environment.should.equal('haha')
+      })
+    })
+
     describe('Wrapper', () => {
       describe('_link:then', () => {
         it('should still run then functions', () => {
