@@ -11,7 +11,6 @@ const EntryPoint = require('../')
 
 // Third-parties
 const cloneDeep = require('lodash.clonedeep')
-const url = require('url')
 const Mitm = require('mitm')
 
 // required samples
@@ -37,7 +36,7 @@ const rejectedAsset = 'imageNOPE'
 const emptyArray = 'emptyArray'
 const rand = Date.now()
 const defaultErr = new Error('Expected an error...')
-let baseUrl = '/spaces/' + spaceId + '/'
+const baseUrl = '/spaces/' + spaceId + '/'
 let expectedParts = []
 
 // create puller and mock server to use for tests
@@ -51,8 +50,7 @@ before(() => {
         throw new Error(`Url request did not match expected (missing part).\n\nMissing Part: ${val}\nUrl: ${req.url}`)
       }
     })
-    const $url = url.parse(req.url)
-    let pathParts = $url.pathname.split('/')
+    const pathParts = req.url.split('?')[0].split('/')
     pathParts.shift()
     const part = pathParts[4]
 
@@ -66,7 +64,7 @@ before(() => {
     } else if (req.url.indexOf(emptyArray) > -1) {
       return end(mockData.emptyArray)
     } else if (part === 'entries') {
-      let ret = JSON.parse(JSON.stringify(mockData.entries))
+      const ret = JSON.parse(JSON.stringify(mockData.entries))
       if (req.url.indexOf('limit=1000') !== -1 && req.url.indexOf('skip') === -1) {
         for (let i = 1; i < mockData.entries.total - 1; i++) {
           ret.items.push(ret.items[0])
@@ -218,7 +216,7 @@ const setupPullerTests = (C, name) => {
         it('should be able to parse a circularly referenced object', () => {
           expectedParts = ['/entries?', 'include=10', 'limit=1', `sys.id=${entryId}`]
           return puller.getEntryById(entryId).parse(entry => {
-            let nested = entry.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref
+            const nested = entry.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref.fields.ref
             nested.id.should.equal(entryId)
             nested.should.not.have.property('sys')
           })

@@ -53,7 +53,7 @@ module.exports = {
 
     createMeta(entry)
 
-    for (let key in entry.fields) {
+    for (const key in entry.fields) {
       if (entry.fields[key] && entry.fields[key].sys) {
         const val = parse(entry.fields[key])
         if (val) {
