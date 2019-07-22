@@ -11,7 +11,6 @@ const EntryPoint = require('../')
 
 // Third-parties
 const cloneDeep = require('lodash.clonedeep')
-const url = require('url')
 const Mitm = require('mitm')
 
 // required samples
@@ -51,8 +50,7 @@ before(() => {
         throw new Error(`Url request did not match expected (missing part).\n\nMissing Part: ${val}\nUrl: ${req.url}`)
       }
     })
-    const $url = url.URL(req.url)
-    const pathParts = $url.pathname.split('/')
+    const pathParts = req.url.split('?')[0].split('/')
     pathParts.shift()
     const part = pathParts[4]
 
