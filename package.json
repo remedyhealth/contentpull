@@ -41,7 +41,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-subset": "^1.5.0",
-    "husky": "^2.3.0",
+    "husky": "^3.0.0",
     "jsdoc": "^3.6.2",
     "mitm": "^1.7.0",
     "mocha": "^6.1.4",
