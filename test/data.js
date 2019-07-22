@@ -1,4 +1,4 @@
-let data = {
+const data = {
   unparsed: {
     sys: {
       id: 'test1',

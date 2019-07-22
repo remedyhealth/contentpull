@@ -117,7 +117,7 @@ class Wrapper {
    * @ignore
    */
   _getObjects (params, isAsset) {
-    let fn = (isAsset) ? this.client.getAssets : this.client.getEntries
+    const fn = (isAsset) ? this.client.getAssets : this.client.getEntries
 
     return this._link(fn.call(this, Object.assign({}, {
       include: this.include
@@ -228,13 +228,13 @@ class Wrapper {
    * @ignore
    */
   _getByType (contentType, fields, otherParams, onlyOne) {
-    let params = {
+    const params = {
       content_type: contentType
     }
 
-    let fn = (onlyOne) ? this.getEntry : this.getEntries
+    const fn = (onlyOne) ? this.getEntry : this.getEntries
 
-    for (let i in fields) {
+    for (const i in fields) {
       params[`fields.${i}`] = fields[i]
     }
 
@@ -270,7 +270,7 @@ class Wrapper {
    * @ignore
    */
   _combineArrays (arrs) {
-    let r = {
+    const r = {
       sys: {
         type: 'Array'
       },
