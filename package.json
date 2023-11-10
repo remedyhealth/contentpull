@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/remedyhealth/contentpull#readme",
   "dependencies": {
-    "contentful": "^7.10.0",
+    "contentful": "^10.6.7",
     "lodash.clonedeep": "^4.5.0"
   },
   "devDependencies": {
